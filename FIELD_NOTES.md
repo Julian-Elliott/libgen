@@ -77,6 +77,33 @@ contextual "did you know?" nudge at the moment of contact). The nudges aren't de
 — they're the mechanism that attacks the #1 barrier (awareness of breadth), and the
 trace log tells Jack which ones actually convert.
 
+## The Hive re-think: exclusion → provenance
+
+Our first rule was "never touch thehiveworcester.org — it goes stale". Working
+with Jack's team showed that rule threw away the only public description of
+Worcester's biggest library asset: The Hive is Europe's first joint
+university+public library, open 8:30am–10pm every day, home to the
+Worcestershire Archive & Archaeology Service, 800+ study spaces, a Business &
+IP Centre and a Youth Hub — and almost none of that lives on the council site.
+**Staleness isn't a reason to exclude a source; it's a reason to tag it.** So
+we crawl all 57 pages (`build_hive_kb.py`), record the *exact* offering of each
+page, stamp every fact with its source URL + crawl date, and apply one
+precedence rule: where the Hive and council sites conflict (hours, prices,
+membership), the council wins and the answer says so. The site even flags its
+own events page as static — so live events still come only from the council.
+
+## Going copy-level: "do you have it?" → "here's how you get it"
+
+A catalogue hit isn't an outcome; a borrowed book is. `where_to_get` extends
+item search down to the **individual copies**: it reads the item's detail page
+for per-branch holdings (which branch, shelf mark, on-shelf or out), and offers
+the fastest route per format — walk in at the named branch, reserve free, or
+borrow the eBook on BorrowBox *tonight* (the Atom feed's `Electronic Access`
+field often carries the direct link). The detail page is the most fragile
+markup we touch, so there are two independent parsers (holdings table, then a
+branch-name-anchored text scan) and a hard honesty rule: **if neither parses,
+say so and link the item page — never guess availability.**
+
 ## What surprised us
 
 - A **single Atom endpoint** saved the hardest integration.
@@ -90,10 +117,12 @@ trace log tells Jack which ones actually convert.
 
 ```bash
 pip install -r requirements.txt gradio
-python build_kb.py && python graph_build.py   # refresh data + graph (live)
+python build_kb.py && python build_hive_kb.py && python graph_build.py
 python app.py                                  # run (no-LLM mode without HF_TOKEN)
+python library_sources.py                      # live self-test incl. copy-level §5
 ```
 
-Everything reads only `worcestershire.gov.uk` and the council catalogue — we deliberately
-exclude the out-of-date Hive website. Public data, public good, on a model that fits on
+Everything reads official sources — `worcestershire.gov.uk` and the catalogue live,
+plus every page of `thehiveworcester.org` with per-fact provenance and the council
+taking precedence on conflicts. Public data, public good, on a model that fits on
 a laptop.

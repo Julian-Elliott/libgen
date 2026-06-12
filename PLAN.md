@@ -6,10 +6,21 @@ Companion docs: [README](README.md) · [SUBMISSION](SUBMISSION.md) · [IDEAS](ID
 ## Goal
 
 Give Worcestershire Libraries one conversational voice that answers any resident
-question from **live, official, source-cited data**, tells them **exactly what they
-need to sign up**, and **surfaces the services they never knew existed** — on a ≤32B
-model, locally-capable. The DCMS-evidenced answer to "the library doesn't shout
-about what it offers."
+question from **official, source-cited data at every granularity** — down to
+*which branch has the copy on its shelf right now* and *exactly what every page
+of the Hive offers* — tells them **exactly what they need to sign up**, and
+**surfaces the services they never knew existed** — on a ≤32B model,
+locally-capable. The DCMS-evidenced answer to "the library doesn't shout about
+what it offers." Built with/for Jack's library-resources team.
+
+The granularity ladder:
+
+| Level | Data | Tool |
+|---|---|---|
+| Service | 87 council service pages, eligibility-first | KB tools |
+| Page | all 57 pages of thehiveworcester.org, exact offerings + provenance | `hive_info` |
+| Item | live catalogue (Atom feed), incl. BorrowBox deep links | `search_catalogue` |
+| Copy | per-branch holdings + status from the item's detail page | `where_to_get` |
 
 ## Architecture
 
@@ -19,14 +30,19 @@ about what it offers."
                        │            fallback (no-token safe)        │
                        └───────────────┬────────────────────────────┘
                                        ▼
-        ┌──────────────── 10 tools ─────────────────┐   ┌── GraphRAG ──┐
-        │ search_catalogue   (SirsiDynix Atom feed) │   │ local_search │
-        │ whats_new          (newest titles)         │   │ global_search│
-        │ find_library       (hours/open-now/facils) │◀──│ multi-hop    │
-        │ mobile_library     (154 villages)          │   │ over graph   │
-        │ library_events     (live events)           │   └──────────────┘
-        │ online_hub         (PressReader/BorrowBox…) │   library_graph.json
-        │ libraries_unlocked · printing · membership  │   320 nodes/465 edges
+        ┌──────────────── 12 tools ─────────────────┐   ┌── GraphRAG ──┐
+        │ where_to_get       (copy-level: shelf @    │   │ local_search │
+        │                     branch → reserve →     │   │ global_search│
+        │                     BorrowBox tonight)     │   │ multi-hop    │
+        │ hive_info          (57 Hive pages, exact   │◀──│ over graph   │
+        │                     offer + provenance)    │   └──────────────┘
+        │ search_catalogue   (SirsiDynix Atom feed)  │   library_graph.json
+        │ whats_new          (newest titles)         │   349 nodes/502 edges
+        │ find_library       (hours/open-now/facils) │   incl. 26 HiveService
+        │ mobile_library     (154 villages)          │
+        │ library_events     (live events)           │
+        │ online_hub         (PressReader/BorrowBox…)│
+        │ libraries_unlocked · printing · membership │
         └───────────────────┬────────────────────────┘
                             ▼
         synthesise (≤32B)  +  eligibility  +  £-receipt  +  EAST nudge
@@ -40,8 +56,9 @@ about what it offers."
 | Layer | File | Role |
 |---|---|---|
 | Ingestion | `build_kb.py` → `library_kb.json` | Crawl all 218 library URLs → 87 services / 23 branches / 17 resources, with eligibility & facilities |
-| Graph | `graph_build.py` → `library_graph.json` | Deterministic GraphRAG: entities → relationships → communities → reports |
-| Sources | `library_sources.py` | 10 live/KB tools + curated hub access + membership tiers |
+| Hive ingestion | `build_hive_kb.py` → `hive_kb.json` | Crawl all 57 Hive pages → exact per-page offerings, what-you-need, prices, levels; curated `hive_profile` of 26 extended capabilities, every fact source-tagged |
+| Graph | `graph_build.py` → `library_graph.json` | Deterministic GraphRAG over BOTH KBs: entities → relationships → communities → reports (incl. 26 HiveService nodes; offline rebuild keeps villages) |
+| Sources | `library_sources.py` | 12 live/KB tools + curated hub access + membership tiers + copy-level availability parser |
 | Retrieval | `graph_rag.py` | local/global graph search (multi-hop) |
 | Traces | `trace.py` → `traces.jsonl` | per-turn structured agent trace (Open Trace badge) |
 | App | `app.py` | router, renders, behaviour-change layer, Gradio UI |
@@ -56,8 +73,16 @@ about what it offers."
 - [x] **P5 — Behaviour-change layer.** EAST nudges, £-saved value receipt, quick-reply chips (DCMS/COM-B grounded).
 - [x] **P6 — Traces.** JSONL logging + in-chat "how I answered" panel.
 - [x] **P7 — KB refinement.** Curate all 17 hub resources, filter time-bound junk, tag seasonal pages.
-- [ ] **P8 — Deploy** to the Space + `HF_TOKEN` + smoke-test (user action).
-- [ ] **P9 — Stretch:** custom `gr.Server` frontend; a small fine-tune (🎯 badge); llama.cpp local run (🔌🦙).
+- [x] **P8 — The Hive, page-level.** Reverse the exclusion: crawl all 57 pages
+  with provenance (`build_hive_kb.py`), `hive_info` tool, Hive in the graph
+  (open-late, archives, 26 capabilities), council-wins-on-conflict rule.
+- [x] **P9 — Copy-level "where to get it".** `where_to_get`: per-branch
+  holdings/status from the item detail page (two parse strategies, fail-soft),
+  free-reservation steps, BorrowBox deep links from the Atom feed's
+  Electronic Access field. *Live-verify with `python library_sources.py`.*
+- [ ] **P10 — Deploy** to the Space + `HF_TOKEN` + smoke-test (user action),
+  incl. the new self-test §5 (copy-level) against the live catalogue.
+- [ ] **P11 — Stretch:** custom `gr.Server` frontend; a small fine-tune (🎯 badge); llama.cpp local run (🔌🦙).
 
 ## The behaviour-change layer (why, not just what)
 
@@ -90,6 +115,8 @@ source correctness.
 | HF Inference flaky / no token | **No-LLM fallback** renders raw live data — demo never breaks |
 | Council site HTML changes | Re-run `build_kb.py` (re-crawl) any time; tools fail soft |
 | SirsiDynix slow/timeouts | per-call try/except; app degrades gracefully |
+| Hive site goes stale again | every Hive fact shows its crawl date; council wins on conflict; `build_hive_kb.py` re-crawls in minutes |
+| Detail-page holdings markup shifts | two independent parse strategies (table + branch-name text scan); if both miss, the answer says so and links the item page — never guesses |
 | Gradio 6 needs Py3.10+ | tested logic locally; boot-test on the Space first |
 | Facility data sparse (e.g. "study space") | multi-hop honest about coverage; lead demo on café+meeting |
 

@@ -1,0 +1,1513 @@
+{
+  "generated": "2026-06-12T12:00:00Z",
+  "source": "https://www.thehiveworcester.org",
+  "method": "web_fetch crawl",
+  "page_count": 57,
+  "notes": "BFS crawl of all internal .html pages reachable from the homepage and known seed URLs (57 unique pages; /index.html treated as duplicate of homepage). No fetch failures. Site banner on whats-on.html states the website is under construction and content is static pending a new site.",
+  "hive_profile": {
+    "name": "The Hive, Worcester",
+    "partnership": "Joint venture of the University of Worcester and Worcestershire County Council - 'The Hive is the first joint public and university library in Europe' (services.html, using-the-library.html). Built with support of Worcester City Council and Advantage West Midlands; opened to the public 2 July 2012 and officially opened by Her Majesty the Queen on 11 July 2012 (creating-the-hive.html).",
+    "address": "The Hive, Sawmill Walk, The Butts, Worcester, WR1 3PD (getting-here.html, contact-us.html)",
+    "phone": {
+      "general_enquiries": "01905 822866 - The Hive at the Worcestershire County Council Customer Services, 9am-5pm Monday-Friday (contact-us.html)",
+      "renewals": "01905 822866 - 24 hour automated renewal system (contact-us.html)",
+      "site_footer": "01905 855000 - University of Worcester, Henwick Grove, WR2 6AJ (site-wide footer)"
+    },
+    "email": {
+      "general_and_bookings": "hiveadminteam@worcestershire.gov.uk",
+      "library": "TheHiveLibrary@worcestershire.gov.uk",
+      "university_members": "askalibrarian@worc.ac.uk",
+      "events_programming": "programming@worcestershire.gov.uk",
+      "school_visit_bookings": "bookings@thehiveworcester.org",
+      "catering": "hivecatering@bellrockgroup.co.uk"
+    },
+    "opening_hours": {
+      "building": "The Hive is open from 8:30am - 10pm, Monday to Sunday (opening-hours.html; plan-your-visit.html states 'Monday to Sunday 8.30am - 10.00 pm')",
+      "cafe": "Monday-Sunday 8.30am-9pm (cafe.html)",
+      "careers_youth_hub": "Monday - Friday, 9am-4pm (youthhub.html)",
+      "archives": "Explore The Past / Archives and Archaeology opening times are published on the dedicated Explore The Past website explorethepast.co.uk (opening-hours.html, explore-the-past.html)",
+      "bank_holidays_2025": "Good Friday 18 April Closed; Easter Saturday 19 April normal opening hours; Easter Sunday 20 April Closed; Easter Monday 21 April Closed; Early May Bank Holiday Monday 5 May reduced opening hours; Spring Bank Holiday Monday 26 May Closed; Summer Bank Holiday Monday 25 August Closed (opening-hours.html)"
+    },
+    "key_facts": [
+      "Opened July 2012; first of its kind in Europe (facts-and-figures.html)",
+      "Houses 12 miles of archive collections (facts-and-figures.html)",
+      "Contains a quarter of a million books (facts-and-figures.html)",
+      "10,000m2 of public space, over five floors (facts-and-figures.html)",
+      "800 study stations (facts-and-figures.html)",
+      "Over 26,000 records of historic monuments and buildings (facts-and-figures.html)",
+      "Anticipating over a million visitors per year; over a million books issued in the first year (facts-and-figures.html)"
+    ],
+    "extended_capabilities": [
+      {
+        "capability": "First joint public and university library in Europe",
+        "detail": "Community members and university students get the same user experience; no segregation - university stock shelved alongside public stock; staff from both university and council work throughout the library; all users access the same services.",
+        "source": "https://www.thehiveworcester.org/using-the-library.html"
+      },
+      {
+        "capability": "Exceptionally long opening hours",
+        "detail": "Open 8:30am - 10pm, Monday to Sunday (every day of the week).",
+        "source": "https://www.thehiveworcester.org/opening-hours.html"
+      },
+      {
+        "capability": "Explore the Past - Worcestershire Archive & Archaeology Service (Level 2)",
+        "detail": "Home to the Worcestershire Archive and Archaeology Service; thousands of archaeological sites, historic buildings and landscapes recorded; 12 miles of original archives collected and preserved. Offers: area for consulting original archives on level 2; guidance from knowledgeable staff; facility to talk to archaeologists and access the archaeological record; large self-service area for microform and internet sources; local studies and archaeology library; a conservation room for the repair and preservation of documents; prearranged 'behind the scenes' group visits; programme of history and archaeology events for all ages. Original-document viewings (e.g. Stuart Collection) take place in the original documents examination room within 'access to original archives' opening hours.",
+        "source": "https://www.thehiveworcester.org/explore-the-past.html"
+      },
+      {
+        "capability": "Historic Environment Record (HER) access",
+        "detail": "Searchable database with digital mapping of all known archaeological sites, historic buildings and landscapes in the county; online search via Heritage Gateway; for detailed enquiries you can book to see an HER officer at The Hive.",
+        "source": "https://www.thehiveworcester.org/catalogue-search.html"
+      },
+      {
+        "capability": "Three online catalogues",
+        "detail": "Library catalogue search (quarter of a million titles plus all County branches, via wcc.ent.sirsidynix.net.uk), Archaeology report search (Heritage Gateway) and Archives search (CalmView at e-services.worcestershire.gov.uk).",
+        "source": "https://www.thehiveworcester.org/catalogue-search.html"
+      },
+      {
+        "capability": "Business & IP Centre (BIPC) Worcestershire (Level 2)",
+        "detail": "The Business Centre at The Hive is home to BIPC Worcestershire, providing free and accessible business advice, support, information and resources, plus well-appointed meeting rooms with the latest technology. Free business databases COBRA (Complete Business Reference Adviser), Statista and FAME are accessible from any public computer in The Hive; start-up support, Intellectual Property information and funding signposted via the BIPC Worcestershire website.",
+        "source": "https://www.thehiveworcester.org/business-centre.html"
+      },
+      {
+        "capability": "Careers Worcs Youth Hub (Level 1)",
+        "detail": "Dedicated space for young people aged 15-24, open Monday-Friday 9am-4pm, with careers advisors providing 1-1 advice, CV writing, job search, interview preparation, apprenticeships/training routes, plus finance and health & wellbeing services. Careers Helpline 0300 666 3666.",
+        "source": "https://www.thehiveworcester.org/youthhub.html"
+      },
+      {
+        "capability": "800+ study spaces and bookable study spaces for students",
+        "detail": "Over 800 study spaces across The Hive available to use for study; Level 0 can be used for group study; Level 4 is the silent study floor; 250 new computers bookable in advance (students page).",
+        "source": "https://www.thehiveworcester.org/book-a-space.html"
+      },
+      {
+        "capability": "Room hire / Space for hire with online booking and video conferencing",
+        "detail": "From small huddle rooms to large function rooms at competitive prices; online booking system (librarybookings.worcestershire.gov.uk) with 360-degree virtual tours; new video-conferencing technology in many meeting rooms; concessionary rates for not-for-profit organisations; minimum one-hour charge with additional half hours; all prices include public liability insurance; University of Worcester members can book Hive rooms free for specific purposes; exhibition space also available for hire.",
+        "source": "https://www.thehiveworcester.org/space-for-hire.html"
+      },
+      {
+        "capability": "On-site hospitality catering (Bellrock)",
+        "detail": "The Hive has its own onsite catering company (also manages the cafe) offering hospitality menus - buffets, platters, canapes, business breakfasts - for meetings, corporate training and conferences; special diets catered for; minimum 2 working days' notice.",
+        "source": "https://www.thehiveworcester.org/catering.html"
+      },
+      {
+        "capability": "Cafe at The Hive (Level 1)",
+        "detail": "Open Monday-Sunday 8.30am-9pm; hot and cold snacks, light meals, deli bar with made-to-order baguettes/sandwiches/salads; 10% student discount; five-star hygiene rating; fully accessible; Urban Eat ranges including vegan, vegetarian, gluten free and halal options.",
+        "source": "https://www.thehiveworcester.org/cafe.html"
+      },
+      {
+        "capability": "Children's library - one of the largest in the country (Level 1)",
+        "detail": "Designed for children to find their own level; Story Pit recessed seating area for readings, performances and group work; access to 'Story Island', a unique outdoor teaching space for children accessed through the children's library; children-only PCs and printer/copier.",
+        "source": "https://www.thehiveworcester.org/children-young-people-families.html"
+      },
+      {
+        "capability": "Walk-in academic research databases",
+        "detail": "Free walk-in access inside the building for all library members to ~37 databases including Ancestry Library Edition, JSTOR, Academic Search Complete, Business Source Complete, CINAHL Complete, BMJ Journals, Oxford English Dictionary, Dictionary of National Biography, Times Digital Archive, Gale British newspapers, House of Commons Parliamentary Papers, Cambridge/Oxford/SAGE/Taylor & Francis journals, ScienceDirect, Project Muse, Drama Online and more.",
+        "source": "https://www.thehiveworcester.org/research-databases.html"
+      },
+      {
+        "capability": "Special collections",
+        "detail": "The Stuart Collection (over one-thousand books on Stuart-period Britain 1603-1714, bequeathed by John Grainger in 1900, many first/last surviving copies); the Palfrey Collection (antiquarian studies and first editions key to Worcestershire study); the Stanbrook Abbey Press Collection (closed access on level 4); extensive Local Studies and Archaeology libraries.",
+        "source": "https://www.thehiveworcester.org/special-collections.html"
+      },
+      {
+        "capability": "Research collections for family and local history",
+        "detail": "Maps and plans (historic Ordnance Survey, tithe, inclosure and estate plans, many digital); census returns, International Genealogical Index, GRO Index of Births Marriages and Deaths, local newspapers, wills and probate; Worcestershire Photographic Survey and aerial photographic collections; archives of local families/businesses including the Earls of Coventry of Croome; Quarter Sessions, County and District Council records and the Worcester City Archive; Diocese of Worcester, parish and Non-conformist records.",
+        "source": "https://www.thehiveworcester.org/research-collections.html"
+      },
+      {
+        "capability": "Commissioned public art collection",
+        "detail": "Kaleidoscope by Robert Orchardson (aluminium, 2012, visible from all three main floors); Rack Alley by Clare Woods (600x500cm enamel and oil on aluminium, 2012, commissioned for the atrium); two John Clare-inspired paintings by James Fisher (2008).",
+        "source": "https://www.thehiveworcester.org/art-collections.html"
+      },
+      {
+        "capability": "BorrowBox digital library (eBooks/eAudio)",
+        "detail": "eBook and eAudiobook service free to all library members 24/7 via library.bolindadigital.com/worcestershire or the BorrowBox app; borrow up to six eBooks and six eAudiobooks at a time; loans auto-expire with no late fees; syncs across up to six devices; requires library card number and PIN.",
+        "source": "https://www.thehiveworcester.org/ebooks.html"
+      },
+      {
+        "capability": "School and college visit packages",
+        "detail": "More than 8,000 students hosted since 2012. Free 'Package 1' visits (library tour plus activities such as Storytime, Book Blitz, Coding with Scratch, research skills, referencing) for Early Years through Sixth Form; charged 'Package 2' Explore the Past history/archive/archaeology workshops from a minimum of £40 per hour/class (individual WAAS workshops around £80, 90-120 minutes, e.g. Romans in Worcester, Anglo-Saxons, Tudor Worcester, Civil War, Victorian public health, WWI, WWII archaeology); webinars available; classroom resource packs £20 each; teacher training days hosted.",
+        "source": "https://www.thehiveworcester.org/10252.html"
+      },
+      {
+        "capability": "Archaeology planning advice for developers (professional service)",
+        "detail": "The Archive and Archaeology Service provides advice to landowners, developers and consultants on archaeological implications and opportunities of development in the County; advice on management and conservation of the rural and urban historic environment; workshops and training on heritage topics; plus professional services including digitisation, document conservation and a wide range of professional archaeological services.",
+        "source": "https://www.thehiveworcester.org/supporting-business.html"
+      },
+      {
+        "capability": "WAAS learning and outreach programme",
+        "detail": "Local history research groups, talks, workshops, tours, school activities, community excavations, archive film screenings, family history fairs, guided walks and a geology trail around The Hive.",
+        "source": "https://www.thehiveworcester.org/worcestershire-archive-archaeology.html"
+      },
+      {
+        "capability": "IT, gaming and printing on every level",
+        "detail": "Public access PCs with internet and Microsoft Office on Levels 0-4; group study screen with 46-inch HDMI display (L0); two PS4 gaming zones (L0); high-speed printers/copiers on every level with credit-card top-up kiosks (cash kiosk only at the L1 Hub); A4 scanners on request (L3); privacy filters available (L1 Hub); dedicated catalogue search stations.",
+        "source": "https://www.thehiveworcester.org/it-equipment-printing.html"
+      },
+      {
+        "capability": "The Studio theatre, exhibition spaces and Worcestershire Hub (Level 1)",
+        "detail": "Level 1 'Discover' holds the children's library, the cafe, exhibition spaces and The Studio theatre as well as The Worcestershire Hub (county council customer services) and quick choice books; Level 2 also has meeting rooms and a Business Centre with a suite of three rooms, informal networking space and 24-hour newsfeed; secure archives on Level 0 with occasional special tours.",
+        "source": "https://www.thehiveworcester.org/inside-the-hive.html"
+      },
+      {
+        "capability": "Accessibility provision",
+        "detail": "Fully accessible to wheelchairs, mobility scooters and pushchairs; lifts to all five public floors with Braille signage; Meet & Greet service bookable in advance; personal care suite on Level 1 with shower and lifting facilities (access card from staff); height-adjustable workstations and archive/microfilm tables; automated microfilm machine with foot pedal; induction loops in Meeting rooms 2, 3 and The Studio; 21 blue badge bays free for 3 hours in Cattlemarket car park; pre-arranged close access via Level 0; DisabledGo accessibility guide.",
+        "source": "https://www.thehiveworcester.org/physical-accessibility.html"
+      },
+      {
+        "capability": "Prayer space",
+        "detail": "Rooms within The Hive can be used by customers to pray - ask a member of staff to be directed to an available room; Worcestershire County Council policy is to be equally supportive of all faiths.",
+        "source": "https://www.thehiveworcester.org/inside-the-hive.html"
+      },
+      {
+        "capability": "Award-winning sustainable landmark building",
+        "detail": "Biomass boilers, River Severn river-water cooling, rainwater harvesting for WC flushing and archaeological washing, natural ventilation, water meadows for flood attenuation and 4000m2+ of biodiversity landscape; winner of 20+ awards including BREEAM Outstanding (2012), RIBA National Award (2013), SCONUL Library Design Award (2016) and ARA Record Keeping Service of the Year (2017); distinctive golden honeycomb cladding by Feilden Clegg Bradley Studios.",
+        "source": "https://www.thehiveworcester.org/sustainability.html"
+      },
+      {
+        "capability": "Membership without barriers",
+        "detail": "Instant free digital membership online (eBooks, eAudio, eMagazines and online resources) upgradeable to full membership with proof of name and address; UW students/staff use their university ID as their library card; dedicated Children's library card (designed by Liz Pichon) and Young Person's library card for ages 13-19; instant membership for ages 8-16 allows borrowing 2 books without a parent signature; full members get free computer/Wi-Fi access, DVD/Blu-ray hire, library activities and adult and family learning courses.",
+        "source": "https://www.thehiveworcester.org/how-to-get-a-library-card.html"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "url": "https://www.thehiveworcester.org/",
+      "title": "The Hive (homepage)",
+      "section": "other",
+      "summary": "Homepage with main navigation, a carousel highlighting The Hive as a landmark for Worcestershire, bookable study spaces for students, and Explore the Past, plus quick links for using the library and the digital library.",
+      "offerings": [
+        "Catalogue search",
+        "Sign in to your account (online library account)",
+        "Join the library (how to get a library card)",
+        "University of Worcester Library Services",
+        "Space for hire",
+        "Digital Library (BorrowBox at library.bolindadigital.com/worcestershire)",
+        "We now have a range of study spaces that can be booked out for students",
+        "Explore the Past is home to the Worcestershire Archive and Archaeology Service and anything history related",
+        "The Hive - a landmark for Worcestershire"
+      ],
+      "details": {
+        "contact": "Footer: (c) University of Worcester, Henwick Grove, WR2 6AJ, Tel: 01905 855000"
+      },
+      "links_out": [
+        "https://wcc.ent.sirsidynix.net.uk/client/en_GB/wcc",
+        "https://library.worc.ac.uk",
+        "http://library.bolindadigital.com/worcestershire",
+        "https://en-gb.facebook.com/TheHiveWorcs/",
+        "https://twitter.com/TheHiveWorcs/",
+        "https://www.instagram.com/thehiveworcs/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/collections.html",
+      "title": "Collections",
+      "section": "collections",
+      "summary": "Collections landing page: The Hive is home to a huge range of print and online resources, all discoverable via the online catalogue searches, with sub-pages for research, art and special collections.",
+      "offerings": [
+        "The Hive is home to a huge range of print and online resources",
+        "Discover them all via the online catalogue searches",
+        "Catalogue search",
+        "Research collections",
+        "Art collections",
+        "Special collections"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/services.html",
+      "title": "Services",
+      "section": "services",
+      "summary": "Services landing page: The Hive is the first joint public and university library in Europe and all users have access to an outstanding facility with a vast variety of resources; hub linking to library use, Explore the Past, space for hire, Youth Hub, Business Centre, IT and the cafe.",
+      "offerings": [
+        "The Hive is the first joint public and university library in Europe",
+        "All users have access to an outstanding facility with a vast variety of resources",
+        "Explore the past - Archives and Archaeology Services: Level 2",
+        "Space for hire",
+        "Careers Worcs Youth Hub",
+        "Using the library",
+        "Business Centre",
+        "IT, Equipment & Printing",
+        "The Cafe at The Hive",
+        "Borrowing & reservations",
+        "How to get a library card",
+        "How to find things",
+        "Fines & renewals"
+      ],
+      "details": {
+        "location_in_building": "Explore the Past - Archives and Archaeology Services is on Level 2"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/whats-on.html",
+      "title": "What's On",
+      "section": "whats-on",
+      "summary": "Events landing page covering drama, art, learning opportunities, workshops, book clubs, visiting authors and lectures. A 'Website Under Construction' notice states content on this site is static; latest events are on the Worcestershire County Council Events page. Also explains how to join the events programme and hire exhibition space.",
+      "offerings": [
+        "From drama and art to learning opportunities, workshops, book clubs, visiting authors and lectures",
+        "Events programme - external contributors can propose Arts, Culture & Heritage events (criteria for assessment document provided)",
+        "Exhibition spaces available for hire (terms and conditions and Exhibition Enquiry Form provided)",
+        "Keep up to date with events by becoming a Worcestershire library member or following The Hive on Facebook, Twitter and Instagram"
+      ],
+      "what_you_need": [
+        "To propose an event: read the criteria for assessment and email programming@worcestershire.gov.uk with your idea, how it fits the values and how you can fund it",
+        "To exhibit: read the exhibition terms and conditions, complete the Exhibition Enquiry Form and send to programming@worcestershire.gov.uk"
+      ],
+      "details": {
+        "contact": "programming@worcestershire.gov.uk"
+      },
+      "links_out": [
+        "https://www.worcestershire.gov.uk/events"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/plan-your-visit.html",
+      "title": "Plan your visit",
+      "section": "plan-your-visit",
+      "summary": "Visit-planning landing page stating opening hours of Monday to Sunday 8.30am-10.00pm, with links to parking, transport, find your space, opening hours, accessibility, inside the Hive, food & drink and floor plans.",
+      "offerings": [
+        "Opening hours are Monday to Sunday 8.30am - 10.00 pm",
+        "Parking information",
+        "Transport information",
+        "Find your space",
+        "Opening hours",
+        "Getting here",
+        "Physical accessibility",
+        "Inside the Hive",
+        "Food & drink",
+        "Floor plans [PDF]",
+        "Interactive floor plan (web.wagnerguide.com)"
+      ],
+      "details": {
+        "hours": "Monday to Sunday 8.30am - 10.00pm"
+      },
+      "links_out": [
+        "http://web.wagnerguide.com/worcesterLibrary.aspx?Lang=en&Style=widescreen32"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/learn.html",
+      "title": "Learn",
+      "section": "learn",
+      "summary": "Learning landing page: The Hive offers opportunities for everyone to learn, whatever their age or interest, linking to school/college visits, children & families, WAAS, students and book a space, plus a Lifelong Readers PDF.",
+      "offerings": [
+        "The Hive offers opportunities for everyone to learn, whatever their age or interest",
+        "Children, young people & families",
+        "School and College Visits",
+        "Worcestershire Archive & Archaeology Service",
+        "Students",
+        "Book a space",
+        "Lifelong Readers [PDF]"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/about-the-hive.html",
+      "title": "About The Hive",
+      "section": "about",
+      "summary": "About landing page: The Hive is the result of the vision and commitment of the University of Worcester and Worcestershire County Council; links to Creating the Hive, jobs and volunteering, contact us, awards and coronavirus information, plus an introductory YouTube video.",
+      "offerings": [
+        "The Hive is the result of the vision and commitment of the University of Worcester and Worcestershire County Council",
+        "Creating the Hive (project history)",
+        "Jobs and volunteering",
+        "Contact us",
+        "Awards",
+        "Coronavirus information (10 December)"
+      ],
+      "links_out": [
+        "https://www.youtube.com/embed/C70W4OIvCfI"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/opening-hours.html",
+      "title": "Opening hours",
+      "section": "plan-your-visit",
+      "summary": "States the building's hours - open 8:30am-10pm Monday to Sunday - plus 2025 bank holiday arrangements; Archives and Archaeology opening times are on the Explore The Past website.",
+      "offerings": [
+        "The Hive is open from 8:30am - 10pm, Monday to Sunday",
+        "Visit Explore The Past for Archives and Archaeology opening times"
+      ],
+      "details": {
+        "hours": "8:30am - 10pm, Monday to Sunday. Bank Holidays 2025: Good Friday 18 April Closed; Easter Saturday 19 April normal opening hours; Easter Sunday 20 April Closed; Easter Monday 21 April Closed; Early May Bank Holiday Monday 5 May reduced opening hours; Spring Bank Holiday Monday 26 May Closed; Summer Bank Holiday Monday 25 August Closed"
+      },
+      "links_out": [
+        "https://www.explorethepast.co.uk/contact-us/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/getting-here.html",
+      "title": "Getting here",
+      "section": "plan-your-visit",
+      "summary": "Location and address page: The Hive is in Worcester City centre, near the racecourse and facing the riverfront, with an embedded map, downloadable 'Visiting The Hive' leaflet, and links to parking/transport sub-pages and floor plans.",
+      "offerings": [
+        "The Hive is located in Worcester City centre, near the racecourse and facing the riverfront",
+        "Address: The Hive, Sawmill Walk, The Butts, Worcester, WR1 3PD",
+        "Download 'Visiting The Hive' leaflet (PDF)",
+        "Floor plans [PDF] and interactive floor plan"
+      ],
+      "details": {
+        "location_in_building": "n/a - building address: Sawmill Walk, The Butts, Worcester, WR1 3PD"
+      },
+      "links_out": [
+        "https://maps.google.com/maps/ms?msa=0&msid=217790600158349344997.0004af1a199b926bb90c1",
+        "http://web.wagnerguide.com/worcesterLibrary.aspx?Lang=en&Style=widescreen32"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/contact-us.html",
+      "title": "Contact us",
+      "section": "about",
+      "summary": "Contact directory for general, booking, library, university and archive enquiries, telephone enquiries via Worcestershire County Council Customer Services, a 24-hour automated renewal line, a feedback channel and the postal address.",
+      "offerings": [
+        "General enquiries: hiveadminteam@worcestershire.gov.uk",
+        "Booking enquiries: hiveadminteam@worcestershire.gov.uk",
+        "Library enquiries: TheHiveLibrary@worcestershire.gov.uk",
+        "University of Worcester members: askalibrarian@worc.ac.uk",
+        "University of Worcester Library Services information at library.worc.ac.uk",
+        "Worcestershire Archive and Archaeology team enquiries via the Explore the Past website",
+        "Telephone enquiries: call The Hive at the Worcestershire County Council Customer Services on 01905 822866 between 9am-5pm Monday - Friday",
+        "Renew library items by telephone 01905 822866 (24 hour automated renewal system)",
+        "Have your say - feedback about facilities, services or events via hiveadminteam@worcestershire.gov.uk"
+      ],
+      "details": {
+        "contact": "01905 822866 (9am-5pm Mon-Fri; 24hr automated renewals); hiveadminteam@worcestershire.gov.uk; TheHiveLibrary@worcestershire.gov.uk; askalibrarian@worc.ac.uk. Address: The Hive, Sawmill Walk, The Butts, Worcester, WR1 3PD"
+      },
+      "links_out": [
+        "https://library.worc.ac.uk/",
+        "https://www.explorethepast.co.uk/contact-us/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/fines-renewals.html",
+      "title": "Fines & renewals",
+      "section": "using-the-library",
+      "summary": "Explains book renewals: renew online via your account, up to 9 times provided there is no hold on the item; links to Worcestershire Libraries membership information and University of Worcester borrowing services.",
+      "offerings": [
+        "You can renew your books online - log onto your account",
+        "You can renew your books up to 9 times as long as there isn't a hold on the book you have",
+        "Worcestershire Libraries - Your Library Membership information (link)",
+        "University of Worcester Borrowing Services (link)"
+      ],
+      "what_you_need": [
+        "Library account login to renew online"
+      ],
+      "links_out": [
+        "https://wcc.ent.sirsidynix.net.uk/client/en_GB/thehive",
+        "https://www.worcestershire.gov.uk/council-services/worcestershire-libraries/your-library-membership",
+        "https://library.worc.ac.uk/borrowing-services"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/how-to-find-things.html",
+      "title": "How to find things",
+      "section": "using-the-library",
+      "summary": "Wayfinding guidance: start with the online catalogues, then use the interactive map in the main foyer, plasma screens, a level-by-level leaflet and roaming staff with Hive name badges; the History Centre helpdesk for archives is on the second floor beside the main staircase.",
+      "offerings": [
+        "The Hive is home to a huge range of resources, including books, archives, DVDs, art collections and more",
+        "Online catalogues showing lists of resources and their locations within The Hive",
+        "Interactive map in the main foyer and plasma screens to direct you to specific locations",
+        "Downloadable level-by-level leaflet (the-hive-level-by-level.pdf)",
+        "Hive staff located throughout the building, identifiable by distinctive Hive name badges",
+        "History Centre helpdesk for archive assistance, on the second floor beside the main staircase"
+      ],
+      "details": {
+        "location_in_building": "History Centre helpdesk: second floor, beside the main staircase"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/borrowing-reservations.html",
+      "title": "Borrowing & reservations",
+      "section": "using-the-library",
+      "summary": "Detailed borrowing entitlements and reservation rules for the joint Council/University library: item limits, University Short Loan (orange band) and Core text (blue band) rules, 80p reservations, last useful date, non-reservable items and account access. Includes a legacy COVID notice extending loans to 12 April 2021.",
+      "offerings": [
+        "As a joint Council/University venture, The Hive and its rich variety of resources are accessible to everyone",
+        "All books, DVD's, CD's and other resources including specialised academic texts, are available to students and the public",
+        "Borrowing limits: Books 12; Sound recordings 12; Spoken word 12; DVDs 6; Blu-ray DVDs 3; Video 6; CDs 6; PlayStation games 4",
+        "University Short Loans (orange bands): community users can consult in the library only; University students can sign out for 2 days",
+        "Core University student texts (blue bands): community users may sign out one at a time (not requestable to other branches); University students may sign out 12 for two weeks; never reservable if available on the shelf at The Hive",
+        "All remaining books can be signed out for three weeks, 12 at a time",
+        "For 80p you can reserve an item for collection at a branch of your choice",
+        "Reservations typically satisfied in a few days but can be up to three weeks; reserved items held for approximately two weeks for collection",
+        "Last Useful Date: reservations auto-delete 12 months after being placed unless you notify the library",
+        "Non-reservable items: Reference, Short Loan, Periodicals, Special Collections",
+        "Access the online catalogue and your account at wcc.ent.sirsidynix.net.uk",
+        "COVID NOTICE - The return date for all existing loans has been extended until 12 April 2021. No fines or reservation fees will be applied during this time"
+      ],
+      "what_you_need": [
+        "Log in to your library account to reserve items",
+        "80p reservation fee per item"
+      ],
+      "details": {
+        "prices": "Reservation: 80p per item"
+      },
+      "links_out": [
+        "https://wcc.ent.sirsidynix.net.uk/client/en_GB/thehive",
+        "http://www.worcestershire.gov.uk/cms/pdf/Libraries-ByeLaws.pdf",
+        "http://libguides.worc.ac.uk/about/library-regulations",
+        "https://library.worc.ac.uk/about/about-us/reports-policies-strategies"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/how-to-get-a-library-card.html",
+      "title": "How to get a library card",
+      "section": "using-the-library",
+      "summary": "Joining the library: instant online Digital Membership (eBooks, eAudio, eMagazines and online resources) upgradeable to Full Library Membership in person with proof of name and address; UW students and staff use their university ID card; lists everything full membership unlocks.",
+      "offerings": [
+        "Instantly become a digital member and get access to all of our services online",
+        "Digital Membership: access free eBook, eAudio and eMagazine collections and a wealth of other online resources; reserve a book to pick up from the library of your choice",
+        "Full Library Membership: borrow and reserve books, spoken word CDs and sound recordings from any library in the county",
+        "Borrow from our free collection of eBooks, eAudio and eMagazines, as well as our large Online Resource and Reference collections",
+        "Access library computers or Wi-Fi for free",
+        "DVD and Blu-Ray hire",
+        "Access library activities, such as Readers' Group, children's activities, Summer Reading Challenge and more",
+        "Adult and family learning courses both for qualifications and leisure",
+        "University of Worcester students and staff do not need to apply for a public library card; use your usual student or staff ID card to sign out materials",
+        "Young person's library card and Children's library card available (sub-pages)"
+      ],
+      "what_you_need": [
+        "Digital membership: join online instantly",
+        "Full membership: visit a library and show proof of name and address (driver's licence, passport, utility bill etc.)",
+        "Proof of name and address required when collecting a first reservation (upgrades you to full membership)",
+        "A standard reservation charge normally applies to reserved items"
+      ],
+      "links_out": [
+        "https://www.worcestershire.gov.uk/council-services/worcestershire-libraries/online-library-hub"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/explore-the-past.html",
+      "title": "Explore The Past",
+      "section": "services",
+      "summary": "Explore the Past is home to the Worcestershire Archive and Archaeology Service: 12 miles of original archives, the Historic Environment Record, public research facilities on Level 2, plus professional archive/archaeology services; the dedicated explorethepast.co.uk website carries full service and opening-time details.",
+      "offerings": [
+        "Explore the Past is home to the Worcestershire Archive and Archaeology Service and anything history related",
+        "Thousands of archaeological sites, historic buildings and landscapes are recorded and 12 miles of original archives are collected and preserved",
+        "An area for consulting original archives, up on level 2",
+        "Guidance and supervision from friendly, knowledgeable staff",
+        "Printed guidance and information to help you navigate indexes and collections",
+        "The facility to talk to archaeologists and access the archaeological record",
+        "A large self-service area for using microform and internet sources",
+        "A local studies and archaeology library",
+        "A conservation room for the repair and preservation of documents",
+        "Prearranged group visits 'behind the scenes'",
+        "A programme of history and archaeology based events and activities for all ages and interests",
+        "All types of research on Worcestershire people and places using the Historic Environment Record and the archive collections",
+        "Professional services: collect, preserve, make available and advise on archives",
+        "Professional services: undertake digitisation work on our own collections and those of others",
+        "Professional services: conserve documents in our care to ensure their long term preservation",
+        "Professional services: work with districts, county and regional and national agencies to manage and protect Worcestershire's Historic Environment",
+        "Professional services: deliver a wide range of professional archaeological services",
+        "Outreach & visits: tours, talks and school workshops",
+        "Newspaper microfilm collection temporarily unavailable (notice)"
+      ],
+      "details": {
+        "location_in_building": "Level 2",
+        "hours": "See Explore The Past website for Archives and Archaeology opening times"
+      },
+      "links_out": [
+        "https://www.explorethepast.co.uk/services/",
+        "https://www.explorethepast.co.uk/contact-us/",
+        "https://www.explorethepast.co.uk/discover-your-past/",
+        "https://www.explorethepast.co.uk/services/learning-and-outreach/",
+        "https://www.youtube.com/channel/UCzP1OnHquo3wsNOVqqt8yXQ",
+        "https://twitter.com/explorethepast?lang=en-gb",
+        "https://www.facebook.com/WorcsAAS/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/book-a-space.html",
+      "title": "Book a space",
+      "section": "learn",
+      "summary": "Study spaces for students: over 800 study spaces across The Hive available for study, with Level 0 usable for group study.",
+      "offerings": [
+        "There are over 800 study spaces across the Hive available to use for study",
+        "Level 0 can be used for group study"
+      ],
+      "details": {
+        "location_in_building": "Group study on Level 0"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/space-for-hire.html",
+      "title": "Space for hire",
+      "section": "services",
+      "summary": "Room hire at The Hive: affordable meeting, conference, event and training spaces from small huddle rooms to large function rooms, booked online with 360-degree virtual tours; video conferencing in many rooms; concessionary rates for not-for-profits; exhibition space also for hire.",
+      "offerings": [
+        "From small huddle rooms to large function rooms, The Hive offers the perfect space with easily accessible, well-equipped rooms, at competitive prices",
+        "Affordable meeting space for meetings, conferences, events or training sessions",
+        "Wide range of spaces also available across Worcestershire Libraries",
+        "Online booking system with 360-degree virtual tour of Hive meeting rooms and facility checking (librarybookings.worcestershire.gov.uk)",
+        "University of Worcester members can continue to book Hive rooms for free for specific purposes",
+        "Concessionary rates available for not-for-profit organisations such as community groups, societies and charities",
+        "Video conferencing: new video-conferencing technology in many library meeting rooms (supported by the Library Improvement Fund and Arts Council England)",
+        "Exhibition space is available for hire - a variety of exhibition spaces, seeking ideas and activities to develop arts and cultural activities",
+        "Requests to hire other interior and exterior library space considered",
+        "A minimum one-hour charge applies to all bookings, with additional half hours available",
+        "All room booking prices include public liability insurance",
+        "Booking form and room layout documents available"
+      ],
+      "what_you_need": [
+        "Book online via librarybookings.worcestershire.gov.uk",
+        "When making a booking, you will be asked to sign and agree to the booking terms and conditions",
+        "Minimum one-hour charge applies to all bookings"
+      ],
+      "details": {
+        "prices": "Competitive prices, updated; concessionary rates for not-for-profit organisations; minimum one-hour charge with additional half hours; public liability insurance included (specific figures not stated on page)"
+      },
+      "links_out": [
+        "https://librarybookings.worcestershire.gov.uk/",
+        "https://library.worc.ac.uk/booking-a-room",
+        "https://www.worcestershire.gov.uk/council-services/worcestershire-libraries/find-library"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/catalogue-search.html",
+      "title": "Catalogue search",
+      "section": "collections",
+      "summary": "Gateway to three online catalogue searches: the library catalogue (quarter of a million titles plus all County branches), the archaeology report search via Heritage Gateway (HER), and the archives search via CalmView; also links to research databases and University of Worcester Library Services.",
+      "offerings": [
+        "Library catalogue search: records for The Hive's quarter of a million titles plus simultaneous search of the stock of all County branches",
+        "Links to online resources, such as Ancestry and a range of research databases",
+        "University of Worcester Library Services: specialised services for University students and staff as well as the local community",
+        "Archaeology report search: Historic Environment Record (HER) information searchable online through the Heritage Gateway",
+        "Booking to see an HER officer at The Hive recommended for more detailed enquiries - they will explain the resources and conduct more detailed searches with you",
+        "Archives search: a significant proportion of the archive collections can be searched online (CalmView); paper catalogues at The Hive for the rest"
+      ],
+      "what_you_need": [
+        "University of Worcester students should log in to students.worc.ac.uk for the full range of educational resources"
+      ],
+      "links_out": [
+        "https://wcc.ent.sirsidynix.net.uk/client/en_GB/thehive",
+        "http://www.heritagegateway.org.uk/gateway/advanced_search.aspx",
+        "http://e-services.worcestershire.gov.uk/CalmView/",
+        "http://library.worc.ac.uk/",
+        "http://students.worc.ac.uk/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/using-the-library.html",
+      "title": "Using the library",
+      "section": "using-the-library",
+      "summary": "Explains the joint-library model: the first joint public and university library in Europe, with one user experience for everyone, university stock shelved alongside public stock, and integrated staff teams from the university, council libraries and council customer services.",
+      "offerings": [
+        "The Hive is the first joint public and university library in Europe",
+        "Community members and university students access an outstanding facility with a vast variety of resources",
+        "Everyone gets the same user experience - from logging on to signing out books, whether student or member of the public",
+        "No segregation in the library: university stock is shelved alongside public stock",
+        "Staff from both the university and council work throughout the library; all users access the same services",
+        "Hive staff teams combine trained academic and public library staff with council customer service staff"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/special-collections.html",
+      "title": "Special collections",
+      "section": "collections",
+      "summary": "Describes The Hive's special collections: the Stuart Collection (1,000+ books on Stuart-era Britain), the Local Studies and Archaeology libraries, the Palfrey Collection and the Stanbrook Abbey Press Collection, with consultation arrangements via the Explore the Past desk.",
+      "offerings": [
+        "The Stuart Collection: over one-thousand books on the period of Stuart rule (1603-1714), largely bequeathed by John Grainger in 1900, including several hundred books printed during the period; many first and possibly last copies in existence",
+        "Browse Stuart Collection titles via the library catalogue using an advanced search for classification 'Stuart'",
+        "Local Studies library: one of the most extensive collections of books relating to Worcestershire's history and archaeology",
+        "Archaeology library: comprehensive collection covering all periods and most types of sites, particularly strong on the Home Front in the Second World War, with local, regional and national journals",
+        "The Palfrey Collection: rare antiquarian studies, first edition volumes and books crucial to the study of Worcestershire, bequeathed by Alderman H.E. Palfrey",
+        "The Stanbrook Abbey Collection: publications of the Stanbrook Abbey Press (founded 1876), on closed access on level 4 and catalogued"
+      ],
+      "what_you_need": [
+        "To consult Stuart Collection books, speak to a member of staff at the Explore the Past desk on Level 2",
+        "All viewings of fragile items must be performed in the original documents examination room within the 'access to original archives' opening hours"
+      ],
+      "details": {
+        "location_in_building": "Explore the Past desk on Level 2; Stanbrook Abbey Collection on closed access on Level 4"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/research-collections.html",
+      "title": "Research collections",
+      "section": "collections",
+      "summary": "Catalogue of the archive and local-history research collections available at The Hive (Level 2), from historic maps and the Historic Environment Record to census, probate, photographic, family, council and church records.",
+      "offerings": [
+        "Staff available to assist in person during Explore The Past opening times - stop off at Level 2",
+        "Maps and plans, including historic Ordnance Survey, tithe and inclosure plans and estate plans; many available in digital formats for map comparison",
+        "The Historic Environment Record - a searchable database with digital mapping of all known archaeological sites, historic buildings and landscapes in the county",
+        "Sources for researching life stories, social history and your local area: Census returns, International Genealogical Index, General Register Office Index of Births, Marriages and Deaths, local newspapers, wills and other probate records",
+        "Photographs, including Worcestershire Photographic Survey and an Aerial photographic collection, most available digitally",
+        "Records of local families, groups, societies and businesses, including the archive of the Earls of Coventry of Croome",
+        "Quarter Sessions and County and District Council records including The Worcester City Archive",
+        "Records of the Diocese of Worcester as well as Church of England parishes and Non-conformist records",
+        "Local studies and archaeology library, including journals, trade and clerical directories",
+        "Special Collections also available"
+      ],
+      "details": {
+        "location_in_building": "Level 2"
+      },
+      "links_out": [
+        "https://www.explorethepast.co.uk/contact-us/",
+        "https://www.worcestershire.gov.uk/info/20230/archive_and_archaeology_projects/1131/the_croome_collection",
+        "https://www.worcestershire.gov.uk/info/20230/archive_and_archaeology_projects/1128/worcester_city_collection"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/art-collections.html",
+      "title": "Art collections",
+      "section": "collections",
+      "summary": "Describes the commissioned artworks in The Hive: Robert Orchardson's Kaleidoscope sculpture, Clare Woods' large-scale atrium painting Rack Alley, and two John Clare-inspired paintings by James Fisher.",
+      "offerings": [
+        "Robert Orchardson, 'Kaleidoscope', aluminium, 2012 - commissioned sculpture designed to be visible from all three main floors of the building",
+        "Clare Woods, 'Rack Alley', 600x500cms, enamel and oil on aluminium, 2012 - made especially for the atrium of The Hive, commissioned by the University of Worcester and Worcestershire County Council to celebrate the opening",
+        "James Fisher, 'I Quaked Like the Ague' and 'Eat the Quids', oil on linen, 2008 - procured for The Hive by WLHC ProjectCo, inspired by poet John Clare's 1840 journey"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/youthhub.html",
+      "title": "Careers Worcs Youth Hub",
+      "section": "services",
+      "summary": "Careers Worcestershire @ The Hive is a dedicated space on Level 1 (Mon-Fri 9am-4pm) for young people aged 15-24, with careers advisors offering 1-1 support into employment, training and education, plus workshops and finance/health & wellbeing services.",
+      "offerings": [
+        "Careers Worcs' Youth Hub is open Monday - Friday, 9am-4pm based on Level 1 in the Hive",
+        "Dedicated space for young people aged 15-24 to help find the right pathway into employment, training, and education",
+        "Dedicated careers advisors providing 1-1 support",
+        "Workshops and access to other services within the hub including finance, health & wellbeing, and other youth providers",
+        "Providing one to one advice and guidance sessions",
+        "Supporting you in finding, applying, and securing your next opportunity",
+        "Helping you find an apprenticeship or training programme",
+        "Confidence & resilience; personal development; career choices",
+        "CV writing; job search; job applications; interview preparation",
+        "Mental health/wellbeing support",
+        "Apprenticeships / Training courses / College & University courses",
+        "Work experience / Volunteering",
+        "Start your own business / Graduate jobs",
+        "Job search across the county via Worcestershire Jobs (worcestershirejobs.co.uk)"
+      ],
+      "what_you_need": [
+        "Aged 15-24 for the youth hub offer",
+        "Book an appointment via careersworcestershire.setmore.com"
+      ],
+      "details": {
+        "hours": "Monday - Friday, 9am-4pm",
+        "contact": "Careers Helpline 0300 666 3666; careersworcs@worcestershire.gov.uk",
+        "location_in_building": "Level 1"
+      },
+      "links_out": [
+        "https://careersworcestershire.setmore.com/",
+        "https://www.worcestershirejobs.co.uk/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/business-centre.html",
+      "title": "Business Centre",
+      "section": "services",
+      "summary": "The Business Centre at The Hive, located on Level 2, is home to the Business & IP Centre (BIPC) Worcestershire, providing free business advice, support, information and resources, plus a collection of technology-equipped meeting rooms.",
+      "offerings": [
+        "The Hive is a valuable centre for businesses, as a provider of specialist resources and as a meeting and training venue",
+        "The Business Centre at The Hive is now home to the Business & IP Centre (BIPC) Worcestershire",
+        "The centre provides free and accessible business advice, support, information and resources",
+        "A collection of well-appointed meeting rooms, all equipped with the latest technology"
+      ],
+      "details": {
+        "location_in_building": "Located on L2 (Level 2)"
+      },
+      "links_out": [
+        "https://www.worcestershire.gov.uk/BIPC"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/it-equipment-printing.html",
+      "title": "IT, Equipment & Printing",
+      "section": "services",
+      "summary": "Level-by-level inventory of IT and AV equipment: catalogue search stations, public PCs with internet and Microsoft Office on every level, a 46-inch group study screen and two PS4 gaming zones on Level 0, printers/copiers and top-up kiosks throughout, scanners on Level 3 and privacy filters at the Level 1 Hub.",
+      "offerings": [
+        "Dedicated stations to search the library catalogue, archive resources and archaeology resources",
+        "Level 0: Group study screen - HDMI cable to plug a laptop into a large 46\" display for groups to share ideas",
+        "Level 0: Two gaming zones with two PS4 consoles",
+        "Level 0: Public access PCs with internet and software applications such as Microsoft Office",
+        "Level 0: High speed printer and a credit card top-up kiosk",
+        "Level 1 Children's library: public access PCs just for children; printer/copier",
+        "Level 1 Hub: high speed printer/copier and top-up kiosk - the only one in the building that takes cash",
+        "Level 2: public access PCs; the Explore the Past area has a high speed printer/copier",
+        "Level 3: public access PCs; A4 scanners available on request; two high speed printers/copiers and a credit card top-up kiosk",
+        "Level 4: public access PCs with internet and Microsoft Office",
+        "Privacy filters offered to all customers in the Hub area on level 1 - ask a member of staff"
+      ],
+      "what_you_need": [
+        "Read the Acceptable Use Agreement before using the computers at the Hive"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/cafe.html",
+      "title": "The Cafe at The Hive",
+      "section": "services",
+      "summary": "The cafe serves hot and cold snacks, light meals and refreshments with a made-to-order deli bar, open 8.30am-9pm every day, with monthly offers, special-diet catering, a 10% student discount, five-star hygiene rating and full wheelchair accessibility; food supplied in partnership with Urban Eat.",
+      "offerings": [
+        "A variety of hot and cold snacks, light meals and refreshments",
+        "Deli bar with fresh baguettes, sandwiches and salads, all prepared to order",
+        "Healthy choices such as yoghurt & muesli pots, plus indulgent treats",
+        "Monthly special offers and promotions",
+        "Special dietary requirements catered for: lactose- or gluten-free, vegetarian, vegan or other requirements",
+        "Student discount: 10% off food and drink purchased in the cafe (present student card at the till)",
+        "Catering for any meeting or function that takes place in The Hive",
+        "Five-star hygiene rating and commitment to customer service excellence",
+        "The cafe is fully accessible to wheelchair users, mobility scooters and pushchairs",
+        "Urban Eat ranges: CORE (incl. vegetarian, vegan, gluten free and halal), DELI (toasties, paninis, hot boxes), STREET (e.g. Bacon naan, Vegan Bean Burrito), ROOTS (Vegetarian Society approved vegan/vegetarian range)"
+      ],
+      "what_you_need": [
+        "Present your student card at the till to receive the 10% student discount",
+        "Food eaten in the cafe must be food which has been purchased from The cafe at The Hive"
+      ],
+      "details": {
+        "hours": "Monday-Sunday 8.30am-9pm",
+        "location_in_building": "Level 1 (per food-drink.html and catering.html)"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/parking.html",
+      "title": "Parking",
+      "section": "plan-your-visit",
+      "summary": "Car and bicycle parking guidance: Cattlemarket pay-and-display directly in front (with 21 blue badge bays), Crowngate multi-storey opposite (with Shopmobility), Croft Road for long stay and high vehicles, two bicycle parking areas, and University Riverside car park arrangements for staff and students.",
+      "offerings": [
+        "Cattlemarket pay and display car park directly in front of The Hive",
+        "21 designated blue badge disabled bays along the near side of The Hive, with ramped access to the main entrance",
+        "Crowngate Shopping Centre car park opposite The Hive - ticketed multi-storey; Shop mobility available on level six",
+        "Long stay and parking for high vehicles at Croft Road Car Park",
+        "Two bicycle park areas: one directly opposite the main entrance, one under the viaduct next to Cattlemarket car park",
+        "University of Worcester staff/students: student car parking permits valid at the University's Riverside car park (about 6 minutes' walk); University permits and St John's parking tickets are interchangeable at Riverside"
+      ],
+      "links_out": [
+        "http://www.worcester.gov.uk"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/transport.html",
+      "title": "Transport",
+      "section": "plan-your-visit",
+      "summary": "Public transport access: adjacent to Crowngate bus station, 4 minutes from Foregate Street train station, drop-off points on The Butts and Cattlemarket, walking route and bike share for university members, plus detailed last bus and last train timetables.",
+      "offerings": [
+        "Adjacent to the main (Crowngate) bus station and a short walk (4 minutes) from Foregate Street train station",
+        "Foregate Street Train Station is 0.2 miles, 4 minutes, from The Hive, with stairs and an external access lift up to Sawmill Walk",
+        "Worcester Bus Station situated underneath Crowngate Shopping Centre directly opposite The Hive",
+        "Easy access drop off point on The Butts lay by, with public outside lift to Sawmill Walk; drop off also available in Cattlemarket car park",
+        "About 20 minutes' walk from St John's Campus for University students and staff",
+        "Bike share scheme: borrow a bike for 24 hours to ride between campuses; plenty of bike racks on the Hive site (worcester.ac.uk/bike)",
+        "The 31 bus stops on the St. John's Campus and runs right past The Hive",
+        "Last city buses, last other buses, last Foregate Street trains and last Shrub Hill trains timetables published on the page"
+      ],
+      "links_out": [
+        "http://www.worcester.ac.uk/bike"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/find-your-space.html",
+      "title": "Find your space",
+      "section": "plan-your-visit",
+      "summary": "Describes the variety of spaces across the five floors - for families, students and researchers - with purpose-designed furniture and layouts and sound dampening technology on all floors for both sociable and quiet use.",
+      "offerings": [
+        "5 floors with a range of different types of spaces, from families with children to students and researchers",
+        "Furniture, shelving and layouts designed to provide the best possible environment for learning and leisure",
+        "Wide open spaces and sheltered secluded study areas throughout",
+        "Sound dampening technology applied on all floors - noisy/chatty areas and solitude both available"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/physical-accessibility.html",
+      "title": "Physical accessibility",
+      "section": "plan-your-visit",
+      "summary": "Comprehensive accessibility information: trained staff and enquiry points on every floor, bookable Meet & Greet, full wheelchair access with lifts and Braille signage, disabled toilets on every floor, a Level 1 personal care suite with shower and lifting facilities, adjustable workstations, induction loops, blue badge parking and pre-arranged close access.",
+      "offerings": [
+        "Hive staff close to the main entrance, trained in all aspects of customer care",
+        "A call point near the entrance and an information / enquiry point on every floor",
+        "Arrange a Meet & Greet: staff will meet you, introduce the building, help you get around and assist with services",
+        "Fully accessible to wheelchair users, mobility scooters and pushchairs; ramp access to all areas on each floor",
+        "Lifts give access to all five public floors; clear signage with Braille underneath",
+        "Drinking water available on Levels 2 and 3 next to the lifts",
+        "Disabled toilet facilities on every floor, next to the lifts",
+        "Personal care suite on Level 1 with shower and lifting facilities (access cards from Hive staff, yours to keep for future visits)",
+        "Adjustable height working stations available throughout The Hive for computer use",
+        "Height adjustable tables for archive research and microfilm facilities in the Archive and Archaeology Service on Level 2",
+        "Automated microfilm machine with a foot pedal for customer use",
+        "Induction loops in Meeting rooms 2, 3 and The Studio (IR loop with headsets or neck loops available)",
+        "Selected information / enquiry points fitted with hearing loops (switch hearing aid to 'T' position)",
+        "Cattlemarket car park: 21 designated blue badge disabled bays, free for 3 hours",
+        "Crowngate Shop mobility available on level six (9:00am-5:30pm Mon-Sat, 10:30-4:00pm Sundays and Bank Holidays)",
+        "Easy access drop off point with lowered pavement on The Butts; public external lift to Sawmill Walk",
+        "Close access can be pre-arranged through Level 0 (call 01905 822866 or email hiveadminteam@worcestershire.gov.uk)",
+        "DisabledGo online accessibility checker for The Hive"
+      ],
+      "what_you_need": [
+        "Access card (from Hive staff on request) for the personal care suite",
+        "Pre-arrange Level 0 close access by phone or email in advance"
+      ],
+      "details": {
+        "contact": "01905 822866; hiveadminteam@worcestershire.gov.uk",
+        "location_in_building": "Personal care suite on Level 1; height-adjustable archive tables on Level 2; drinking water Levels 2 and 3"
+      },
+      "links_out": [
+        "http://www.disabledgo.com/access-guide/university-of-worcester/hive-library-20"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/inside-the-hive.html",
+      "title": "Inside the Hive",
+      "section": "plan-your-visit",
+      "summary": "Floor-by-floor guide: Level 0 shared/group study with gaming and DVDs plus the secure archives; Level 1 children's library, cafe, exhibition spaces, The Studio theatre and Worcestershire Hub; Level 2 Explore the Past, meeting rooms and Business Centre; Level 3 the main integrated public and University library; Level 4 silent study; plus outdoor terraces, gardens, balconies and Story Island.",
+      "offerings": [
+        "Level 0 - Shared study: social space with group study areas, gaming stations, comfortable chairs and vending machines; DVD and graphic novel collections; secure archives housed on Level 0 with occasional special tours",
+        "Level 1 - Discover: large and colourful children's library with access to 'Story Island', the cafe, exhibition spaces and The Studio theatre, The Worcestershire Hub, and a large selection of quick choice books",
+        "Level 2 - Explore the Past: archive and archaeology service for exploring the history of Worcestershire using original photos, maps, documents, archaeological evidence and digital resources; meeting rooms and a Business Centre with a suite of three rooms, an informal networking space and 24-hour newsfeed",
+        "Level 3 - Read, learn, imagine: main integrated public and University library with wide-ranging fiction, academic and general non-fiction; quiet study spaces, formal/informal reading places, comfortable chairs and sofas, views over the city, outdoor seating area",
+        "Level 4 - Research, quiet study: silent study floor with desks, chairs and window seating for peaceful reading and research",
+        "Rooms within The Hive can be used by customers to pray - ask a member of staff for an available private room (council policy equally supportive of all faiths)",
+        "Outdoors: landscaped environment with terraces and gardens, two balconies, and the unique 'Story Island' outdoor teaching space for children accessed through the children's library"
+      ],
+      "details": {
+        "location_in_building": "Five public levels, 0-4, as described"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/food-drink.html",
+      "title": "Food & drink",
+      "section": "plan-your-visit",
+      "summary": "Food and drink rules: cafe on Level 1; visitors may bring their own cold food but no hot food; lids on hot drinks; eating and drinking allowed throughout the building except Level 2's Explore the Past section and Level 4 silent study.",
+      "offerings": [
+        "The cafe on Level 1 offers a variety of food and drink",
+        "Visitors are welcome to bring their own cold food into the building, but no hot food is allowed",
+        "Users are asked to keep lids on their hot drinks",
+        "You can eat and drink in the cafe and throughout the building, except Level 2's Explore the Past section and Level 4 (the silent study area)"
+      ],
+      "details": {
+        "location_in_building": "Cafe on Level 1; restrictions on Level 2 Explore the Past and Level 4"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/10252.html",
+      "title": "School and College Visits",
+      "section": "learn",
+      "summary": "School and college visit packages for Early Years through Sixth Form & College: free 2-hour 'Package 1' visits (library tour plus curriculum activities) and charged 'Package 2' Explore the Past workshops from a minimum of £40 per hour/class; webinars and tailor-made packages also offered. More than 8,000 students have visited since 2012.",
+      "offerings": [
+        "More than 8,000 students from schools and colleges have visited The Hive since it opened in 2012",
+        "Curriculum focused activities and workshops, building tours and library information sessions",
+        "Packages suitable for a whole class, or home educated groups, from age 5 up to secondary and sixth form",
+        "Early Years Package 1 (free, 2 hours): library tour, Storytime, How the library works, plus choice of Picture Book Races / Famous Author or Book Character Themed Visit / Christmas",
+        "Key Stage 1 Package 1 (free, 2 hours): library tour, Storytime, How the library works, plus choice of Picture Book Races / Book Sorter / Famous Author / Christmas",
+        "Key Stage 2 Package 1 (free, 2 hours): library tour, Storytime, How the library works tour, plus choice of Book Blitz / Book Sorter / Famous Author / Coding / Sustainability at The Hive / Christmas",
+        "Key Stage 3 Package 1 (free): library tour plus one of How the library works / Coding / Book Blitz / Sustainability at The Hive",
+        "Key Stage 4 Package 1 (free): library tour plus Research skills or Book speed dating",
+        "Sixth Form & College Package 1 (free): library tour plus one of Research skills / Using journals / Evaluating information for academic study / Referencing top tips (all referencing systems) / Introduction to Harvard Referencing / Spotting fake news",
+        "Package 2 (KS1 to Sixth Form): library tour plus choice of history, archive and archaeology workshops delivered by Worcestershire Archive and Archaeology Service (awarded Learning Outside the Classroom status in 2012) - minimum £40 per hour/class",
+        "Most sessions can be delivered to your classroom as a webinar; videos and worksheets available for some topics",
+        "Tailor-made packages themed to fit school work or national initiatives (Science Week, World Book Day, Time to Read, Summer Reading Challenge)"
+      ],
+      "what_you_need": [
+        "Package 2 costs a minimum of £40 per hour/class",
+        "Book via bookings@thehiveworcester.org"
+      ],
+      "details": {
+        "prices": "Package 1 free; Package 2 minimum £40 per hour/class",
+        "contact": "bookings@thehiveworcester.org; webinar enquiries r.sykes2@worc.ac.uk"
+      },
+      "links_out": [
+        "https://www.explorethepast.co.uk/services/learning-and-outreach/schools/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/children-young-people-families.html",
+      "title": "Children, young people & families",
+      "section": "learn",
+      "summary": "The Hive's children's library is one of the largest in the country, designed at children's scale with comfortable spaces for young children and carers, and featuring the Story Pit recessed seating area for readings, performances and group work.",
+      "offerings": [
+        "The Hive's children's library is one of the largest in the country",
+        "Designed for children to find their own level and feel comfortable in spaces that are on their scale",
+        "Places for very young children to sit comfortably with their parents and carers; bright colours, easy-to-reach books, soft seating and interesting displays",
+        "Furniture and reading material adapts to its audience, providing something for all ages",
+        "The Story Pit: a recessed seating area in the heart of the library, perfect for readings, performances and group work"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/worcestershire-archive-archaeology.html",
+      "title": "Worcestershire Archive & Archaeology Service",
+      "section": "learn",
+      "summary": "Outlines WAAS's learning and outreach activities for participants from age 5 to retirees: research groups, talks, workshops, tours, school activities, community excavations, film screenings, family history fairs, guided walks and a geology trail; community project partnerships invited.",
+      "offerings": [
+        "Local history research groups",
+        "Talks",
+        "Workshops",
+        "Tours",
+        "School activities",
+        "Community excavations",
+        "Archive film screenings",
+        "Family history fairs",
+        "Guided walks",
+        "Geology trail around The Hive (downloadable PDF)",
+        "Historical documents and artefacts used with groups to inspire learning and community projects",
+        "Open invitation to discuss collaborative community projects"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/students.html",
+      "title": "Students",
+      "section": "learn",
+      "summary": "Explains what The Hive offers University of Worcester students: four times the floor space of the old Peirson library, 250 bookable computers, printers/wifi/laptop points, access to council facilities including the records office and archaeology service, the dedicated history floor, the children's library for education students, and askalibrarian support.",
+      "offerings": [
+        "Four times the floor space of the previous Peirson library - more spaces to study, relax and spend time",
+        "250 new computers, which you will be able to book in advance",
+        "Access to plenty of printers, wifi and laptop points",
+        "Access to a huge range of Council facilities, including the records office and archaeology service plus all of the public library books and other resources",
+        "Dedicated history floor with information on Worcestershire dating back to the last Ice Age - opportunity to undertake original research and develop high-level academic skills",
+        "The new children's library is one of the best in the country - valuable for teaching or early years qualifications and work experience opportunities",
+        "Library Services supports University of Worcester students, staff and local community in The Hive; askalibrarian team via email or lib chat",
+        "Student projects and Independent Studies supported when agreed with Hive staff in advance (guidance notes PDF)"
+      ],
+      "what_you_need": [
+        "Student projects and surveys must be discussed and agreed with Hive staff in advance"
+      ],
+      "details": {
+        "contact": "askalibrarian@worc.ac.uk"
+      },
+      "links_out": [
+        "https://library.worc.ac.uk/",
+        "http://www.worc.ac.uk/library",
+        "http://www.worcester.ac.uk/your-home/social-learning.html"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/creating-the-hive.html",
+      "title": "Creating the Hive",
+      "section": "about",
+      "summary": "History of the project: County Council and University first discussed a joint library in October 2004; Galliford Try appointed 2009; designed by Feilden Clegg Bradley Studios; built from 2010 on a derelict city-centre site; opened to the public 2 July 2012 and officially opened by Her Majesty the Queen on 11 July 2012; the name reflects purposeful activity and the golden honeycomb cladding.",
+      "offerings": [
+        "A new multi-million pound city centre library, history and customer centre for students and the public",
+        "A combined facility for the whole community - a model unique and never undertaken before in this Country",
+        "Designed by Bath-based architects Feilden Clegg Bradley Studios; won the international Bentley Be Inspired Innovation in Generative Design award",
+        "Doors opened to the public on 2 July 2012; officially opened on 11 July 2012 by Her Majesty the Queen",
+        "Pedestrian route now links the cathedral, city centre, the library and the university's city campus"
+      ],
+      "links_out": [
+        "http://www.fcbstudios.com/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/coronavirus.html",
+      "title": "Coronavirus information (10 December)",
+      "section": "about",
+      "summary": "Legacy COVID-19 notice (dated 10 December): face coverings required unless exempt; customer number limits removed and seating reinstated; computers and desks available on demand without pre-booking; archive services fully open with no pre-booking; links to council and university COVID pages.",
+      "offerings": [
+        "Public library open: customer numbers no longer limited, seating areas reinstated",
+        "Customers no longer have to pre-book computers or desk spaces - available on demand",
+        "Good ventilation of all public areas (including meeting rooms for hire), hand hygiene and surface cleaning maintained",
+        "Worcestershire Archive and Archaeology Service: archive services fully open; no pre-booking needed for search room spaces, archive self-service access or Historic Environment Records appointments"
+      ],
+      "what_you_need": [
+        "Anyone visiting a library will be required to wear a face covering at all times, unless medically exempt (per this dated notice)"
+      ],
+      "links_out": [
+        "https://www.worcestershire.gov.uk/info/20017/libraries_and_learning/2427/coronavirus_covid-19_library_information",
+        "https://library.worc.ac.uk/help/coronavirus",
+        "https://www.explorethepast.co.uk/contact-us/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/jobs.html",
+      "title": "Jobs and volunteering",
+      "section": "about",
+      "summary": "Employment and volunteering: full- and part-time jobs offered by either the University or the County Council (all staff work as one integrated service), with links to County Council, University and Bellrock vacancies; volunteer applications are currently paused due to unprecedented demand.",
+      "offerings": [
+        "A range of exciting full- and part-time employment opportunities, offered either by the University or the County Council",
+        "County Council vacancies (link)",
+        "University of Worcester vacancies (link)",
+        "Careers at Bellrock (link)",
+        "Volunteering: a large and diverse team of volunteers - applications currently paused due to an unprecedented number of applications"
+      ],
+      "links_out": [
+        "https://www.worcestershire.gov.uk/vacancies/worcestershire-county-council",
+        "https://jobs.worcester.ac.uk/Vacancies.aspx",
+        "http://www.bellrock.fm/about/careers/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/hive-awards.html",
+      "title": "Awards",
+      "section": "about",
+      "summary": "List of awards won by The Hive, spanning record-keeping, library design, sustainability, architecture and community impact from 2009 to 2017.",
+      "offerings": [
+        "Record Keeping Service of the Year - ARA (Archives and Records Association) Excellence Awards, May 2017",
+        "Library Design Award (development over 2,000 square metres) - SCONUL Library Design Awards, December 2016",
+        "Service Provider of the Year - Worcester BID Customer Service Awards, April 2016",
+        "Outstanding Public Building - SCALA Civic Building of the Year Award, November 2013",
+        "Sustainability Award - British Construction Industry Awards, October 2013",
+        "Outstanding Library Team - Times Higher Leadership and Management Award, June 2013",
+        "National Award and Regional Award - RIBA, May 2013",
+        "Sustainability Award - RIBA Awards West Midlands, May 2013",
+        "Award for Design and Innovation - RICS Awards West Midlands, May 2013",
+        "Community Benefit Award - RICS Awards West Midlands, May 2013",
+        "Sustainable Project of the Year - Building Magazine Awards, April 2013",
+        "Civic Trust - Civic Trust Awards, March 2013",
+        "Contribution to the local community through The Hive - Guardian University Award, February 2013",
+        "New build project of the year (value above £5 million) - CIBSE Awards, February 2013",
+        "Building Excellence Award - South Worcestershire Building Control, 2012",
+        "Building of the year - Post Tensioned Society Awards, 2012",
+        "Outstanding Performance - BREEAM, June 2012",
+        "Best Sustainability in a Project - Public Private Partnership Awards, May 2012",
+        "West Midlands Regional Planning Award - Regional Planning Awards, 2012",
+        "Innovation in Generative Design - Bentley Be Inspired Awards, October 2009"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/ebooks.html",
+      "title": "eBook library",
+      "section": "using-the-library",
+      "summary": "BorrowBox eBook and eAudiobook service free to all library members 24/7: borrow up to six eBooks and six eAudiobooks at a time with automatic expiry (no late fees), via the website, library catalogue or BorrowBox app, syncing across up to six devices.",
+      "offerings": [
+        "eBook and eAudiobook service provided by BorrowBox, available to all library members",
+        "Extensive range of best-selling fictional and non-fictional eBooks and eAudio titles, accessible 24/7",
+        "All titles in the collection are free to borrow",
+        "Up to six eBooks and six eAudiobooks can be borrowed at a time",
+        "Loans automatically expire at the end of the lending period, so no late fees",
+        "Access via the website (library.bolindadigital.com/worcestershire), via the library catalogue, or the BorrowBox app (Apple, Android, Kindle/Amazon Fire)",
+        "Borrowed titles synchronize across up to six devices on the same account",
+        "Web borrowing on PC/Mac uses Adobe Digital Editions; eAudiobooks loaned as protected MP3 files transferable to any device",
+        "Free classic eBooks signposted: Project Gutenberg, Manybooks.net, Feedbooks",
+        "University of Worcester students log in to students.worc.ac.uk for educational eBooks"
+      ],
+      "what_you_need": [
+        "Library membership; input your library card number and PIN",
+        "Join by visiting any Worcestershire library with proof of name and address, or join online instantly and upgrade later"
+      ],
+      "links_out": [
+        "http://library.bolindadigital.com/worcestershire",
+        "https://wcc.ent.sirsidynix.net.uk/client/en_GB/thehive",
+        "http://www.worcestershire.gov.uk/info/20313/join_the_library/47/digital_library_membership",
+        "https://itunes.apple.com/gb/app/borrowbox-library/id562843562?mt=8",
+        "https://play.google.com/store/apps/details?id=com.bolindadigital.BorrowBoxLibrary&hl=en_GB",
+        "http://www.borrowbox.com/kindlefire/install/",
+        "http://www.adobe.com/solutions/ebook/digital-editions.html",
+        "http://www.gutenberg.org/wiki/Main_Page",
+        "http://manybooks.net/",
+        "http://www.feedbooks.com/",
+        "http://students.worc.ac.uk/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/how-to-use-the-public-wifi.html",
+      "title": "How to login to the public wi-fi",
+      "section": "using-the-library",
+      "summary": "Page hosting an embedded instructional video (uniview.worc.ac.uk) showing how to log in to The Hive's public wi-fi; no further text content.",
+      "offerings": [
+        "Public wi-fi available at The Hive, with an embedded how-to-login video guide"
+      ],
+      "links_out": [
+        "https://uniview.worc.ac.uk/Embed.aspx?id=5449"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/research-databases.html",
+      "title": "Research databases",
+      "section": "collections",
+      "summary": "The Hive provides walk-in access to ~37 research databases for all library members inside the building (not at home or other County libraries), covering millions of journal and newspaper articles, conference papers and original documents, with staff help available.",
+      "offerings": [
+        "Research databases available on a walk-in basis to all library members within the building itself, but not at home or in other County libraries",
+        "Staff in the Hive will demonstrate the best methods for searching these resources and advise on the best database for your needs",
+        "Academic Search Complete (multi-disciplinary, nearly 8,500 full-text periodicals)",
+        "Access to Research",
+        "ACLS Humanities E-Book Collection",
+        "ACM Digital Library",
+        "Ancestry.com - Library Edition (1 billion searchable UK family history records)",
+        "Archaeology Data Service",
+        "BMJ Journals",
+        "British Education Index",
+        "British Periodicals Online",
+        "Business Source Complete",
+        "Cambridge University Press Journals (Cambridge Core)",
+        "Cambridge Companions to Literature and the Classics",
+        "CINAHL Complete",
+        "BIPC Business database reference resources (on the 'Business Research Databases' in The Hive Business Centre on level 2, courtesy of The Hive partnership with Worcestershire County Council)",
+        "Dictionary of National Biography (log in with WOR + library number)",
+        "Drama online (full-text plays)",
+        "Early Modern Books",
+        "ERIC",
+        "Gale Primary Sources: British newspapers",
+        "Google Scholar",
+        "House of Commons Parliamentary Papers - 18th, 19th and 20th Century",
+        "Internet Archaeology Archive",
+        "JSTOR",
+        "Jane Austen's Manuscripts",
+        "Oxford English Dictionary (log in with WOR + library number)",
+        "Oxford Reference Online - Premium Collection (over 2 million entries)",
+        "Oxford University Press Journals (over 330 journals)",
+        "Project Gutenberg",
+        "Project Muse: Humanities",
+        "ProQuest Archives",
+        "PsycARTICLES",
+        "Science Direct Open Access Journals and Science Direct Journals",
+        "SAGE Premier",
+        "Social Care Online",
+        "SPORTDiscus with full text",
+        "Taylor & Francis Full Collection",
+        "Times Digital Archive",
+        "Research database PDF guide downloadable"
+      ],
+      "what_you_need": [
+        "Library membership; access from within the building only (walk-in)",
+        "Resources marked with an asterisk are for personal educational use only; copying limited by Copyright Law (one article per periodical issue, 5% or one chapter of a book)",
+        "University members log in to student or staff pages as normal for the full range"
+      ],
+      "details": {
+        "location_in_building": "BIPC business databases on the Business Research Databases terminals in The Hive Business Centre on level 2"
+      },
+      "links_out": [
+        "https://www.ancestryinstitution.co.uk",
+        "https://www.jstor.org/",
+        "https://www.accesstoresearch.org.uk/",
+        "https://www.worcestershire.gov.uk/council-services/worcestershire-libraries/start-or-grow-business/business-database-reference",
+        "http://www.oxforddnb.com/",
+        "http://www.oed.com/",
+        "https://scholar.google.com/",
+        "https://www.sciencedirect.com/",
+        "https://www.tandfonline.com/",
+        "http://find.galegroup.com/ttda/start.do?prodId=TTDA&userGroupName=wornews"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/10075.html",
+      "title": "Young person's library card",
+      "section": "using-the-library",
+      "summary": "A dedicated 'street art' library card for Worcestershire teenagers aged 13-19, designed by local artist Louis Burrows - believed to be the first dedicated teen library card in the Midlands - with instant-membership rules for ages 8-16.",
+      "offerings": [
+        "A funky 'street art' library card for Worcestershire's teenagers aged 13 - 19 years, designed by local artist Louis Burrows",
+        "Believed to be the first dedicated library card for teenagers in the Midlands",
+        "Join at your local library or via the Online Library Hub for online services and the eLibrary",
+        "Teenagers aged 8 - 16 years can become instant members, entitling them to borrow up to two books without a parent or guardian signature",
+        "Instant membership upgradeable to full membership by visiting the library with a parent or guardian with ID showing name and address"
+      ],
+      "what_you_need": [
+        "For full membership upgrade: visit with a parent or guardian and identification showing name and address",
+        "Parent/guardian visit required to add computer access and book borrowing to online-only membership"
+      ],
+      "links_out": [
+        "https://www.worcestershire.gov.uk/council-services/worcestershire-libraries/online-library-hub"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/10074.html",
+      "title": "Children's library card",
+      "section": "using-the-library",
+      "summary": "Worcestershire's children's library card, designed by Tom Gates author Liz Pichon; full membership for children requires a parent or guardian's signature, while ages 8-16 can become instant members and borrow up to 2 books.",
+      "offerings": [
+        "Children's library card designed by Liz Pichon, author of the Tom Gates book series, featuring characters from the books",
+        "Children and teenagers aged 8 - 16 years can become instant members at The Hive, entitling them to borrow up to 2 books without a parent/guarantor signature",
+        "Child instant membership upgradeable to full membership by visiting with a parent or guardian and ID showing name and address"
+      ],
+      "what_you_need": [
+        "Children need a parent or guardian's signature to join the library with full membership"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/catering.html",
+      "title": "Catering",
+      "section": "services",
+      "summary": "Hospitality catering for meetings, corporate training and conferences at The Hive, delivered by the onsite catering company that also runs the cafe: buffets, platters, canapes, business breakfasts and special-diet options, booked with at least 2 working days' notice.",
+      "offerings": [
+        "The Hive has its own onsite catering company, who also manage our excellent cafe on level 1",
+        "Hospitality menu with a variety of delicious buffets and platters, fresh fruit, cake and breakfast options",
+        "Side dishes such as savoury mini quiches",
+        "Special diets catered for, including dairy-free, gluten-free, vegetarian and vegan",
+        "Canapes and finger food for meetings requiring 'just a nibble'",
+        "Business breakfasts for early meetings",
+        "Hospitality booking form downloadable"
+      ],
+      "what_you_need": [
+        "Download the hospitality booking form and email it to hivecatering@bellrockgroup.co.uk, including your meeting room booking reference and meeting room number",
+        "Minimum of 2 working days' notice to add catering to a room booking; final numbers confirmed by that time; later cancellations/changes subject to additional charges"
+      ],
+      "details": {
+        "contact": "hivecatering@bellrockgroup.co.uk",
+        "location_in_building": "Cafe on level 1"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/supporting-business.html",
+      "title": "Supporting business",
+      "section": "services",
+      "summary": "The Archive and Archaeology Service at The Hive advises landowners, developers and consultants on archaeological implications and opportunities of development in the County, advises on historic environment management and conservation, and runs heritage workshops and training.",
+      "offerings": [
+        "Advice to landowners, developers and consultants on the archaeological implications and potential opportunities of development in the County",
+        "Early conversations to clarify the process and keep archaeology-related costs to a minimum",
+        "Advice on the management and conservation of the rural and urban historic environment",
+        "Input into community-focused projects and HLF (Heritage Lottery Fund) projects",
+        "Workshops and training sessions on a wide variety of heritage and historic environment topics"
+      ],
+      "details": {
+        "contact": "Historic Environment Policy and Advisory Manager Emma Hancox ehancox@worcestershire.gov.uk; Historic Environment Advisor Adam Mindykowski amindykowski@worcestershire.gov.uk"
+      },
+      "links_out": [
+        "http://www.worcestershire.gov.uk/info/20230/archive_and_archaeology_projects/1064/archaeology_planning_advice"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/business-research-resources.html",
+      "title": "Research resources (Business)",
+      "section": "services",
+      "summary": "Business and IP Centre resources: free access to the COBRA, Statista and FAME business databases from any public computer in The Hive, plus walk-in research databases and signposting to BIPC Worcestershire for start-up support, IP information and funding.",
+      "offerings": [
+        "The Business and IP Centre at The Hive provides free access to a selection of business databases and up to date business information",
+        "COBRA (Complete Business Reference Adviser) - free from any public computer in The Hive",
+        "Statista - free from any public computer in The Hive",
+        "FAME - free from any public computer in The Hive",
+        "Access to many other research databases on a walk-in basis for all library members within the building",
+        "Business information including start-up support, Intellectual Property information, and funding via the BIPC Worcestershire website"
+      ],
+      "what_you_need": [
+        "Walk-in databases available to library members within the building only"
+      ],
+      "links_out": [
+        "https://www.worcestershire.gov.uk/council-services/worcestershire-libraries/start-or-grow-business/business-database-reference-resources",
+        "https://www.worcestershire.gov.uk/BIPC"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/10886.html",
+      "title": "Catering (legacy page)",
+      "section": "services",
+      "summary": "Older duplicate of the catering page (linked under the cafe section) with the same hospitality offering - buffets, platters, canapes, business breakfasts, special diets - using earlier 2021 menu and bellrock.fm contact addresses.",
+      "offerings": [
+        "The Hive has its own onsite catering company, who also manage our excellent cafe on level 1",
+        "Hospitality menu (2021 version) with buffets, platters, fresh fruit, cake and breakfast options",
+        "Special diets catered for, including dairy-free, gluten-free, vegetarian and vegan",
+        "Canapes and finger food; business breakfasts"
+      ],
+      "what_you_need": [
+        "Download the hospitality booking form and email to hivecatering@bellrock.fm with meeting room booking reference and room number",
+        "Minimum of 2 working days' notice; final numbers required by then; later changes subject to additional charges"
+      ],
+      "details": {
+        "contact": "hivecatering@bellrock.fm"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/activities-workshops-descriptions.html",
+      "title": "Activities & workshops - descriptions",
+      "section": "learn",
+      "summary": "Full descriptions of school visit activities (story time, library skills, Book Blitz, coding with Scratch, research skills, journals and more) and the chargeable Explore the Past history/archaeology workshops (around £80, 90-120 minutes) covering prehistory to WWII, including joint workshops with other Worcester heritage venues.",
+      "offerings": [
+        "Story time: fun, interactive story time linked to the curriculum or a topic of your choice",
+        "How the library works - finding what you need: finding your way around a school or public library and using the library catalogue (themable to your topic)",
+        "Book blitz: lively 45-60 minute session encouraging a wider range of books, authors and genres (Years 4 upwards)",
+        "Picture Book Races: engaging children in reading for pleasure using picture book covers (Years R-3)",
+        "Famous Author / Book Character Themed Visit: workshops themed around famous authors or book characters (e.g. Harry Potter, Roald Dahl); chargeable add-on activity on request at £2.50 / child (e.g. BFG dream jars)",
+        "Book Sorter: pupils create a reading list for their class in a teamwork exercise (Years 3 upwards)",
+        "Coding: 1 hour introduction to computer coding using Scratch to create an animation or game (Years 4-7)",
+        "Sustainability at The Hive: workshop celebrating the building's energy efficiency and sustainability footprint (Years 4 upwards)",
+        "Christmas: festive stories and Christmas card making; cards distributed to housebound customers (Years R-6)",
+        "Research skills: minimum 2.5 hours, general or subject specific; university-library experience, finding resources, keywords, evaluating online resources; extendable to a full day (10am-3pm) with poster project assessment - beneficial for HPQ or EPQ students",
+        "Using journals: one hour introduction to academic journals and online databases",
+        "Explore the Past workshops by Worcestershire Archive & Archaeology Service: most last around 90-120 minutes and cost around £80; primarily KS2 but adaptable from Year 1 to sixth form; can be delivered in schools and colleges",
+        "Prehistoric Worcestershire workshop (can include Iron Age village clay workshop at Worcester City Museum & Art Gallery)",
+        "Romans in Worcester workshop (The Hive is built on the site of a busy part of Roman Worcester)",
+        "Roman Kitchen & Cooking workshop",
+        "Anglo-Saxons (Invaders and Settlers) workshop with replica skeleton and grave goods",
+        "Tudor Worcester workshop using documents and archaeological evidence",
+        "Civil War in Worcester workshop (combinable with Worcester Cathedral tower trip or Commandery workshop)",
+        "Victorian Worcester - Public Health: joint two-site visit with The Infirmary medical museum",
+        "What was it like to live here? Victorian Worcester / The Lives of the Poor workshops",
+        "World War I resource-pack-based visits (war memorials/tracing soldiers, life in Worcestershire, letters from the front)",
+        "Archaeology of World War II workshop, with optional second session at Ronkswood Meadows searchlight bases",
+        "Local History Study advice on maps, photos and census material",
+        "Teacher advice on running local study projects using The Hive's holdings"
+      ],
+      "details": {
+        "prices": "Famous Author add-on activity £2.50 per child; Explore the Past workshops around £80 (90-120 minutes)"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/resource-packs.html",
+      "title": "Resource packs",
+      "section": "learn",
+      "summary": "Five WAAS classroom resource packs containing copies of documents from The Hive's collections with teaching notes: Civil War and 'What was it like to live here in the Past?' at £20 each, plus three WW1 packs available free from the Worcestershire WW100 project website.",
+      "offerings": [
+        "Five resource packs developed by Worcestershire Archive and Archaeology Service for use in the classroom, containing copies of documents from the collections at The Hive together with notes",
+        "Worcestershire in the Civil War - £20",
+        "What was it like to live here in the Past? - £20",
+        "World War 1 - War Memorials (free download from ww1worcestershire.co.uk)",
+        "World War 1 - Worcestershire during WW1 (coming soon)",
+        "World War 1 - Letters from the Front (coming soon)"
+      ],
+      "details": {
+        "prices": "£20 each for Civil War and 'What was it like to live here' packs; WW1 packs free to download"
+      },
+      "links_out": [
+        "http://www.ww1worcestershire.co.uk/"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/booking-your-visit.html",
+      "title": "Booking your visit",
+      "section": "learn",
+      "summary": "How to book a school/college visit: contact bookings@thehiveworcester.org (or explorethepast@worcestershire.gov.uk / 01905 766352 for Explore the Past-only workshops); The Hive is also available as a venue and resource for teacher training days.",
+      "offerings": [
+        "School and college visit bookings via bookings@thehiveworcester.org",
+        "Explore the Past workshop-only bookings via explorethepast@worcestershire.gov.uk or 01905 766352",
+        "The Hive available as a venue and resource for teacher training days",
+        "Workshops for teachers on using libraries to encourage independent learning and on The Hive's resources for teachers and students"
+      ],
+      "what_you_need": [
+        "Inform The Hive of any special requirements for children or accompanying adults when booking",
+        "The safety of school and college visitors remains the responsibility of the teacher throughout (The Hive conforms to its own safeguarding policy)"
+      ],
+      "details": {
+        "contact": "bookings@thehiveworcester.org; explorethepast@worcestershire.gov.uk; 01905 766352"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/schools-joining-the-library.html",
+      "title": "Joining the library (schools)",
+      "section": "learn",
+      "summary": "Library membership for school visitors: children can join during a visit and borrow books; under-16 full membership needs an adult guarantor; automatic membership available if the school supplies names and dates of birth; instant membership (age 8+) allows 2 books; Schools' Bulk Loan Library Card available via the Worcestershire Schools' Library Service.",
+      "offerings": [
+        "Children and students who are not already library members can join during a school or college visit and borrow books to take home",
+        "The library card is valid in all Worcestershire public libraries - books borrowed from The Hive can be returned to the nearest Worcestershire library",
+        "Automatic library membership available by providing a full list of first names, surnames and dates of birth for visiting students",
+        "Instant membership for students aged 8 plus: borrow up to two books without a parent/guarantor signature, with an explanatory letter sent home",
+        "School's Bulk Loan Library Card - Worcestershire Schools' Library Service offers schools and Home Educators a wide range of up-to-date resources and reading material (contact SLS on 01905 420273)"
+      ],
+      "what_you_need": [
+        "Full membership for children under 16 requires an adult guarantor signature; adult permission also required for child computer use",
+        "Instant membership (8-16) upgradeable by visiting with a parent/guardian and ID showing name and address; 16+ upgrade with own proof of identity"
+      ],
+      "details": {
+        "contact": "Schools' Library Service: www.worcestershire.gov.uk/sls, 01905 420273"
+      },
+      "links_out": [
+        "http://www.worcestershire.gov.uk/sls"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/schools-visit-information.html",
+      "title": "Visit information (schools)",
+      "section": "learn",
+      "summary": "Practical information for school visits: travel and parking directions, coach drop-off on The Butts, non-secured bag/coat storage in the Level 1 children's library, bookable lunch rooms (hire charge) or packed-lunch spaces, pre-orderable cafe food, and toilets plus a personal care suite.",
+      "offerings": [
+        "Train directions (Worcester Foregate Street) and step-free access route",
+        "Coach or minibus drop-off point on The Butts; nearest car park for minibuses and larger vehicles is Croft Road",
+        "Parking on the Crowngate car park and Cattle Market car park with safe pedestrian access",
+        "Bag and coat storage: a non-secured area on level 1 in the children's library",
+        "Rooms available to book in advance for lunch (hire charge applies); spaces can be made available for students to eat packed lunches",
+        "Food can be purchased from the cafe and pre-booked by emailing hivecatering@bellrock.fm at least one day in advance",
+        "Cafe menu downloadable (PDF)",
+        "Toilets, including disabled facilities, on every floor; personal care suite on level 1"
+      ],
+      "what_you_need": [
+        "Advise at booking if packed-lunch space is required",
+        "Pre-order cafe food at least one day in advance via hivecatering@bellrock.fm",
+        "Hire charge applies to rooms booked for lunch"
+      ],
+      "details": {
+        "contact": "hivecatering@bellrock.fm",
+        "location_in_building": "Bag/coat storage and personal care suite on Level 1"
+      },
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/facts-and-figures.html",
+      "title": "Facts and figures",
+      "section": "about",
+      "summary": "Headline statistics for The Hive: opened July 2012, first of its kind in Europe, 12 miles of archives, a quarter of a million books, 10,000m2 of public space over five floors, 800 study stations and over 26,000 historic monument records.",
+      "offerings": [
+        "Opened July 2012",
+        "Is the first of its kind in Europe",
+        "Houses 12 miles of archive collections",
+        "Winner of two international awards for the building's design and sustainability",
+        "Contains a quarter of a million books",
+        "Anticipating over a million visitors per year",
+        "Over a million books issued in the building's first year of opening",
+        "10,000m2 of public space, over five floors",
+        "800 study stations",
+        "Over 26,000 records of historic monuments and buildings",
+        "Landmark, distinctive design"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/the-building.html",
+      "title": "The building",
+      "section": "about",
+      "summary": "Describes the building's design and environment: colour/lighting/acoustic zoning, renewable energy and recycling, natural light and ventilation, sustainable and recyclable materials, grey water recycling, green travel facilities, and radiant heating/cooling from concrete ceilings with automatic windows.",
+      "offerings": [
+        "Each area within The Hive is defined by colour, lighting and acoustics to create distinct and appropriate zones",
+        "The building uses renewable energy and has exemplar recycling facilities throughout",
+        "Maximum use of controlled natural light and ventilation, with local manual override for user comfort",
+        "Water use minimised by water saving fittings and the recycling of grey water",
+        "Green travel facilitated via cycle parking, staff showers and excellent public transport connections",
+        "Heating and cooling controlled automatically; majority delivered by radiant effect from concrete ceilings with embedded pipework; majority of the building naturally ventilated by automatic windows"
+      ],
+      "last_seen": "2026-06-12"
+    },
+    {
+      "url": "https://www.thehiveworcester.org/sustainability.html",
+      "title": "Sustainability",
+      "section": "about",
+      "summary": "Details the sustainability systems: natural ventilation and summertime cooling, daylight strategy, biomass heating, river water cooling using the River Severn as a heat sink, rainwater harvesting for WC flushing and archaeological washing, water meadows and 4000m2+ of biodiversity planting; the building has beaten its energy targets.",
+      "offerings": [
+        "Natural ventilation & summertime cooling strategy: perimeter opening windows, atrium stack ventilation, below-ground supply duct, evaporative cooling over the water meadow, exposed concrete thermal mass with night-time pre-cooling, river-fed chilled beams/slab cooling in very hot weather",
+        "Daylight strategy: design maximises daylight to cut the ~30% of building energy normally used for artificial lighting",
+        "Renewable energy strategy: biomass boilers burning organic material (considered carbon neutral)",
+        "River water cooling: River Severn used as a heat sink via heat exchanger, returned only a few degrees warmer, hydraulically separate from building water",
+        "Water management: rainwater harvesting serves WC flushing and archaeological washing requirements",
+        "Planting & urban ecology: two water meadows for flood attenuation planted with native wildflowers including Worcestershire's county flower, the cowslip; over 4000m2 of soft landscape dedicated to biodiversity; bird nesting, bat roosting and stag beetle hibernacula features",
+        "Monitoring: The Hive has comfortably beaten its energy targets (CIBSE Journal case study linked)"
+      ],
+      "links_out": [
+        "http://www.cibsejournal.com/case-studies/just-the-ticket-monitoring-at-the-hive/",
+        "https://www.youtube.com/embed/VeA1CgheFjY"
+      ],
+      "last_seen": "2026-06-12"
+    }
+  ],
+  "note": "Built page-by-page from thehiveworcester.org. Every fact carries its source page. Where the Hive site and worcestershire.gov.uk conflict (hours, prices, membership), the council page wins; the site itself flags whats-on.html as static/under-construction."
+}

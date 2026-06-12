@@ -29,8 +29,25 @@ except Exception:
     CURATED_HUB = {}
 
 KB_PATH = "library_kb.json"
+HIVE_KB_PATH = "hive_kb.json"
 OUT_PATH = "library_graph.json"
 GOV = "https://www.worcestershire.gov.uk"
+
+# Facility signals scanned across the Hive pages (same idea as build_kb.py).
+HIVE_FACILITY_VOCAB = {
+    "café": r"\bcaf[eé]\b",
+    "meeting rooms": r"\bmeeting rooms?|rooms? (for|to) hire|space for hire\b",
+    "study space": r"\bstudy (space|area|room)\b",
+    "free Wi-Fi": r"\bwi-?fi\b",
+    "public computers": r"\b(public )?computers?\b",
+    "printing": r"\bprint(ing)?|photocopy",
+    "public toilets": r"\btoilets?\b",
+    "baby changing": r"\bbaby chang",
+    "wheelchair access": r"\bwheelchair|step-?free|level access|accessib",
+    "archives": r"\barchives?\b",
+    "children's library": r"\bchildren'?s (library|area)\b",
+    "exhibition space": r"\bexhibition\b",
+}
 
 POSTCODE = re.compile(r"[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}")
 
@@ -117,17 +134,76 @@ def build_graph(kb: dict) -> nx.Graph:
         if f"tier::{tier}" in G:
             G.add_edge(rid, f"tier::{tier}", rel="REQUIRES")
 
-    # --- Mobile library villages (best-effort live fetch) ---
+    # --- Mobile library villages (live fetch; falls back to the last graph) ---
     mob = add("service::Mobile library", "Service", "Mobile library",
               category="access",
               url=f"{GOV}/council-services/libraries/your-library-membership/mobile-library")
+    villages: dict[str, str] = {}
     try:
         from library_sources import _village_index
-        for name, url in list(_village_index().items()):
-            vid = add(f"village::{name}", "Village", name.title(), url=url)
-            G.add_edge(vid, mob, rel="SERVED_BY")
+        villages = dict(_village_index())
     except Exception as e:
-        print(f"  (mobile villages skipped: {e})")
+        try:  # offline rebuild: keep the villages from the previous graph
+            with open(OUT_PATH, encoding="utf-8") as f:
+                for n in json.load(f).get("nodes", []):
+                    if n.get("type") == "Village":
+                        villages[n["label"].lower()] = n.get("url", "")
+            print(f"  (mobile villages: live fetch failed [{e}]; "
+                  f"kept {len(villages)} from previous graph)")
+        except Exception:
+            print(f"  (mobile villages skipped: {e})")
+    for name, url in villages.items():
+        vid = add(f"village::{name}", "Village", name.title(), url=url)
+        G.add_edge(vid, mob, rel="SERVED_BY")
+
+    # --- The Hive: page-level KB -> enrich the branch + capability nodes ---
+    try:
+        with open(HIVE_KB_PATH, encoding="utf-8") as f:
+            hive = json.load(f)
+    except FileNotFoundError:
+        hive = {}
+    if hive:
+        prof = hive.get("hive_profile", {})
+        pages = [p for p in hive.get("pages", []) if not p.get("error")]
+        hive_id = next((n for n in G.nodes
+                        if n.startswith("branch::") and "hive" in n.lower()), None)
+        blob = " ".join(o for p in pages for o in p.get("offerings", []))
+        facilities = [name for name, pat in HIVE_FACILITY_VOCAB.items()
+                      if re.search(pat, blob, re.I)]
+        hours = (prof.get("opening_hours") or {}).get("building", "")
+        attrs = dict(
+            open_late=True,  # 8:30am–10pm, seven days — later than Unlocked
+            hive_hours=hours, source="thehiveworcester.org",
+            partnership=prof.get("partnership", "")[:200],
+            summary="Worcester city's library — Europe's first joint university "
+                    "+ public library, open 8:30am–10pm every day.",
+        )
+        if hive_id:  # enrich the council-crawled branch node
+            G.nodes[hive_id].update(attrs)
+            facs = set(G.nodes[hive_id].get("facilities", [])) | set(facilities)
+            G.nodes[hive_id]["facilities"] = sorted(facs)
+            for fac in facs:
+                fid = add(f"facility::{fac}", "Facility", fac)
+                G.add_edge(hive_id, fid, rel="HAS_FACILITY")
+        else:
+            hive_id = add("branch::The Hive", "Branch", "The Hive",
+                          address=prof.get("address", ""), facilities=facilities,
+                          url="https://www.thehiveworcester.org", **attrs)
+            for fac in facilities:
+                fid = add(f"facility::{fac}", "Facility", fac)
+                G.add_edge(hive_id, fid, rel="HAS_FACILITY")
+        aid = add("area::Worcester", "Area", "Worcester")
+        G.add_edge(hive_id, aid, rel="LOCATED_IN")
+        for cap in prof.get("extended_capabilities", []):
+            if not isinstance(cap, dict):
+                continue
+            label = cap.get("capability", "")[:80]
+            if not label:
+                continue
+            cid = add(f"hive::{label}", "HiveService", label,
+                      summary=cap.get("detail", ""), url=cap.get("source", ""),
+                      source="thehiveworcester.org")
+            G.add_edge(hive_id, cid, rel="OFFERS")
 
     return G
 
@@ -166,7 +242,7 @@ def main():
 
     out = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "built_from": KB_PATH,
+        "built_from": f"{KB_PATH} + {HIVE_KB_PATH}",
         "method": "deterministic GraphRAG-style graph (entities->relationships->"
                   "communities->reports); inspired by microsoft/graphrag",
         "stats": {"nodes": G.number_of_nodes(), "edges": G.number_of_edges(),

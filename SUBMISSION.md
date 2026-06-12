@@ -95,22 +95,23 @@ Backyard entries **lead with a face + a quote** → the demo opens on Jack.
 
 ```
 question → route (LLM JSON + keyword fallback)
-        → 10 live/KB tools  ── SirsiDynix catalogue (Atom)
+        → 12 live/KB tools  ── SirsiDynix catalogue (Atom) down to COPY level
+        →                   ── all 57 Hive pages, exact offer (provenance‑tagged)
         → GraphRAG search   ── council pages (87 services / 23 branches / 17 resources)
-        → synthesise (≤32B)    library_graph.json: 320 nodes · 465 edges · 8 communities
+        → synthesise (≤32B)    library_graph.json: 349 nodes · 502 edges · 26 Hive services
         → answer + eligibility + £‑receipt + EAST nudge + source + open trace
 ```
 
 - **Inspiration:** microsoft/graphrag, microsoft/markitdown, IBM Docling.
 - **Evidence spine:** DCMS/Ipsos *What works to engage non‑users* (COM‑B) + BIT **EAST**.
 - **Honest constraint fit:** small model + big graph; **no‑LLM fallback** so the demo never breaks.
-- **Sources:** worcestershire.gov.uk only — the out‑of‑date Hive site is deliberately excluded.
+- **Sources:** worcestershire.gov.uk + the live catalogue (checked at question time), plus every page of thehiveworcester.org crawled with per‑fact provenance — council wins on conflicts.
 
 ## 8. Go‑live checklist (for Jack, Friday AM)
 
 - [ ] Create Space `build-small-hackathon/wpl-discovery` (Gradio, public).
 - [ ] Push: `app.py`, `library_sources.py`, `graph_rag.py`, `trace.py`,
-      `library_kb.json`, `library_graph.json`, `requirements.txt`, `README.md`, `LICENSE`.
+      `library_kb.json`, `hive_kb.json`, `library_graph.json`, `requirements.txt`, `README.md`, `LICENSE`.
       *(build_kb.py / graph_build.py are build‑time only — optional to include.)*
 - [ ] Add Space secret **`HF_TOKEN`** (read scope) → enables the model. *Without it the
       app still runs in no‑LLM mode, so a missing token won't block Jack's test.*

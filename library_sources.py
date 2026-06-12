@@ -1,12 +1,21 @@
 """
-library_sources.py — live data-mining tools for Worcestershire Libraries.
+library_sources.py — data-mining tools for Worcestershire Libraries,
+at every granularity:
 
-Every function here pulls *live* data from official sources only:
-  - the SirsiDynix Enterprise catalogue  (wcc.ent.sirsidynix.net.uk)
-  - worcestershire.gov.uk library pages
+  service level   — every council library page         (library_kb.json, live)
+  page level      — every page of thehiveworcester.org (hive_kb.json)
+  item level      — the live SirsiDynix catalogue      (Atom feed)
+  copy level      — per-branch holdings on an item's detail page, so we can
+                    say WHERE to actually get the book/eBook someone wants
 
-We deliberately do NOT scrape thehiveworcester.org — that content is
-unreliable and often years out of date. Council + catalogue only.
+Sources & provenance policy:
+  - the SirsiDynix Enterprise catalogue (wcc.ent.sirsidynix.net.uk) — live
+  - worcestershire.gov.uk library pages — live + crawled KB (canonical)
+  - thehiveworcester.org — crawled page-by-page (build_hive_kb.py); every
+    fact carries its source page + crawl date. Where Hive and council pages
+    conflict (hours, prices, membership), the COUNCIL page wins, and answers
+    say which source they used. The Hive site's own events page is static,
+    so live events always come from the council.
 
 No LLM, no Gradio in here — pure functions so they can be unit-tested
 against the live sites on their own.
@@ -35,6 +44,9 @@ CATALOGUE_RSS = "https://wcc.ent.sirsidynix.net.uk/client/rss/hitlist/wcc/qu="
 CATALOGUE_SEARCH = (
     "https://wcc.ent.sirsidynix.net.uk/client/en_GB/wcc/search/results?qu="
 )
+HIVE = "https://www.thehiveworcester.org"
+BORROWBOX = "https://library.bolindadigital.com/worcestershire"
+EXPLORE_PAST = "https://www.explorethepast.co.uk"
 MOBILE_INDEX = f"{GOV}/council-services/libraries/your-library-membership/mobile-library"
 EVENTS_URL = f"{GOV}/council-services/libraries/library-events-and-activities"
 PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-services"
@@ -139,6 +151,10 @@ def search_catalogue(query: str, limit: int = 8) -> dict:
                     break
 
         fmt, digital = _classify(fields)
+        ea_url = ""
+        if fields.get("Electronic Access"):
+            m = re.search(r"https?://\S+", fields["Electronic Access"])
+            ea_url = m.group(0).rstrip('".,)') if m else ""
         items.append({
             "title": title,
             "author": fields.get("author", ""),
@@ -147,6 +163,7 @@ def search_catalogue(query: str, limit: int = 8) -> dict:
             "year": fields.get("Publication Date", "").split()[0] if fields.get("Publication Date") else "",
             "isbn": fields.get("ISBN", ""),
             "digital": digital,
+            "electronic_access": ea_url,
             "detail_url": detail,
             "catalogue_id": cat_id,
         })
@@ -391,6 +408,9 @@ ELIGIBILITY = {
     "unlocked": "Full member, aged 15+, after a short one-off staff induction.",
     "events": "Most events are free — just turn up; a few need booking.",
     "visit": "Nothing at all — anyone can walk in for Wi-Fi, toilets and study space.",
+    "hive_visit": "Nothing — The Hive is open to everyone, 8:30am–10pm every day.",
+    "archives": "Free to visit Explore the Past (Level 2, The Hive); opening "
+                f"times and document-ordering rules are on [Explore the Past]({EXPLORE_PAST}).",
 }
 
 DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -672,6 +692,313 @@ def membership_help(service: str | None = None) -> dict:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# 6. Copy-level availability + the "where do I actually GET it" journey
+# --------------------------------------------------------------------------- #
+
+_STATUS_AVAILABLE = re.compile(r"\b(available|on shelf|in library)\b", re.I)
+_STATUS_WORDS = re.compile(
+    r"\b(available|on shelf|in library|checked out|on loan|due back|due \d|"
+    r"in transit|on order|on hold(shelf)?|reserved|missing|lost|reference only|"
+    r"not for loan|being catalogued)\b", re.I)
+_CALL_NO = re.compile(r"\b([A-Z]{0,3}\s?\d{3}(?:\.\d+)?\s?[A-Z]{0,4}|[A-Z]{1,3}\s?FIC[A-Z ]*)\b")
+
+
+def _branch_names() -> list[str]:
+    names = [b["name"] for b in kb().get("branches", [])]
+    extra = ["The Hive", "Mobile Library"]
+    out = names + [n for n in extra if n not in names]
+    # also match without the trailing " Library"
+    return sorted(out, key=len, reverse=True)
+
+
+def _item_availability(detail_url: str) -> dict:
+    """
+    Copy-level holdings for one catalogue item: which branch, what call number,
+    what status — parsed from the SirsiDynix detail page.
+
+    The page is JS-heavy, so we parse defensively (tables first, then a text
+    scan anchored on known branch names) and FAIL SOFT: if we can't parse,
+    we say so rather than guess. Returns
+    {"copies":[{branch, call_number, status, available}], "parsed": bool}.
+    """
+    out = {"copies": [], "parsed": False, "detail_url": detail_url}
+    if not detail_url:
+        return out
+    try:
+        soup = BeautifulSoup(_get(detail_url).text, "html.parser")
+    except Exception as e:
+        out["error"] = str(e)
+        return out
+
+    branches = _branch_names()
+
+    def add_copy(branch, call_no, status):
+        status = re.sub(r"\s+", " ", status).strip()
+        out["copies"].append({
+            "branch": branch.strip(),
+            "call_number": (call_no or "").strip(),
+            "status": status,
+            "available": bool(_STATUS_AVAILABLE.search(status)),
+        })
+
+    # Strategy 1 — a holdings table (header mentions library/branch + status)
+    for table in soup.find_all("table"):
+        head = " ".join(th.get_text(" ", strip=True).lower()
+                        for th in table.find_all(["th"]))
+        if not (("librar" in head or "branch" in head or "location" in head)
+                and ("status" in head or "avail" in head or "call" in head)):
+            continue
+        headers = [th.get_text(" ", strip=True).lower()
+                   for th in table.find_all("th")]
+        def col(*words):
+            return next((i for i, h in enumerate(headers)
+                         if any(w in h for w in words)), None)
+        c_lib, c_call, c_stat = (col("librar", "branch", "location"),
+                                 col("call", "shelf"), col("status", "avail"))
+        for tr in table.find_all("tr")[1:]:
+            cells = [td.get_text(" ", strip=True) for td in tr.find_all("td")]
+            if not cells:
+                continue
+            lib = cells[c_lib] if c_lib is not None and c_lib < len(cells) else ""
+            stat = cells[c_stat] if c_stat is not None and c_stat < len(cells) else ""
+            call = cells[c_call] if c_call is not None and c_call < len(cells) else ""
+            if lib and (stat or call):
+                add_copy(lib, call, stat or "see catalogue")
+        if out["copies"]:
+            out["parsed"] = True
+            return out
+
+    # Strategy 2 — text scan anchored on known branch names
+    text = re.sub(r"\s+", " ", soup.get_text(" ", strip=True))
+    for b in branches:
+        for m in re.finditer(re.escape(b), text, re.I):
+            window = text[m.end():m.end() + 140]
+            sm = _STATUS_WORDS.search(window)
+            if sm:
+                cm = _CALL_NO.search(window[:sm.start()])
+                add_copy(b, cm.group(0) if cm else "", sm.group(0))
+    # dedupe
+    seen, copies = set(), []
+    for c in out["copies"]:
+        key = (c["branch"].lower(), c["status"].lower(), c["call_number"])
+        if key not in seen:
+            seen.add(key); copies.append(c)
+    out["copies"] = copies
+    out["parsed"] = bool(copies)
+    return out
+
+
+def _title_sim(a: str, b: str) -> float:
+    return difflib.SequenceMatcher(None, a.lower(), b.lower()).ratio()
+
+
+def where_to_get(query: str) -> dict:
+    """
+    The full get-it journey for one title: every format the service holds and,
+    for each, exactly where/how to get it TODAY —
+        on the shelf at a named branch (copy-level, live)  →
+        reserve it (sign in + Place Hold)                  →
+        borrow tonight on BorrowBox (eBook / eAudiobook)   →
+        not held: ask staff / check the catalogue yourself.
+    """
+    query = (query or "").strip()
+    try:
+        res = search_catalogue(query, limit=12)
+    except Exception as e:  # catalogue unreachable — fail soft, keep the journey
+        res = {"items": [], "error": f"catalogue unreachable: {e}"}
+    base = {"query": query, "search_url": res.get("search_url",
+            CATALOGUE_SEARCH + quote_plus(query)), "checked": _now()}
+    if res.get("error") or not res.get("items"):
+        base.update({"found": False, "routes": [{
+            "route": "not_held",
+            "advice": "Nothing matched in the catalogue. Staff can often get "
+                      "titles from other library services — ask in any branch, "
+                      "or try different search words.",
+            "url": base["search_url"],
+        }]})
+        return base
+
+    items = sorted(res["items"], key=lambda i: _title_sim(query, i["title"]),
+                   reverse=True)
+    best = items[0]
+    cluster = [i for i in items if _title_sim(best["title"], i["title"]) > 0.6]
+    routes = []
+
+    # 1) digital first — instant, tonight, no waiting
+    for fmt in ("eBook", "eAudiobook"):
+        d = next((i for i in cluster if i["format"] == fmt), None)
+        if d:
+            routes.append({
+                "route": "digital", "format": fmt, "title": d["title"],
+                "author": d["author"],
+                "url": d.get("electronic_access") or BORROWBOX,
+                "direct_link": bool(d.get("electronic_access")),
+                "need": ELIGIBILITY["borrow_digital"],
+                "steps": ["Open the link (or the BorrowBox app, service "
+                          "'Worcestershire').",
+                          "Sign in with your library card number + PIN — or get "
+                          "instant digital membership with just a postcode.",
+                          "Borrow it free; it auto-returns, so no fines."],
+            })
+
+    # 2) physical — copy-level: which branch has it on the shelf right now
+    phys = next((i for i in cluster if not i["digital"]), None)
+    if phys:
+        avail = _item_availability(phys["detail_url"])
+        on_shelf = [c for c in avail["copies"] if c["available"]]
+        if on_shelf:
+            routes.append({
+                "route": "shelf", "format": phys["format"],
+                "title": phys["title"], "author": phys["author"],
+                "copies": on_shelf[:8], "all_copies": avail["copies"][:12],
+                "need": ELIGIBILITY["borrow_physical"],
+                "url": phys["detail_url"],
+            })
+        else:
+            routes.append({
+                "route": "reserve", "format": phys["format"],
+                "title": phys["title"], "author": phys["author"],
+                "copies": avail["copies"][:8],
+                "availability_parsed": avail["parsed"],
+                "need": ELIGIBILITY["borrow_physical"],
+                "url": phys["detail_url"],
+                "steps": ["Open the item page and sign in (card number + PIN).",
+                          "Choose 'Place Hold' and pick the branch you want to "
+                          "collect from — any Worcestershire library or the van.",
+                          "You'll be emailed when it's ready to collect. "
+                          "Reservations are free."],
+            })
+
+    if not routes:
+        routes.append({"route": "not_held",
+                       "advice": "I found similar titles but not that exact one — "
+                                 "check the matches below or ask staff in any branch.",
+                       "url": base["search_url"]})
+
+    other = [f'{i["icon"]} {i["title"]} ({i["format"]})'
+             for i in items if i not in cluster][:4]
+    base.update({
+        "found": True, "best_title": best["title"], "author": best["author"],
+        "formats_held": sorted({i["format"] for i in cluster}),
+        "routes": routes, "other_matches": other,
+    })
+    return base
+
+
+# --------------------------------------------------------------------------- #
+# 7. The Hive — page-level KB of thehiveworcester.org (built by build_hive_kb.py)
+# --------------------------------------------------------------------------- #
+
+_HIVE_KB = None
+
+
+def hive_kb() -> dict:
+    global _HIVE_KB
+    if _HIVE_KB is None:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "hive_kb.json")
+        try:
+            with open(path, encoding="utf-8") as f:
+                _HIVE_KB = json.load(f)
+        except FileNotFoundError:
+            _HIVE_KB = {"pages": [], "hive_profile": {}, "generated": ""}
+    return _HIVE_KB
+
+
+# question word -> hive page slug fragments that answer it
+_HIVE_INTENTS = {
+    "hour": ["opening-hours"], "open": ["opening-hours"],
+    "parking": ["getting-here"], "park": ["getting-here"],
+    "get there": ["getting-here"], "directions": ["getting-here"],
+    "bus": ["getting-here"], "train": ["getting-here"],
+    "contact": ["contact-us"], "phone": ["contact-us"], "email": ["contact-us"],
+    "archive": ["explore-the-past"], "archaeolog": ["explore-the-past"],
+    "family history": ["explore-the-past"], "history": ["explore-the-past"],
+    "study": ["book-a-space"], "room": ["space-for-hire", "book-a-space"],
+    "hire": ["space-for-hire"], "meeting": ["space-for-hire"],
+    "card": ["how-to-get-a-library-card"], "join": ["how-to-get-a-library-card"],
+    "fine": ["fines-renewals"], "renew": ["fines-renewals"],
+    "borrow": ["borrowing-reservations"], "reserve": ["borrowing-reservations"],
+    "café": ["cafe"], "cafe": ["cafe"], "coffee": ["cafe"], "food": ["cafe"],
+    "children": ["children"], "kids": ["children"],
+    "business": ["business"], "student": ["student"], "young": ["youthhub"],
+    "career": ["youthhub"], "collection": ["collections"],
+}
+
+
+def hive_info(topic: str | None = None) -> dict:
+    """
+    The Hive (Worcester's library) at PAGE granularity: the exact offering of
+    each page of thehiveworcester.org, plus the profile of what makes it more
+    than a branch (joint university+public library, Explore the Past archives
+    & archaeology, 800+ study spaces, room hire, BIPC, Youth Hub...).
+    """
+    hk = hive_kb()
+    prof = hk.get("hive_profile", {})
+    pages = [p for p in hk.get("pages", []) if not p.get("error")]
+    caps = prof.get("extended_capabilities", [])
+    out = {
+        "name": prof.get("name", "The Hive, Worcester"),
+        "partnership": prof.get("partnership", ""),
+        "address": prof.get("address", ""),
+        "opening_hours": (prof.get("opening_hours") or {}).get("building", ""),
+        "as_of": hk.get("generated", ""), "source_note": hk.get("note", ""),
+        "page_url": HIVE, "checked": _now(),
+    }
+
+    if not (topic or "").strip():
+        out.update({
+            "kind": "overview",
+            "capabilities": caps[:12],
+            "page_count": len(pages),
+            "sections": sorted({p.get("section", "") for p in pages}),
+        })
+        return out
+
+    t = topic.lower()
+    slugs: list[str] = []
+    for word, frags in _HIVE_INTENTS.items():
+        if word in t:
+            slugs += frags
+    scored = []
+    for p in pages:
+        score = 0.0
+        if any(s in p["url"] for s in slugs):
+            score += 6
+        title = p.get("title", "").lower()
+        terms = [w for w in re.findall(r"[a-z]{3,}", t)
+                 if w not in ("the", "hive", "library", "what", "can", "you",
+                              "about", "tell", "does", "have", "there")]
+        for w in terms:
+            if w in title:
+                score += 3
+            score += sum(0.5 for o in p.get("offerings", []) if w in o.lower())
+            if w in p.get("summary", "").lower():
+                score += 1
+        if score:
+            scored.append((score, p))
+    scored.sort(key=lambda x: -x[0])
+
+    cap_hits = [c for c in caps
+                if isinstance(c, dict) and any(
+                    w in (c.get("capability", "") + c.get("detail", "")).lower()
+                    for w in re.findall(r"[a-z]{4,}", t))][:4]
+
+    out.update({
+        "kind": "topic", "topic": topic,
+        "pages": [{
+            "title": p["title"], "url": p["url"], "summary": p.get("summary", ""),
+            "offerings": p.get("offerings", [])[:10],
+            "what_you_need": p.get("what_you_need", [])[:3],
+            "details": p.get("details", {}),
+            "notes": p.get("notes", ""),
+        } for _, p in scored[:3]],
+        "capabilities": cap_hits,
+    })
+    return out
+
+
 def whats_new(genre: str | None = None, limit: int = 6) -> dict:
     """Newest catalogue titles for a genre/topic — fuel for a fun 'hot take'."""
     term = (genre or "fiction").strip()
@@ -722,3 +1049,30 @@ if __name__ == "__main__":
     res = printing_help()
     print("  ", res["summary"][:80], "...")
     print("  pricing:", res["pricing"])
+
+    print("\n### 5. WHERE TO GET: 'wolf hall' (copy-level availability — LIVE) ###")
+    res = where_to_get("wolf hall")
+    print(f"  found={res['found']} best='{res.get('best_title')}' "
+          f"formats={res.get('formats_held')}")
+    for r in res.get("routes", []):
+        if r["route"] == "shelf":
+            spots = ", ".join(f"{c['branch']} ({c['call_number'] or 'ask staff'})"
+                              for c in r["copies"][:4])
+            print(f"  📚 ON SHELF now: {spots}")
+        elif r["route"] == "reserve":
+            print(f"  🔖 reserve ({len(r.get('copies', []))} copies tracked, "
+                  f"parsed={r.get('availability_parsed')})")
+        elif r["route"] == "digital":
+            print(f"  💻 {r['format']} — direct link: {r['direct_link']}")
+        else:
+            print(f"  ✋ {r['route']}: {r.get('advice', '')[:70]}")
+
+    print("\n### 6. HIVE INFO (page-level KB — offline) ###")
+    res = hive_info()
+    print(f"  {res['name']} — {res['opening_hours'][:60]}")
+    print(f"  pages={res.get('page_count')} capabilities={len(res.get('capabilities', []))} "
+          f"as_of={res.get('as_of', '')[:10]}")
+    for q in ("archives and old documents", "hire a meeting room", "parking"):
+        r = hive_info(q)
+        tops = [p["title"] for p in r.get("pages", [])]
+        print(f"  '{q}' -> pages {tops} + {len(r.get('capabilities', []))} capabilities")

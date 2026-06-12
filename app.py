@@ -2,9 +2,15 @@
 Worcestershire Libraries — Live Assistant  (Build Small Hackathon)
 
 A small-model (<=32B) civic agent that answers real questions about
-Worcestershire Libraries from LIVE official data + a local knowledge graph.
+Worcestershire Libraries from official data at EVERY granularity:
+service pages -> every page of the Hive site -> catalogue items -> the
+individual copies on a branch's shelf.
 
   • Live tools  — catalogue, mobile library, events, branch hours/facilities
+  • where_to_get — the full "how do I actually get this title" journey:
+    on-shelf copy at a named branch / free reservation / BorrowBox tonight
+  • hive_info   — The Hive (Worcester) page-by-page: archives & archaeology,
+    800+ study spaces, room hire, BIPC, Youth Hub, 8:30am–10pm every day
   • Knowledge graph (GraphRAG-style) — multi-hop "which late library has a café?"
   • Curated detail — exactly what you need to sign up for each service
   • Behaviour-change layer — EAST nudges + £-saved "value receipt" (DCMS-evidenced)
@@ -54,9 +60,21 @@ def llm(messages, *, max_tokens=512, temperature=0.3, stream=False):
 
 TOOLS = {
     "search_catalogue": {
-        "desc": "Find a specific book, eBook, audiobook or DVD the library holds. "
+        "desc": "Browse/search what the library holds (book, eBook, audiobook, DVD). "
                 "args: {\"query\": \"<title / author / subject>\"}",
         "fn": lambda a: ls.search_catalogue(a.get("query", ""), limit=6)},
+    "where_to_get": {
+        "desc": "User wants to actually GET/borrow/obtain a specific title — gives "
+                "the exact route: which branch has it on the shelf NOW (copy-level), "
+                "free reservation steps, or borrow tonight on BorrowBox. "
+                "args: {\"query\": \"<title / author>\"}",
+        "fn": lambda a: ls.where_to_get(a.get("query") or a.get("title", ""))},
+    "hive_info": {
+        "desc": "The Hive — Worcester's library (joint university+public): hours "
+                "(8:30am-10pm daily), Explore the Past archives & archaeology, study "
+                "spaces, room hire, café, getting there, children's library, business "
+                "support. Page-level detail. args: {\"topic\": \"<optional topic>\"}",
+        "fn": lambda a: ls.hive_info(a.get("topic") or a.get("query"))},
     "whats_new": {
         "desc": "Newest titles in a genre, for fun recommendations. "
                 "args: {\"genre\": \"<genre/topic>\"}",
@@ -114,6 +132,25 @@ def keyword_route(q: str) -> tuple[str, dict]:
                     if w in t)
     if re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t):
         return "printing_help", {}
+    # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
+    if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
+                 r"worcester city librar|hire (a |the )?(room|space)|"
+                 r"(room|space) (for )?hire|book a (room|space|study)", t):
+        topic = re.sub(r"\b(the|hive|at|in|about|tell|me|what|can|i|do|you|"
+                       r"know|is|are|there)\b", " ", t)
+        return "hive_info", {"topic": topic.strip(" ?.") or None}
+    # "how do I actually GET it" — the full per-copy journey
+    if (re.search(r"\b(where|how) (can|do|could|would) i (get|borrow|find|read|"
+                  r"listen to)\b|\bget hold of\b|\bi want to (read|borrow)\b|"
+                  r"\bis .{3,60} (available|in stock|on the shelf)\b|"
+                  r"\b(nearest|closest) copy\b", t)
+            and not re.search(r"\bcard|member|join|sign ?up\b", t)):
+        q2 = re.sub(r"\b(where|how|can|do|could|would|i|get|borrow|find|read|"
+                    r"listen|to|hold|of|want|is|available|in stock|on the shelf|"
+                    r"a copy of|the book|nearest|closest|copy)\b", " ", t)
+        q2 = q2.strip(" ?.")
+        if q2:
+            return "where_to_get", {"query": q2}
     if (re.search(r"\b(which|what) librar|librar(y|ies) (with|that has)\b", t)
             or feat_hits >= 2 or "overall" in t):
         return "graph_search", {"query": q}
@@ -124,8 +161,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"facilit|where is|near me|study space)\b", t):
         m = re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
         return "find_library", {"name": (m[-1] if m else "")}
-    if re.search(r"\b(unlocked|8pm|after hours|out of hours|evening access|"
-                 r"open late)\b", t):
+    if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
+                 r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|"
                          r"theory test|bfi|cobra|digital library|online (library )?hub)\b", t)
@@ -364,8 +401,96 @@ def render_graph(r):
     return "\n".join(out)
 
 
+def render_where_to_get(r):
+    if not r.get("found"):
+        rt = r["routes"][0]
+        return (f"I couldn't find **{r['query']}** in the catalogue. {rt['advice']}\n\n"
+                f"🔎 [Try the catalogue yourself]({r['search_url']})")
+    out = [f"**{r['best_title']}**" + (f" — {r['author']}" if r["author"] else "")
+           + f" · held as: {', '.join(r['formats_held'])}\n"]
+    for rt in r["routes"]:
+        if rt["route"] == "digital":
+            link = ("[Open it in BorrowBox]" if rt["direct_link"]
+                    else "[Open BorrowBox (Worcestershire)]")
+            out.append(f"💻 **Borrow the {rt['format']} free tonight** — "
+                       f"{link}({rt['url']})")
+            out += [f"  {i}. {s}" for i, s in enumerate(rt["steps"], 1)]
+            out.append(f"  - ✅ {rt['need']}")
+        elif rt["route"] == "shelf":
+            out.append(f"📚 **{rt['format']} — on the shelf right now at:**")
+            for c in rt["copies"]:
+                call = f" · shelf mark `{c['call_number']}`" if c["call_number"] else ""
+                out.append(f"  - **{c['branch']}**{call} — _{c['status']}_")
+            out.append(f"  - ✅ {rt['need']}")
+            out.append(f"  - 🔎 [Item page / all copies]({rt['url']})")
+        elif rt["route"] == "reserve":
+            out.append(f"🔖 **{rt['format']} — no copy on a shelf just now: "
+                       f"reserve it free.**")
+            if rt.get("copies"):
+                spots = "; ".join(f"{c['branch']}: {c['status']}"
+                                  for c in rt["copies"][:5])
+                out.append(f"  - Current copies — {spots}")
+            elif not rt.get("availability_parsed"):
+                out.append("  - _(I couldn't read live copy status this time — "
+                           "the item page below shows it.)_")
+            out += [f"  {i}. {s}" for i, s in enumerate(rt["steps"], 1)]
+            out.append(f"  - ✅ {rt['need']}")
+            out.append(f"  - 🔎 [Reserve here]({rt['url']})")
+        else:
+            out.append(f"✋ {rt.get('advice', '')}")
+    if r.get("other_matches"):
+        out.append(f"\n_Similar in the catalogue:_ {' · '.join(r['other_matches'])}")
+    out.append(f"\n🔎 [Full search results]({r['search_url']})")
+    return "\n".join(out)
+
+
+def render_hive(r):
+    hours = r.get("opening_hours", "")
+    out = [f"🐝 **{r['name']}** — Worcester's library, run jointly by the "
+           f"University of Worcester and Worcestershire County Council."]
+    if hours:
+        out.append(f"🕗 **{hours}**")
+    if r.get("kind") == "overview":
+        out.append(f"{r.get('address', '')}\n")
+        out.append("**More than a branch:**")
+        for c in r.get("capabilities", [])[:9]:
+            if isinstance(c, dict):
+                src = f" — [source]({c['source']})" if c.get("source") else ""
+                out.append(f"- **{c.get('capability', '')}** — "
+                           f"{c.get('detail', '')[:160]}{src}")
+        out.append(f"\n✅ {ls.ELIGIBILITY['hive_visit']}")
+    else:
+        for p in r.get("pages", []):
+            out.append(f"\n**[{p['title']}]({p['url']})** — {p['summary'][:180]}")
+            for o in p.get("offerings", [])[:6]:
+                out.append(f"  - {o}")
+            for n in p.get("what_you_need", [])[:2]:
+                out.append(f"  - ✅ {n}")
+            d = p.get("details", {})
+            for k, label in (("hours", "🕗"), ("prices", "💷"),
+                             ("location_in_building", "📍"), ("contact", "☎️")):
+                if d.get(k):
+                    out.append(f"  - {label} {d[k][:140]}")
+            if p.get("notes"):
+                out.append(f"  - ⚠️ _{p['notes']}_")
+        for c in r.get("capabilities", [])[:3]:
+            if isinstance(c, dict):
+                out.append(f"\n💎 **{c.get('capability', '')}** — "
+                           f"{c.get('detail', '')[:160]}")
+        if not r.get("pages") and not r.get("capabilities"):
+            out.append("\nI don't have a Hive page on that — try the council "
+                       f"pages, or browse [thehiveworcester.org]({r['page_url']}).")
+    as_of = (r.get("as_of") or "")[:10]
+    out.append(f"\n<sub>ℹ️ From the Hive's own pages (crawled {as_of}). For live "
+               "events, membership and prices the council site is the "
+               "authority — ask me and I'll check it live.</sub>")
+    out.append(f"🔎 [thehiveworcester.org]({r['page_url']})")
+    return "\n".join(out)
+
+
 RENDER = {
     "search_catalogue": render_catalogue, "whats_new": render_whats_new,
+    "where_to_get": render_where_to_get, "hive_info": render_hive,
     "find_library": render_find_library, "mobile_library": render_mobile,
     "library_events": render_events, "online_hub": render_online_hub,
     "libraries_unlocked": render_unlocked, "membership_help": render_membership,
@@ -380,6 +505,8 @@ RENDER = {
 def value_receipt(tool, raw):
     if tool in ("search_catalogue", "whats_new") and raw.get("items"):
         return "💷 _Borrowing instead of buying ≈ **£9–£20 saved** per title._"
+    if tool == "where_to_get" and raw.get("found"):
+        return "💷 _Getting it from the library instead of buying ≈ **£9–£20 saved**._"
     if tool == "online_hub":
         return ("💷 _Free with your card — a newspaper or eBook subscription is "
                 "**~£8–£12/month** you don't pay._")
@@ -410,8 +537,12 @@ NUDGES = {
                         ["Set up digital membership", "What's the difference?", "What can I borrow online?"]),
     "graph_search": ("💡 Tell me what matters (late, café, study space) and I'll match a branch.",
                      ["Late-opening + café", "Find a book", "What's on this week?"]),
+    "where_to_get": ("💡 Reservations are free — collect at any branch, or the van.",
+                     ["Is it on BorrowBox?", "Which branch is nearest?", "How do I join?"]),
+    "hive_info": ("💡 The Hive is open 8:30am–10pm every single day — and anyone can walk in.",
+                  ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
 }
-HELP_CHIPS = ["Do you have Harry Potter?", "Mobile library near me",
+HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
 
 
@@ -426,6 +557,7 @@ SYNTH_SYSTEM = (
     "data. Lead with what the person CAN do: if a service meets their need in a "
     "different way (e.g. they can't print AT home, but can send a job from home "
     "and collect it at any branch), open with that — never with a bare 'no'. "
+    "Keep any provenance footnote (e.g. 'From the Hive's own pages') intact. "
     "If the data doesn't answer it, say so and point to the source link.")
 
 
@@ -453,14 +585,18 @@ def synthesize_stream(question, rendered):
 HELP = (
     "👋 I'm the **Worcestershire Libraries assistant**. I check the council site "
     "and catalogue *live* and can help you:\n\n"
-    "- 📚 **Find a book / eBook / audiobook**\n"
+    "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
+    "or borrow the eBook tonight\n"
     "- 📍 **Branch hours, 'open now?', toilets, parking**\n"
+    "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
+    "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
     "- 📅 **What's on** this week\n"
     "- 💻 **Free online** — newspapers, magazines, family history\n"
     "- 🖨️ **Printing** from your phone\n\n"
-    "_Every answer is checked live against official Worcestershire County "
-    "Council sources._")
+    "_Answers come from official sources — the council site and catalogue "
+    "checked live, plus every page of the Hive's own site — and each answer "
+    "names its source._")
 
 
 # --------------------------------------------------------------------------- #
@@ -505,7 +641,9 @@ def respond(message, history):
     value = value_receipt(tool, raw)
     nudge, chips = NUDGES.get(tool, ("", []))
     checked = raw.get("checked", "")
-    footer = (f"\n\n<sub>🔎 Checked **live**"
+    label = ("page-level KB" if tool == "hive_info" and raw.get("as_of")
+             else "**live**")
+    footer = (f"\n\n<sub>🔎 Checked {label}"
               + (f" · {checked}" if checked else "")
               + f" · tool `{tool}` ({how})"
               + (f" · [source]({source})" if source else "") + "</sub>")
@@ -545,9 +683,10 @@ def build_demo():
     with gr.Blocks(title="Worcestershire Libraries — Live Assistant") as demo:
         gr.HTML("<div id='hero'><span class='live'>● live data</span>"
                 "<h1>Worcestershire Libraries — Live Assistant</h1>"
-                "<p>Books, mobile library, events, printing and what's free online — "
-                "answered live from the council site & catalogue, with exactly what "
-                "you need to sign up.</p></div>")
+                "<p>Exactly where to get the book you want, everything The Hive "
+                "offers, mobile library, events, printing and what's free online — "
+                "from the council site, catalogue & every Hive page, with exactly "
+                "what you need to sign up.</p></div>")
 
         chat = gr.Chatbot(height=460, show_label=False,
                           placeholder="📚 Ask me anything about your local library…",
@@ -561,12 +700,14 @@ def build_demo():
                      for _ in range(3)]
 
         gr.Examples(
-            ["Do you have Harry Potter audiobooks?",
+            ["How do I get Wolf Hall by Hilary Mantel?",
+             "Do you have Harry Potter audiobooks?",
+             "What can I do at The Hive?",
+             "Tell me about the archives at the Hive",
              "Is Malvern library open now?",
              "A late-opening library with a café and meeting rooms",
              "When does the mobile library visit Abberley?",
-             "Can I read newspapers for free?",
-             "What do I need to sign up?"],
+             "Can I read newspapers for free?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

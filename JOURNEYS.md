@@ -12,6 +12,7 @@ The design loop for each journey:
 
 | # | Who & what they ask | Intent | Tool | The answer must hand them |
 |---|---|---|---|---|
+| 0 | "How do I **get** Wolf Hall?" | Walk out with (or download) THIS title today | `where_to_get` | Every format held, then the fastest route per format: **on the shelf at a named branch with shelf mark** (copy-level, live) → free reservation steps → **BorrowBox tonight** (direct link when the catalogue carries one) · eligibility per route |
 | 1 | "Do you have Harry Potter audiobooks?" | Borrow a specific title | `search_catalogue` | Matches with format/year + detail links · **To borrow:** join-online / digital-membership links · full-results link |
 | 2 | "Any good new crime novels?" | Discover something to read | `whats_new` | Newest titles · the same **To borrow** join link · see-more link |
 | 3 | "Is Malvern library open now?" | Visit a branch today | `find_library` | 🟢/🔴 open-now + today's hours · address · facilities · **Libraries Unlocked hours + how to get access** · branch page |
@@ -23,6 +24,7 @@ The design loop for each journey:
 | 9 | "What do I need to sign up?" | Join (right tier, least effort) | `membership_help` | Each tier **linked to its own page** — digital membership links straight to instant sign-up |
 | 10 | "Can I get in after work?" | Use the library out of hours | `libraries_unlocked` | Hours · the 11 branches · induction requirement · **join-online link for non-members** |
 | 11 | Greeting / off-topic | Find out what this thing does | none (`HELP`) | Capability list + four starter chips |
+| 12 | "What can I do at The Hive?" / "the archives" / "hire a room" | Use Worcester's flagship — incl. its uni-grade extras | `hive_info` | The exact offering of the relevant Hive **page(s)** (offerings, what-you-need, prices, level in building) · extended-capability gems · 8:30am–10pm hours · **provenance footer: Hive pages, crawl date, council-wins-on-conflict** |
 
 ## Journey-chaining (the chips)
 
@@ -35,7 +37,8 @@ alludes to — the nudge itself stays short.
 ## Cross-journey guarantees
 
 - **Provenance:** every answer footer shows when it was checked, which tool
-  ran, and a source link.
+  ran, and a source link. Hive answers additionally name the crawl date and
+  defer to the council on conflicts (hours, prices, membership).
 - **Value receipt:** borrowing/online/printing answers show the £ saved
   (`value_receipt`).
 - **Tone:** lead with what the person *can* do — never open with a bare "no"

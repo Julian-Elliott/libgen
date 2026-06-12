@@ -29,6 +29,8 @@ FACILITY_TERMS = {
     "wheelchair": "wheelchair", "accessible": "accessible", "disabled": "accessible",
     "meeting room": "meeting", "meeting": "meeting", "print": "printing",
     "photocopy": "printing", "self-service": "self",
+    "archive": "archive", "archives": "archive", "archaeology": "archive",
+    "children": "child", "kids": "child", "exhibition": "exhibition",
 }
 LATE_TERMS = ["late", "unlocked", "8pm", "evening", "after work", "after hours",
               "open late", "out of hours"]
@@ -80,7 +82,7 @@ def local_search(query: str) -> dict:
     if wanted or want_late or (area and "librar" in q):
         results = []
         for b in g["by_type"].get("Branch", []):
-            if want_late and not b.get("libraries_unlocked"):
+            if want_late and not (b.get("libraries_unlocked") or b.get("open_late")):
                 continue
             if area and area.lower() not in (b.get("address", "")).lower():
                 continue
@@ -93,6 +95,8 @@ def local_search(query: str) -> dict:
             "late": want_late, "area": area,
             "branches": [{"name": b["label"], "facilities": b.get("facilities", []),
                           "libraries_unlocked": b.get("libraries_unlocked", False),
+                          "open_late": b.get("open_late", False),
+                          "late_hours": b.get("hive_hours", ""),
                           "address": b.get("address", ""), "url": b.get("url", "")}
                          for b in results],
             "count": len(results),

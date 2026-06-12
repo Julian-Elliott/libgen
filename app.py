@@ -575,11 +575,19 @@ def build_demo():
         def chip_turn(label, hist):
             return "", (hist or []) + [{"role": "user", "content": label}], *hide3()
 
+        def msg_text(content):
+            # Gradio 6 Chatbot returns content as a list of blocks
+            # ([{"text": ..., "type": "text"}]) rather than a plain string.
+            if isinstance(content, list):
+                return " ".join(b.get("text", "") for b in content
+                                if isinstance(b, dict)).strip()
+            return content or ""
+
         def bot_turn(hist):
             if not hist or hist[-1]["role"] != "user":
                 yield hist, *hide3()
                 return
-            msg = hist[-1]["content"]
+            msg = msg_text(hist[-1]["content"])
             hist = hist + [{"role": "assistant", "content": ""}]
             final_chips = []
             for text, ch in respond(msg, hist[:-1]):

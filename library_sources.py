@@ -491,7 +491,9 @@ CURATED_HUB = {
         "what_you_need": "Worcestershire library card number + PIN (free full membership, residents). No separate PressReader account needed.",
         "at_home": True,
         "access": [
-            "Get the PressReader app (or use pressreader.com).",
+            "Get the PressReader app — [iPhone/iPad](https://apps.apple.com/app/pressreader/id313904711) "
+            "or [Android](https://play.google.com/store/apps/details?id=com.newspaperdirect.pressreader.android) — "
+            "or read in your browser at [pressreader.com](https://www.pressreader.com).",
             "Tap 'Libraries & Groups' and search/select 'Worcestershire'.",
             "Sign in with your library card number + PIN.",
             "At home you get a 30-day pass (re-confirm monthly); on library Wi-Fi it's 7 days.",
@@ -505,7 +507,8 @@ CURATED_HUB = {
         "what_you_need": "Library card number + PIN; choose 'Worcestershire' in the app.",
         "at_home": True,
         "access": [
-            "Download the BorrowBox app.",
+            "Download the BorrowBox app — [iPhone/iPad](https://apps.apple.com/app/borrowbox-library/id562843562) "
+            "or [Android](https://play.google.com/store/apps/details?id=com.bolindadigital.BorrowBoxLibrary).",
             "Select 'Worcestershire' as your library service.",
             "Sign in with your card number + PIN.",
         ],

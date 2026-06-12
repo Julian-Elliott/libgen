@@ -445,7 +445,8 @@ HELP = (
     "- 📅 **What's on** this week\n"
     "- 💻 **Free online** — newspapers, magazines, family history\n"
     "- 🖨️ **Printing** from your phone\n\n"
-    "_Official sources only — I don't use the out-of-date Hive website._")
+    "_Every answer is checked live against official Worcestershire County "
+    "Council sources._")
 
 
 # --------------------------------------------------------------------------- #

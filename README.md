@@ -8,7 +8,7 @@ sdk_version: 6.17.3
 app_file: app.py
 pinned: true
 license: mit
-short_description: Live answers about your library — books, mobile van, events, printing.
+short_description: Live, source-cited answers about your local library
 ---
 
 # 📚 Worcestershire Libraries — Live Assistant

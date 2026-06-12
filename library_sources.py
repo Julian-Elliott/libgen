@@ -39,6 +39,7 @@ MOBILE_INDEX = f"{GOV}/council-services/libraries/your-library-membership/mobile
 EVENTS_URL = f"{GOV}/council-services/libraries/library-events-and-activities"
 PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-services"
 UNLOCKED_URL = f"{GOV}/council-services/libraries/libraries-unlocked"
+JOIN_URL = f"{GOV}/council-services/libraries/your-library-membership/join-library"
 ONLINE_HUB = f"{GOV}/council-services/libraries/online-library-hub"
 
 UA = (
@@ -332,11 +333,12 @@ PRINT_YOUR_WAY = {
     ),
     "device_requirements": "Android 12+, iOS 16+, macOS 12 (Monterey)+, or Windows 11.",
     "steps": [
-        "Be a full library member (free to join with a library card).",
+        f"Be a full library member — free, [join online]({JOIN_URL}) or in any library.",
         "Top up your PaperCut print account at a self-service kiosk in any "
         "Worcestershire library (some kiosks are cash-only, so check first).",
         "One-time setup: download and follow the Print Your Way guide for your "
-        "device (Android / iOS / macOS / Windows).",
+        f"device — Android, iOS, macOS and Windows guides are on the "
+        f"[printing page]({PRINTING_URL}).",
         "Open your document, choose the mono or colour print queue, set your "
         "options and send — authenticate with your library number and PIN.",
         "Release the job at any public printer in any Worcestershire library "
@@ -652,7 +654,7 @@ def online_hub(topic: str | None = None) -> dict:
 def membership_help(service: str | None = None) -> dict:
     """What you need to sign up — the cross-service membership matrix."""
     out = {"tiers": kb().get("membership_tiers", []),
-           "page_url": f"{GOV}/council-services/libraries/your-library-membership/join-library",
+           "page_url": JOIN_URL,
            "checked": _now()}
     if service:
         s = service.lower()

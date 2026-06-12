@@ -1,0 +1,1879 @@
+{
+  "generated": "2026-06-11T22:51:10+00:00",
+  "source": "https://www.worcestershire.gov.uk",
+  "note": "Council pages only; the Hive website is deliberately excluded.",
+  "counts": {
+    "services": 87,
+    "branches": 23,
+    "online_hub": 17
+  },
+  "membership_tiers": [
+    {
+      "tier": "Digital membership",
+      "what_you_need": "Just a Worcestershire postcode — sign up online in minutes, no card needed.",
+      "unlocks": "Free eBooks, eAudiobooks, eMagazines & eNewspapers (BorrowBox, PressReader), Times Digital Archive, Oxford University Press.",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/digital-library-membership"
+    },
+    {
+      "tier": "Full membership",
+      "what_you_need": "Free for everyone — join online then collect, or join in person at any library. Gives you a library card number + PIN.",
+      "unlocks": "Borrow physical books, reserve/renew, use public computers, Print Your Way, the mobile library, and the full online hub.",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/join-library"
+    },
+    {
+      "tier": "Libraries Unlocked",
+      "what_you_need": "Be a full member aged 15+, then do a short one-off induction with staff.",
+      "unlocks": "Self-service access 8am-8pm Mon-Sat (even when unstaffed) at 11 branches: Bromsgrove, Droitwich, Evesham, Kidderminster, Malvern, Pershore, Redditch, Rubery, St John's, Stourport, Tenbury.",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/libraries-unlocked"
+    }
+  ],
+  "branches": [
+    {
+      "name": "Alvechurch Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/alvechurch-library",
+      "address": "Birmingham Road Alvechurch Birmingham B48 7TA United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Wednesday": {
+          "staffed": "Closed"
+        },
+        "Thursday": {
+          "staffed": "2:00pm to 5:00pm"
+        },
+        "Friday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 1:00pm, 2:00pm to 4:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Bewdley Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/bewdley-library",
+      "address": "Dog Lane Bewdley DY12 2EF United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Tuesday": {
+          "staffed": "Closed"
+        },
+        "Wednesday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Friday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Saturday": {
+          "staffed": "9:30am to 1:00pm"
+        }
+      },
+      "facilities": [
+        "wheelchair access",
+        "free Wi-Fi",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Broadway Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/broadway-library",
+      "address": "Leamington Road Broadway WR12 7DZ United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "09:30am to 4:30pm"
+        },
+        "Tuesday": {
+          "staffed": "Closed"
+        },
+        "Wednesday": {
+          "staffed": "09:30am to 4:30pm"
+        },
+        "Thursday": {
+          "staffed": "Closed"
+        },
+        "Friday": {
+          "staffed": "9:30am to 4:30pm"
+        },
+        "Saturday": {
+          "staffed": "9:30am to 1:00pm"
+        }
+      },
+      "facilities": [
+        "wheelchair access",
+        "free Wi-Fi",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Bromsgrove Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/bromsgrove-library",
+      "address": "Parkside Market Street Bromsgrove B61 8DA United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "1:00pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "9:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 2:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "public computers",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Catshill Community Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/catshill-community-library",
+      "address": "The Community Room Catshill Middle School Meadow Road Catshill Bromsgrove B61 0JW United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:15am to 12:15pm"
+        },
+        "Tuesday": {
+          "staffed": "3:00pm to 7:00pm"
+        },
+        "Wednesday": {
+          "staffed": "Closed"
+        },
+        "Thursday": {
+          "staffed": "3:00pm to 5:30pm"
+        },
+        "Friday": {
+          "staffed": "9:30am to Midday"
+        },
+        "Saturday": {
+          "staffed": "9:30am to 12:30pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "wheelchair access",
+        "free Wi-Fi",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Droitwich Spa Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/droitwich-spa-library",
+      "address": "Victoria Square Droitwich Spa WR9 8DQ United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "10:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "10:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "1:00pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "Not applicable",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "10:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 2:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Evesham Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/evesham-library",
+      "address": "Oat Street Evesham WR11 4PJ United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:30am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:30am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "Not applicable",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:30am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "9:30am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 2:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "public computers",
+        "study space",
+        "meeting rooms",
+        "self-service",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Hagley Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/hagley-library",
+      "address": "Worcester Road Hagley Stourbridge DY9 0NW United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Tuesday": {
+          "staffed": "Closed"
+        },
+        "Wednesday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Friday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Saturday": {
+          "staffed": "9:00am to 1:00pm, 2:00pm to 4:30pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "wheelchair access",
+        "free Wi-Fi",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Kidderminster Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/kidderminster-library",
+      "address": "Market Street Kidderminster DY10 1AB United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "1:00pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "9:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 3:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Malvern Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/malvern-library",
+      "address": "Graham Road Malvern WR14 2HU United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "1:00pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 3:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "public computers",
+        "study space",
+        "meeting rooms",
+        "café",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Martley Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/martley-library",
+      "address": "Martley Village hall Berrow Green Road Martley WR6 6PQ United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "2:30pm to 5:00pm"
+        },
+        "Thursday": {
+          "staffed": "10:00am to 12:00pm"
+        },
+        "Friday": {
+          "staffed": "2:30pm to 4:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 11:00am"
+        }
+      },
+      "facilities": [
+        "public toilets"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Pershore Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/pershore-library",
+      "address": "Church Street Pershore WR10 1DT United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "Not applicable",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 2:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "wheelchair access",
+        "free Wi-Fi",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Redditch Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/redditch-library",
+      "address": "15 Market Place Redditch B98 8AR United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "1:00pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "9:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "9:00am to 4:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Rubery Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/rubery-library",
+      "address": "7 Library Way Rubery Birmingham B45 9JS United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "1:00pm to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "Not applicable",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "10:00am to 2:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 2:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "accessible toilet",
+        "baby changing",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "St. John's Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/st-johns-library",
+      "address": "Glebe Close St. John's Worcester WR2 5AX United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "2:00pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "10:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "10:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "2:00 pm to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "10:00am to 5:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "study space",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Stourport-on-Severn Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/stourport-severn-library",
+      "address": "Civic Centre New Street Stourport on Severn DY13 8UN United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "10:30am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "10:30am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "Not applicable",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "10:30am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "1:00pm to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:30am to 1:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "Tenbury Wells Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/tenbury-wells-library",
+      "address": "24 Teme Street Tenbury Wells WR15 8AA United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "1:00pm to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Tuesday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Wednesday": {
+          "staffed": "1:00pm to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Thursday": {
+          "staffed": "10:00am to 4:30pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Friday": {
+          "staffed": "10:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        },
+        "Saturday": {
+          "staffed": "10:00am to 1:00pm",
+          "unlocked": "8:00am to 8:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "wheelchair access",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": true
+    },
+    {
+      "name": "The Hive",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/hive",
+      "address": "Sawmill Cl The Butts Worcester WR1 3PD United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "8:30am to 10:00pm"
+        },
+        "Tuesday": {
+          "staffed": "8:30am to 10:00pm"
+        },
+        "Wednesday": {
+          "staffed": "8:30am to 10:00pm"
+        },
+        "Thursday": {
+          "staffed": "8:30am to 10:00pm"
+        },
+        "Friday": {
+          "staffed": "8:30am to 10:00pm"
+        },
+        "Saturday": {
+          "staffed": "8:30am to 10:00pm"
+        },
+        "Sunday": {
+          "staffed": "8:30am to 10:00pm"
+        }
+      },
+      "facilities": [],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Upton-Upon-Severn Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/upton-upon-severn-library",
+      "address": "School Lane Upton-upon-Severn WR8 0LE United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:30am to 4:30pm"
+        },
+        "Tuesday": {
+          "staffed": "Closed"
+        },
+        "Wednesday": {
+          "staffed": "9:30am to 4:30pm"
+        },
+        "Thursday": {
+          "staffed": "Closed"
+        },
+        "Friday": {
+          "staffed": "9:30am to 4:30pm"
+        },
+        "Saturday": {
+          "staffed": "9:30am to 1:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "study space",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Warndon Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/warndon-library",
+      "address": "The Fairfield Centre Carnforth Drive Worcester WR4 9HG United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Wednesday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Friday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Saturday": {
+          "staffed": "9:30am to 1:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "study space",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Welland Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/welland-library",
+      "address": "Welland Village Hall Marlbank Road Welland WR13 6LA United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "2:00pm to 4:00pm"
+        },
+        "Tuesday": {
+          "staffed": "8:30am to 9:45am"
+        },
+        "Wednesday": {
+          "staffed": "Closed"
+        },
+        "Thursday": {
+          "staffed": "10:00am to 12:00pm"
+        },
+        "Friday": {
+          "staffed": "Closed"
+        },
+        "Saturday": {
+          "staffed": "Closed"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "wheelchair access",
+        "free Wi-Fi"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Woodrow Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/woodrow-library",
+      "address": "25 Local Centre Studley Road Redditch B98 7RY United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Tuesday": {
+          "staffed": "Closed"
+        },
+        "Wednesday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Thursday": {
+          "staffed": "9:30am to 5:00pm"
+        },
+        "Friday": {
+          "staffed": "12:30pm to 5:00pm"
+        },
+        "Saturday": {
+          "staffed": "9:00am to 1:00pm"
+        }
+      },
+      "facilities": [
+        "public toilets",
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "meeting rooms",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    },
+    {
+      "name": "Wythall Library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/wythall-library",
+      "address": "Woodrush Community Hub Shawhurst Lane Hollywood Birmingham B47 5JW United Kingdom",
+      "hours": {
+        "Monday": {
+          "staffed": "9:30am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Tuesday": {
+          "staffed": "9:30am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Wednesday": {
+          "staffed": "9:30am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Thursday": {
+          "staffed": "Closed"
+        },
+        "Friday": {
+          "staffed": "9:30am to 1:00pm, 2:00pm to 5:00pm"
+        },
+        "Saturday": {
+          "staffed": "9:30am to 1:00pm, 2:00pm to 4:00pm"
+        }
+      },
+      "facilities": [
+        "accessible toilet",
+        "baby changing",
+        "wheelchair access",
+        "free Wi-Fi",
+        "café",
+        "printing"
+      ],
+      "libraries_unlocked": false
+    }
+  ],
+  "online_hub": [
+    {
+      "name": "Access to Research",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/access-research",
+      "summary": "Free online access to academic journal articles on Worcestershire library computers.",
+      "what_you_need": [
+        "Suitable for students and independent researchers but it is available to all members of the public.",
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "Ancestry",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/ancestry",
+      "summary": "The genealogy resource is a great place to research your family history and access billions of records from census data, directories, photographs and family trees.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "Borrowbox",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/borrowbox",
+      "summary": "Access to thousands of free eBooks and eAudiobooks, content updated regularly.",
+      "what_you_need": [
+        "BorrowBox, gives you access to eBooks and eAudiobooks - the latest titles, award winners, non-fiction, and the classics, all of which are available 24 hours a day with a Worcestershire Libraries membership.",
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "British Film Institution (BFI Replay)",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/british-film-institution-bfi-replay",
+      "summary": "BFI Replay is a free-to-access digital archive from the BFI (British Film Institute), exclusively available in UK public lending libraries.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "COBRA (Business Support)",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/cobra-business-support",
+      "summary": "COBRA (Complete Business Reference Adviser) is a comprehensive online business resource for individuals and organizations in the UK.",
+      "what_you_need": [
+        "COBRA is accessible through Worcestershire Libraries and other libraries across the UK, and it can be accessed online with a library card.",
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "Digital library membership",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/digital-library-membership",
+      "summary": "Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press. To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+      "what_you_need": [
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "If you're not yet a library member, instant access to our online library is available to all Worcestershire residents.",
+        "Apply Apply for a Digital Membership below: Apply for Digital Membership You can easily upgrade to full library membership by visiting a library and providing proof of your name and address.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "EBSCO",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/ebsco",
+      "summary": "Reliable information for a variety of research.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "ESPACENET",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/espacenet",
+      "summary": "Espacenet is a free online patent search tool offered by the European Patent Office (EPO).",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "Online events",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/online-events",
+      "summary": "Worcestershire libraries provide digital events that allow you to connect with others and expand your skills and interests.",
+      "what_you_need": []
+    },
+    {
+      "name": "Oxford Dictionary of National Biography",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/oxford-dictionary-national-biography",
+      "summary": "Discover the lives that shaped history.",
+      "what_you_need": [
+        "It is helpful for students, researchers, and anyone who loves learning."
+      ]
+    },
+    {
+      "name": "Oxford English Dictionary",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/oxford-english-dictionary",
+      "summary": "The Oxford English Dictionary is the best guide to the meaning, history, and pronunciation of over 600,000 words, old and new.",
+      "what_you_need": [
+        "It is helpful for school, work, and anyone who loves learning."
+      ]
+    },
+    {
+      "name": "Oxford Reference",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/oxford-reference",
+      "summary": "A trusted online collection of dictionaries, facts, and reference entries across many subjects.",
+      "what_you_need": [
+        "Students can use it for schoolwork, writers can check meanings and explanations, and anyone can read reliable information without looking in lots of different places."
+      ]
+    },
+    {
+      "name": "Oxford Research Encyclopaedias",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/oxford-research-encyclopaedias",
+      "summary": "Easy-to-understand guides for study and research.",
+      "what_you_need": [
+        "The Oxford Research Encyclopaedias are free for Worcestershire library users."
+      ]
+    },
+    {
+      "name": "Pressreader",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/pressreader",
+      "summary": "View more than 7,000 of the top newspapers and magazines from around the globe.",
+      "what_you_need": [
+        "Download the PressReader app Access PressReader online Support Open the section below for support to access PressReader.",
+        "To maintain access to the PressReader you'll need to confirm your library membership and keep your account active.",
+        "If you let the 30-day period expire, a pop-up will prompt you to enter your library PIN, as in the PressReader app example below: If you miss this prompt, don't worry, simply log out by going to More, then Accounts.",
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library."
+      ]
+    },
+    {
+      "name": "The Times Digital Archive",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/times-digital-archive",
+      "summary": "Search the archive to explore 200 years of history as it appeared in the pages of The Times, from 1785 to 1985.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "Theory Test Pro",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/theory-test-pro",
+      "summary": "If you are learning to drive, you can access Theory Test Pro for FREE with your library membership.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    },
+    {
+      "name": "Which?",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/which",
+      "summary": "The UK’s most trusted source for independent product reviews, consumer advice, and money-saving tips.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ]
+    }
+  ],
+  "services": [
+    {
+      "title": "About BIPC Worcestershire",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business/about-bipc-worcestershire",
+      "category": "business",
+      "summary": "Providing free and accessible business advice, support, information and resources you can trust to help you on your business journey.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Business database reference resources",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business/business-database-reference-resources",
+      "category": "business",
+      "summary": "The Business & IP Centre (BIPC) Worcestershire provides free access to a wide selection of subscription only databases and up to date business information.",
+      "what_you_need": [
+        "Resources available All are available to Worcestershire library members either from public computers in library buildings or remotely using your own digital devices.",
+        "Available online to all Worcestershire library members Access Cobra and sign in using your library card number An encyclopaedia of practical information for starting, running and managing a small business."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Business facilities at Worcestershire libraries",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business/business-facilities-worcestershire-libraries",
+      "category": "business",
+      "summary": "The BIPC hubs provide accessible and welcoming spaces for business purposes; with access to PCs, desks, Wi-Fi and bookable meeting rooms and spaces for hire.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Business networking",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business/business-networking",
+      "category": "business",
+      "summary": "Connect with other local businesses and start-ups in an informal environment.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Explore free online library resources for learning, research and business",
+      "url": "https://www.worcestershire.gov.uk/news/explore-free-online-library-resources-learning-research-and-business",
+      "category": "business",
+      "summary": "A Worcestershire library membership is the key to a world of FREE digital resources, from books and newspapers to trusted online reference tools.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Get business books online",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business/get-business-books-online",
+      "category": "business",
+      "summary": "Reading and sharing business books is a great way for entrepreneurs to stay informed on business trends, learn new skills and develop innovative ways of working.",
+      "what_you_need": [
+        "These are available to all Worcestershire residents with a library card.",
+        "If you are not already a library member a digital library membership is available to all Worcestershire residents and gives you free access to eBooks, eAudiobooks, eMagazines.",
+        "To apply for digital membership and download the BorrowBox app visit Worcestershire Libraries Online Library ."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Protect your business",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business/protect-your-business",
+      "category": "business",
+      "summary": "Learn how you can protect your business and ideas.",
+      "what_you_need": [
+        "Anyone can have IP.",
+        "They also do free IP webinars that anyone can attend."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Start or grow a business",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/start-or-grow-business",
+      "category": "business",
+      "summary": "Business and IP Centre Worcestershire services that support enterprise, entrepreneurship and business growth.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "2026 Libraries closing dates",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library/2026-libraries-closing-dates",
+      "category": "general",
+      "summary": "All libraries including Libraries Unlocked hours and Jobcentre Plus will be closed on the following dates.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Acclaimed Authors Set to Visit Worcestershire’s Libraries This Autumn",
+      "url": "https://www.worcestershire.gov.uk/news/acclaimed-authors-set-visit-worcestershires-libraries-autumn",
+      "category": "general",
+      "summary": "Libraries across Worcestershire are set to host an exciting season of FREE literary events this autumn. From spine-chilling crime fiction to groundbreaking history and immersive fantasy worlds, the programme offers something for every reader.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Alvechurch Library - New layout for all library pages V1",
+      "url": "https://www.worcestershire.gov.uk/library/alvechurch-library-new-layout-all-library-pages-v1",
+      "category": "general",
+      "summary": "Birmingham Road Alvechurch Birmingham B48 7TA United Kingdom",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Alvechurch Library - New layout for all library pages V2",
+      "url": "https://www.worcestershire.gov.uk/library/alvechurch-library-new-layout-all-library-pages-v2",
+      "category": "general",
+      "summary": "Birmingham Road Alvechurch Birmingham B48 7TA United Kingdom",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Coming Soon: Free Dementia Events at Worcestershire's Libraries",
+      "url": "https://www.worcestershire.gov.uk/news/coming-soon-free-dementia-events-worcestershires-libraries",
+      "category": "general",
+      "summary": "To mark Dementia Action Week, Worcestershire Libraries are delighted to offer a range of free, inclusive events for people living with dementia, their families, carers, professionals, and the wider community.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Discover Volunteering Opportunities at your local library",
+      "url": "https://www.worcestershire.gov.uk/news/discover-volunteering-opportunities-your-local-library",
+      "category": "general",
+      "summary": "Libraries across Worcestershire are on the lookout for volunteers, and the people who've already signed up say it's changed their lives!",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Discover the stories that shaped our town this May at Kidderminster Library!",
+      "url": "https://www.worcestershire.gov.uk/news/discover-stories-shaped-our-town-may-kidderminster-library",
+      "category": "general",
+      "summary": "To mark Local & Community History Month, we’re hosting a fantastic programme of FREE events celebrating the rich heritage of Kidderminster and the surrounding areas.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Early years information library",
+      "url": "https://www.worcestershire.gov.uk/council-services/schools-education-and-learning/virtual-school/early-years-information-library",
+      "category": "general",
+      "summary": "Additional support and resources for pupils in the early years foundation stage, from the age of two.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Exciting STEAM themed event coming to The Hive Library!",
+      "url": "https://www.worcestershire.gov.uk/news/exciting-steam-themed-event-coming-hive-library",
+      "category": "general",
+      "summary": "STEAMfest, a thrilling event celebrating Science, Technology, Engineering, Arts, and Mathematics, is coming to The Hive Library on Saturday 25 January, from 10:00am to 3:00pm.",
+      "what_you_need": [
+        "\" STEAMfest is open to everyone will be a fantastic day out for families, students, and anyone curious about STEAM."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Find a library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/find-library",
+      "category": "general",
+      "summary": "Find details of local library locations, opening times and facilities and of mobile library routes and timetables.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Great news for Malvern’s library members as Libraries Unlocked launches next week",
+      "url": "https://www.worcestershire.gov.uk/news/great-news-malverns-library-members-libraries-unlocked-launches-next-week",
+      "category": "general",
+      "summary": "Libraries Unlocked, the new service will go-live at Malvern Library on Monday 19 August 2024.",
+      "what_you_need": [
+        "Libraries Unlocked is a new service which provides more flexibility for customers and community groups to use their local library at times that are convenient to them, between 8am and 8pm Monday to Saturday.",
+        "“Across Worcestershire, libraries are at the heart of community life, and I am glad that we are developing new approaches to accommodate residents' busy lives.",
+        "\" Libraries Unlocked membership is for ages 15 and over.",
+        "Library members who wish to upgrade to Libraries Unlocked membership are required to complete a short induction.",
+        "To arrange a Libraries Unlocked induction visit Malvern Library and speak to a member of library staff or call 01905 822722 to make an appointment."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Hire a library meeting room",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/hire-library-meeting-room",
+      "category": "general",
+      "summary": "Find details of library meeting rooms and other library spaces for hire.",
+      "what_you_need": [
+        "To do this you will need to apply directly to your local library in writing marking your envelope 'Art Application'."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Hop into Spring with Easter-themed activities at your local library!",
+      "url": "https://www.worcestershire.gov.uk/news/hop-spring-easter-themed-activities-your-local-library",
+      "category": "general",
+      "summary": "Looking for some egg-citing family fun this Easter? Worcestershire’s Libraries has you covered with a variety of cracking FREE activities for both the young and young at heart.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Improve Your Digital Skills at your Local Library",
+      "url": "https://www.worcestershire.gov.uk/news/improve-your-digital-skills-your-local-library",
+      "category": "general",
+      "summary": "Do you know someone with little or no experience using a computer? Worcestershire County Council’s Library service is here to help them build digital skills during Get Online Week.",
+      "what_you_need": [
+        "We are committed to ensuring our local communities have the skills and confidence to access digital information and services safely and open new opportunities for personal and professional growth.",
+        "All our libraries provide free access to digital equipment, including desktop computers and printing facilities making them the perfect support centres for anyone needing digital assistance."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries",
+      "category": "general",
+      "summary": "Discover an extensive collection of books and resources and a wealth of services and activities that encourage reading, learning and aspiration, improve skills and confidence and promote wellbeing and independence.",
+      "what_you_need": [
+        "Your library membership Join the library, sign into your account, search the catalogue, renew and reserve books, pay fees and charges and book a computer.",
+        "Libraries Unlocked A new library service offering longer opening hours and more flexibility for customers and community groups to use their local library at times that are convenient to them.",
+        "Memories and Me Memory Bags are available to loan for carers and families of individuals living with dementia through the Memories and Me project.",
+        "Library strategy A vision for the future of Worcestershire Libraries explaining how library services are evolving to meet the changing needs of residents."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries Unlocked",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/libraries-unlocked",
+      "category": "general",
+      "summary": "A libraries unlocked membership allows customers to enter specific libraries outside of core staffed opening hours.",
+      "what_you_need": [
+        "New technology allows customers with Libraries Unlocked membership to enter the library using their library card outside core staffed opening hours and to use library services independently when staff are not present.",
+        "Apply for a Libraries Unlocked membership Libraries Unlocked is live in Bromsgrove, Droitwich, Evesham, Kidderminster, Malvern, Pershore, Redditch, Rubery, St John's, Stourport and Tenbury Libraries."
+      ],
+      "how_to": [
+        "visit one of the Libraries Unlocked sites during their core staffed hours - please check the opening times using the links below on our website before planning your visit",
+        "complete a brief induction with library staff - they'll guide you through the process and explain the operational procedures"
+      ]
+    },
+    {
+      "title": "Libraries Unlocked Launches Next Week at Redditch Library!",
+      "url": "https://www.worcestershire.gov.uk/news/libraries-unlocked-launches-next-week-redditch-library",
+      "category": "general",
+      "summary": "People in Redditch will soon have more freedom to use their local library at a time to suit them.",
+      "what_you_need": [
+        "To continue enjoying full access to library services, including use of the building during extended hours, customers will need to upgrade their membership by completing a short induction.",
+        "“Providing greater access to libraries gives residents more freedom to use them in ways that suit their lives, and the initiative has already had a fantastic impact in other parts of the county.",
+        "”To arrange an induction, please visit Redditch Library and speak to a member of staff, or call 01905 822722 to make an appointment.",
+        "Customers have described Libraries Unlocked as: “A brilliant idea — it’s enabled us as a family to access the library more,” and “The best thing Worcestershire Libraries have done since the introduction of self-service."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries Unlocked Launches Next Week at Tenbury Library!",
+      "url": "https://www.worcestershire.gov.uk/news/libraries-unlocked-launches-next-week-tenbury-library",
+      "category": "general",
+      "summary": "People in Tenbury will soon have more freedom to use their local library at a time to suit them.",
+      "what_you_need": [
+        "To continue enjoying full access to library services, including use of the building during extended hours, customers will need to upgrade their membership by completing a short induction.",
+        "“This upgrade gives residents more freedom to use the library in a way that suits their lives, and it’s already had a fantastic impact in other parts of the county.",
+        "” To arrange an induction, please visit Tenbury Library and speak to a member of staff, or call 01905 822722 to make an appointment.",
+        "Customers have described Libraries Unlocked as: “A brilliant idea — it’s enabled us as a family to access the library more,” and “The best thing Worcestershire Libraries have done since the introduction of self-service."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries Unlocked is coming soon to Redditch Library!",
+      "url": "https://www.worcestershire.gov.uk/news/libraries-unlocked-coming-soon-redditch-library",
+      "category": "general",
+      "summary": "Libraries Unlocked is a free membership upgrade that allows customers aged 15+ and local community groups to access the library outside staffed hours, from 8am to 8pm, six days a week.",
+      "what_you_need": [
+        "To continue enjoying full access to library services, including use of the building during extended hours, customers will need to upgrade their membership by completing a short induction.",
+        "30pm These sessions are a chance to find out more about how Libraries Unlocked works and to complete a short face-to-face induction with library staff to upgrade your membership.",
+        "“This upgrade gives residents more freedom to use the library in a way that suits their lives, and it’s already had a fantastic impact in other parts of the county."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries Unlocked is coming soon to Tenbury Library!",
+      "url": "https://www.worcestershire.gov.uk/news/libraries-unlocked-coming-soon-tenbury-library",
+      "category": "general",
+      "summary": "Libraries Unlocked is a free membership upgrade that allows customers aged 15+ and local community groups to access the library outside staffed hours, from 8am to 8pm, six days a week.",
+      "what_you_need": [
+        "To continue enjoying full access to library services, including use of the building during extended hours, customers will need to upgrade their membership by completing a short induction.",
+        "“This upgrade gives residents more freedom to use the library in a way that suits their lives, and it’s already had a fantastic impact in other parts of the county."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Library events and activities",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/library-events-and-activities",
+      "category": "general",
+      "summary": "Find the latest information on events and activities taking place in your local library.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Library volunteering provides a new chapter for retiree Paul",
+      "url": "https://www.worcestershire.gov.uk/news/library-volunteering-provides-new-chapter-retiree-paul",
+      "category": "general",
+      "summary": "When Paul retired, he never imagined helping out at The Hive, Worcester would become a highlight of this new chapter.",
+      "what_you_need": [
+        "I encourage anyone considering volunteering to give it a try."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Memories and Me",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/memories-and-me",
+      "category": "general",
+      "summary": "Memory Bags are available to loan for carers and families of individuals living with dementia through the Memories and Me project.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "New library book collection to guide families through pregnancy and early parenthood",
+      "url": "https://www.worcestershire.gov.uk/news/new-library-book-collection-guide-families-through-pregnancy-and-early-parenthood",
+      "category": "general",
+      "summary": "Worcestershire’s libraries are pleased to introduce a new collection by The Reading Agency: 'Reading Well For Families'.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "No Printer? No Problem. Libraries Launch ‘Print Your Way’!",
+      "url": "https://www.worcestershire.gov.uk/news/no-printer-no-problem-libraries-launch-print-your-way",
+      "category": "general",
+      "summary": "Need to print something but don’t have a printer?",
+      "what_you_need": [
+        "” Print Your Way is available to anyone with full library membership.",
+        "If you’re not yet a library member or currently have digital-only membership, you can easily sign up or upgrade by visiting your local library and speaking to a member of staff."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Online library hub",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub",
+      "category": "general",
+      "summary": "Enjoy free eBooks, eAudiobooks, eNewspapers and eMagazines, along with access to Ancestry, Times Digital Archive, Oxford University Press, and more.",
+      "what_you_need": [
+        "Digital library membership Access free eBooks, eAudiobooks, eNewspapers and eMagazines, along with Times Digital Archive and Oxford University Press.",
+        "To gain access to the rest of libraries content, please upgrade to a full membership in library.",
+        "Theory Test Pro If you are learning to drive, you can access Theory Test Pro for FREE with your library membership.",
+        "Related Your library membership Join the library, sign into your account, search the catalogue, renew and reserve books, pay fees and charges and book a computer.",
+        "Join the library Library membership is free for everyone; join digitally now or visit your local library for full membership."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Rooms for hire at your local library – book online today",
+      "url": "https://www.worcestershire.gov.uk/news/rooms-hire-your-local-library-book-online-today",
+      "category": "general",
+      "summary": "Looking for a convenient, affordable venue for your next meeting or event? Your local library has you covered!",
+      "what_you_need": [
+        "For more information and to sign up visit our Libraries Unlocked webpages ."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Spine-tingling events this autumn at your local library",
+      "url": "https://www.worcestershire.gov.uk/news/spine-tingling-events-autumn-your-local-library",
+      "category": "general",
+      "summary": "As the nights grow longer and the shadows stretch deeper, join Worcestershire’s libraries for a series of spine-tingling events!",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Survey launched to help shape library services across the county",
+      "url": "https://www.worcestershire.gov.uk/news/survey-launched-help-shape-library-services-across-county",
+      "category": "general",
+      "summary": "Libraries are not only places to borrow books. They also provide vital community spaces for learning, connecting with others and supporting wellbeing. But what else could they offer?",
+      "what_you_need": [
+        "Responses will help inform how library services are developed over the next two years, ensuring they continue to support residents, families and communities in the ways that matter most."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire Libraries to Host Second ‘Power of Libraries Conference’ for Early Years Professionals",
+      "url": "https://www.worcestershire.gov.uk/news/worcestershire-libraries-host-second-power-libraries-conference-early-years-professionals",
+      "category": "general",
+      "summary": "Worcestershire Libraries Power of Libraries Conference is back for a second year.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire libraries get prepared for emergencies this ‘Save a Life September’",
+      "url": "https://www.worcestershire.gov.uk/news/worcestershire-libraries-get-prepared-emergencies-save-life-september",
+      "category": "general",
+      "summary": "Life-saving trauma kits have been installed in libraries across Worcestershire for use in emergencies.",
+      "what_you_need": [
+        "First aid training is useful, but you don’t have to be a First Aider to use them.",
+        "Anyone can access the kit in an emergency situation."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire library closures announced over Easter holidays",
+      "url": "https://www.worcestershire.gov.uk/news/worcestershire-library-closures-announced-over-easter-holidays",
+      "category": "general",
+      "summary": "All libraries including Libraries Unlocked hours and Jobcentre Plus will not be open on Good Friday 18 April, Easter Sunday 20 April or Easter Monday 21 April.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire’s Free Online Library - Perfect for the Festive Season",
+      "url": "https://www.worcestershire.gov.uk/news/worcestershires-free-online-library-perfect-festive-season",
+      "category": "general",
+      "summary": "This festive season, Worcestershire County Council’s Library Service is helping residents cosy up with a world of free digital content.",
+      "what_you_need": [
+        "Apply for a Digital Library Membership on the dedicated pages of our website.",
+        "You can easily upgrade to full library membership by visiting a library and providing proof of your name and address."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire’s Libraries inspire local primary school teachers",
+      "url": "https://www.worcestershire.gov.uk/news/worcestershires-libraries-inspire-local-primary-school-teachers",
+      "category": "general",
+      "summary": "Worcestershire’s libraries are sparking a love of reading in children, and that message took centre stage at the recent ‘Power of Libraries’ conference.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire’s Library Service at Home is changing lives",
+      "url": "https://www.worcestershire.gov.uk/news/worcestershires-library-service-home-changing-lives",
+      "category": "general",
+      "summary": "For those facing challenges like health or mobility issues, Worcestershire’s Library Service at Home is transforming lives by bringing the library experience directly to your door.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Adult Learning Courses in libraries",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work/adult-learning-courses-libraries",
+      "category": "learning",
+      "summary": "Libraries host a range of Adult Learning courses across Worcestershire.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Book a visit",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learning-outside-classroom/book-visit",
+      "category": "learning",
+      "summary": "Worcestershire Libraries offer a wide range of engaging visits for groups of children and young people in education or pre-school.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Digital Inclusion - Helping You Online",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work/digital-inclusion-helping-you-online",
+      "category": "learning",
+      "summary": "Ensuring local communities have the skills and confidence to access digital information and services and to feel safe online.",
+      "what_you_need": [
+        "Library staff are also on hand to help should you need assistance.",
+        "Anyone seeking support to get started with Learn My Way can simply visit their local library and ask the staff for help with signing up."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Early Years and Reception",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learning-outside-classroom/early-years-and-reception",
+      "category": "learning",
+      "summary": "Libraries develop key literacy and communication skills to prepare children for the classroom.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Job clubs",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work/job-clubs",
+      "category": "learning",
+      "summary": "Job clubs provide practical weekly support for people currently looking for work. This is a free drop-in service, so no appointment is required.",
+      "what_you_need": [
+        "The clubs also provide help and support to use government and local sources of information such as universal job match, national job agencies and websites."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Key Stage 1 and 2 (years 1 to 6)",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learning-outside-classroom/key-stage-1-and-2-years-1-6",
+      "category": "learning",
+      "summary": "Libraries promote a love of reading and learning, inspire curiosity and ambition and encourage socialising, cognitive functioning and the evaluation of ideas.",
+      "what_you_need": [
+        "Little Sprouts A gardening and nature group for families with children aged 4-8 years."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Key Stage 3 and 4 (years 7 to 11)",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learning-outside-classroom/key-stage-3-and-4-years-7-11",
+      "category": "learning",
+      "summary": "Libraries nurture personal growth, enrich the learning journey, promote a healthy approach to study and boost workplace skills and confidence.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Learn, upskill and find work",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work",
+      "category": "learning",
+      "summary": "Promoting learning, getting people online, supporting digital inclusion, and helping people into work.",
+      "what_you_need": [
+        "Digital Inclusion - Helping You Online Ensuring local communities have the skills and confidence to access digital information and services and to feel safe online."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Learning Outside the Classroom",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learning-outside-classroom",
+      "category": "learning",
+      "summary": "Discover the vital role that libraries play supporting children’s and young people’s education from pre-school to final exams.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Online job-seeking support",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work/online-job-seeking-support",
+      "category": "learning",
+      "summary": "Digital resources to assist with finding work and improving skills for the workplace.",
+      "what_you_need": [
+        "Building Better Opportunities project - YMCA Worcestershire - Tailored 1-1 support for anyone 16+ who is unemployed and looking to find work.",
+        "Register your interest in volunteering via BARN and access volunteering opportunities in the local area.",
+        "The Prince's Trust - A youth charity that helps young people aged 11 to 30 get into jobs, education and training."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Sixth form and college library support",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learning-outside-classroom/sixth-form-and-college-library-support",
+      "category": "learning",
+      "summary": "Libraries prepare students for exams, further study and the workplace.",
+      "what_you_need": [
+        "If you would prefer your students to use a footnote system for referencing, we can introduce the Modern Humanities Research Association (MHRA) system instead of Harvard.",
+        "Your students will need digital library membership or a Worcestershire library card to use COBRA and complete the activities for this session."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Study Happy",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work/study-happy",
+      "category": "learning",
+      "summary": "‘Study Happy’, a partnership between Worcestershire Libraries and The University of Worcester, is all about helping students to reach their academic goals while also prioritising their wellbeing.",
+      "what_you_need": [
+        "Study Happy resource list Resources are available to help improve your studying, help you to have a healthy mindset and suggest some interesting ways to relax after a busy studying session."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Volunteering, training and work experience",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/learn-upskill-and-find-work/volunteering-training-and-work-experience",
+      "category": "learning",
+      "summary": "Work experience, volunteering and training placements are available at libraries throughout Worcestershire.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Book a computer",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/book-computer",
+      "category": "membership",
+      "summary": "Computer sessions are available on demand or can be pre-booked.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Emails and updates",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/emails-and-updates",
+      "category": "membership",
+      "summary": "Find out more about email communications, marketing and how to change settings.",
+      "what_you_need": [],
+      "how_to": [
+        "Receive notices only related to your loans, returns, reservations and important service updates.",
+        "Opt to also receive marketing updates on new library services, events and activities.",
+        "Remove all email permissions from your account - this option will stop all emails."
+      ]
+    },
+    {
+      "title": "Join the library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/join-library",
+      "category": "membership",
+      "summary": "Library membership is free for everyone; join digitally now or visit your local library for full membership.",
+      "what_you_need": [
+        "Become a library member The range of different library membership options are described below.",
+        "Digital library membership Worcestershire library members have free access to a wide range of digital resources including eBooks, eAudiobooks, eMagazines and subscription only E-resources, completely free of charge.",
+        "Instant membership gives you access to library computers and Wi-Fi for free and allows you to borrow 2 books.",
+        "All library members who are 15 and over are eligible to upgrade to free Libraries Unlocked membership.",
+        "Libraries Unlocked membership Libraries service behaviour guidelines and byelaws Worcestershire Libraries provides a safe and welcoming space."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Library Service at Home",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/library-service-home",
+      "category": "membership",
+      "summary": "A volunteer run service that helps to ensure that everyone can continue to enjoy reading from the comfort of their own home.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Login to my library account",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/login-my-library-account",
+      "category": "membership",
+      "summary": "Login to your library account to renew your books, reserve books, cancel reservations and change your PIN.",
+      "what_you_need": [
+        "How to login To log into your account: you will need your PIN (personal identification number) in order to renew your books, log into your account or borrow eBooks.",
+        "If you want to sign up for, or no longer want to receive marketing e-mails from Worcestershire Libraries you can subscribe or unsubscribe by changing the marketing preferences in your library account."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Mobile library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/mobile-library",
+      "category": "membership",
+      "summary": "The mobile library visits 160 villages in Worcestershire every four to five weeks. It brings library services to customers who may be unable to travel to a static library.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Pay fees and charges",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/pay-fees-and-charges",
+      "category": "membership",
+      "summary": "Borrowing library books is free, but if you keep the books past their due date, late fees will apply. A full list of fees and charges can be found here.",
+      "what_you_need": [
+        "Replacement library card charges If you have lost your library card, please visit a Worcestershire library and let a member of staff know and they can give you a replacement card."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Printing and photocopying services",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/printing-and-photocopying-services",
+      "category": "membership",
+      "summary": "Worcestershire’s libraries offer convenient, self-service printing and photocopying at all our locations.",
+      "what_you_need": [
+        "Libraries photocopying and printing service is a low-cost, accessible option for everyday printing or photocopying, whether you need a single page or a larger document.",
+        "Print Your Way is available to anyone with full library membership.",
+        "If you’re not yet a library member or you have a digital library membership only, it is easy to sign up for full library membership by visiting your local library and speaking to library staff.",
+        "How to use the Print Your Way service 1.",
+        "Make sure you’re a full library member If you’re not already a full library member, visit a library to sign up for full membership with library staff."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Renew a loan",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/renew-loan",
+      "category": "membership",
+      "summary": "Renew a loan online to extend your loan period.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Reserve your library books",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/reserve-your-library-books",
+      "category": "membership",
+      "summary": "Items can be reserved online via the library catalogue.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Your library membership",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership",
+      "category": "membership",
+      "summary": "Join the library, sign into your account, search the catalogue, renew and reserve books, pay fees and charges and book a computer.",
+      "what_you_need": [
+        "Emergency Road Closures in Worcestershire Your library membership Your library membership Join the library, sign into your account, search the catalogue, renew and reserve books, pay fees and charges and book a computer.",
+        "Join the library Library membership is free for everyone, join digitally now or visit your local library for full membership.",
+        "Login to your account Login to your library account to renew or reserve books, update your account details or sign up to receive email updates on library events and activities.",
+        "The strategy shapes how library services are evolving to meet the changing needs of residents over the next five years."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "'Read & Unwind Time' at your local library",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/read-unwind-time-your-local-library",
+      "category": "reading",
+      "summary": "A time to set aside for the pleasure of reading.",
+      "what_you_need": [
+        "It’s easy to join in.",
+        "At Libraries Unlocked locations you will need to have upgraded to Libraries Unlocked membership to enjoy Read and Unwind Time outside core staffing hours.",
+        "If you haven’t already done so, please arrange a Libraries Unlocked induction and free membership upgrade with local library staff before attending your first Read & Unwind Time."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Ask for a Book",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/ask-book",
+      "category": "reading",
+      "summary": "Ask for a Book is new online personalised book recommendation service offering reading suggestions which can be collected from the reader’s local library.",
+      "what_you_need": [
+        "Any adult can sign-up to join the service, and request a curated selection of up to three books to be chosen specifically for them.",
+        "Register on the Ask for a Book website to discover what recommendations we have in store for you."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Read and discover",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover",
+      "category": "reading",
+      "summary": "Develop a love of reading, imagination and discovery and improving literacy through seasonal challenges, themed collections and competitions.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Reading well",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/reading-well",
+      "category": "reading",
+      "summary": "Reading Well is a dedicated collection of books that provides information and support for managing mental health and wellbeing for children, young people and adults.",
+      "what_you_need": [
+        "Reading Well books are available to borrow from all Worcestershire libraries."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Worcestershire Reading Groups Recommend",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/worcestershire-reading-groups-recommend",
+      "category": "reading",
+      "summary": "Recommended Reads by Worcestershire book groups.",
+      "what_you_need": [
+        "All titles are widely available through libraries across Worcestershire, making it easy for groups to access and enjoy them together."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Aged 13–24? Volunteer with Worcestershire’s Libraries this summer",
+      "url": "https://www.worcestershire.gov.uk/news/aged-13-24-volunteer-worcestershires-libraries-summer",
+      "category": "seasonal",
+      "summary": "Libraries in Worcestershire are on the lookout for enthusiastic young people aged 13 to 24 to volunteer during this year’s Summer Reading Challenge, as part of celebrations for the National Year of Reading 2026",
+      "what_you_need": [
+        "To sign up online, please visit the Summer Reading Challenge webpage."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Celebrate World Book Day at your local library",
+      "url": "https://www.worcestershire.gov.uk/news/celebrate-world-book-day-your-local-library",
+      "category": "seasonal",
+      "summary": "Libraries across Worcestershire are inviting families to celebrate the magic of reading this World Book Day, as part of the National Year of Reading.",
+      "what_you_need": [
+        "For children aged 4 to 9 years."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Free family fun this summer with Worcestershire Libraries & National Trust Croome",
+      "url": "https://www.worcestershire.gov.uk/news/free-family-fun-summer-worcestershire-libraries-national-trust-croome",
+      "category": "seasonal",
+      "summary": "This summer, Worcestershire’s libraries and National Trust Croome are teaming up to offer families an unforgettable experience of reading, creativity, and outdoor play, with an exciting programme of Summer Reading Challenge events and the National Trust’s Summer of Play.",
+      "what_you_need": [
+        "All Summer Reading Challenge sessions and events are free to attend."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Get involved with the National Year of Reading 2026",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/get-involved-national-year-reading-2026",
+      "category": "seasonal",
+      "summary": "Through stories, events and welcoming spaces, Worcestershire libraries help people of all ages discover, enjoy and share a love of books.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Get school ready with Worcestershire's libraries",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/get-school-ready-worcestershires-libraries",
+      "category": "seasonal",
+      "summary": "Is your little one starting school in September? Are you wondering if they are ready? Worcestershire's libraries is here to support the journey!",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Improve Your Digital Skills at Worcestershire Libraries This Summer!",
+      "url": "https://www.worcestershire.gov.uk/news/improve-your-digital-skills-worcestershire-libraries-summer",
+      "category": "seasonal",
+      "summary": "Worcestershire County Council’s Library service is excited to announce new Learn My Way introduction sessions and support for people of all ages who are looking to improve their digital skills.",
+      "what_you_need": [
+        "We are committed to ensuring our local communities have the skills and confidence to access digital information and services safely.",
+        "Anyone seeking support to get started with Learn My Way can simply visit their local library and ask the staff for help with signing up."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries ‘Go All In’ for the National Year of Reading 2026",
+      "url": "https://www.worcestershire.gov.uk/news/libraries-go-all-national-year-reading-2026",
+      "category": "seasonal",
+      "summary": "Libraries bring people together. Through stories, events and welcoming spaces, local libraries support people of all ages to discover, enjoy and share a love of reading.",
+      "what_you_need": [
+        "In addition, libraries are one of the few places you can visit without any cost, as membership is FREE for everyone who lives in Worcestershire."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Library Christmas & New Year Opening Times",
+      "url": "https://www.worcestershire.gov.uk/news/library-christmas-new-year-opening-times",
+      "category": "seasonal",
+      "summary": "Opening Times for Worcestershire Libraries across the festive period.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Library Christmas and New Year opening times",
+      "url": "https://www.worcestershire.gov.uk/news/library-christmas-and-new-year-opening-times",
+      "category": "seasonal",
+      "summary": "Christmas and New Year Opening Times have been shared by Worcestershire Libraries.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Summer Reading Challenge",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/summer-reading-challenge",
+      "category": "seasonal",
+      "summary": "The Summer Reading Challenge is the UK’s biggest free reading for pleasure programme for children.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Young Poet Laureate",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/read-and-discover/young-poet-laureate",
+      "category": "seasonal",
+      "summary": "Worcestershire Young Poet Laureate is run jointly by Severn Arts and Worcestershire Libraries, celebrating the talented voices of young local poets.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Connect with others and boost your wellbeing",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/connect-others-and-boost-your-wellbeing",
+      "category": "wellbeing",
+      "summary": "Improve health and wellbeing through opportunities to connect, inform and build confidence and resources that support self-help.",
+      "what_you_need": [
+        "Readers Groups Informal groups of readers, who can connect socially while discussing books that have been borrowed from the Library.",
+        "Signposting Library staff are experts in supporting customer to access a range of information, resources and to source additional services that might be of help to them."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Libraries offer a free warm space to its residents this winter",
+      "url": "https://www.worcestershire.gov.uk/news/libraries-offer-free-warm-space-its-residents-winter",
+      "category": "wellbeing",
+      "summary": "As winter sets in, libraries across Worcestershire are here to provide everyone with a free, warm, and welcoming space.",
+      "what_you_need": [
+        "Everyone is welcome to use the library as a warm space, and the friendly, knowledgeable staff are always on hand to ensure visitors feel comfortable and well-supported."
+      ],
+      "how_to": []
+    },
+    {
+      "title": "Stay warm and connected at your local library this winter",
+      "url": "https://www.worcestershire.gov.uk/news/stay-warm-and-connected-your-local-library-winter",
+      "category": "wellbeing",
+      "summary": "As the colder months return, libraries across Worcestershire offer free, warm, and welcoming spaces for everyone in the community. Whether you’re seeking a quiet place to read or study an opportunity to take part in a library group or activity, or support with digital skills, job searching or setting up a business, your local library has something for everyone.",
+      "what_you_need": [],
+      "how_to": []
+    },
+    {
+      "title": "Warm welcome",
+      "url": "https://www.worcestershire.gov.uk/council-services/libraries/warm-welcome",
+      "category": "wellbeing",
+      "summary": "Worcestershire Libraries are part of the Warm Welcome Network which lists venues that can provide a warm welcome for those struggling to heat their homes this winter.",
+      "what_you_need": [
+        "Libraries offer a wide range of free services to allow Worcestershire residents to stay connected: Welcoming and warm spaces to work, study, read and research or meet with friends.",
+        "Library membership is free and library members can borrow books download e-books, audiobooks, e-magazines, e-newspapers and search online reference sources for free.",
+        "Worcestershire’s 21 public libraries provide free access to computers, the internet and Wi-Fi and support from Digital Champions to develop IT skills and gain confidence to access online services."
+      ],
+      "how_to": []
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+name: Sync to Hugging Face Space
+
+# Pushes this repo's contents to the Hugging Face Space on every commit to main.
+# Requires one GitHub secret:  HF_TOKEN  (a write-scoped token with access to the
+# build-small-hackathon org).  Add it with:  gh secret set HF_TOKEN
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # lets you trigger a sync manually from the Actions tab
+
+concurrency:
+  group: sync-hf
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install --upgrade "huggingface_hub>=0.27"
+
+      - name: Upload to the Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+
+          REPO = "build-small-hackathon/wpl-discovery"
+          api = HfApi(token=os.environ["HF_TOKEN"])
+
+          # Create the Space if it doesn't exist yet (no-op if it does).
+          api.create_repo(repo_id=REPO, repo_type="space",
+                          space_sdk="gradio", exist_ok=True)
+
+          api.upload_folder(
+              repo_id=REPO,
+              repo_type="space",
+              folder_path=".",
+              commit_message="Sync from GitHub",
+              ignore_patterns=[".git*", ".github*", "**/__pycache__/**",
+                               "*.pyc", "traces.jsonl", ".DS_Store"],
+          )
+          print("✓ Synced to", REPO)
+          PY

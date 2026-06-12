@@ -528,7 +528,8 @@ footer { visibility:hidden; }
 
 def build_demo():
     with gr.Blocks(title="Worcestershire Libraries — Live Assistant") as demo:
-        gr.HTML("<div id='hero'><span class='live'>● live data</span>"
+        gr.HTML(f"<style>{CSS}</style>"
+                "<div id='hero'><span class='live'>● live data</span>"
                 "<h1>Worcestershire Libraries — Live Assistant</h1>"
                 "<p>Books, mobile library, events, printing and what's free online — "
                 "answered live from the council site & catalogue, with exactly what "
@@ -602,6 +603,4 @@ def build_demo():
 
 
 if __name__ == "__main__":
-    build_demo().queue().launch(
-        server_name="0.0.0.0", server_port=7860,
-        css=CSS, theme=gr.themes.Soft(primary_hue="teal"))
+    build_demo().queue().launch(server_name="0.0.0.0", server_port=7860)

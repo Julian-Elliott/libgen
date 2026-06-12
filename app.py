@@ -195,7 +195,7 @@ def render_catalogue(r):
         link = f" — [details]({it['detail_url']})" if it["detail_url"] else ""
         out.append(f"- {it['icon']} **{it['title']}** — {meta}{tag}{link}")
     out.append(f"\n✅ **To borrow:** {ls.ELIGIBILITY['borrow_physical']} "
-               f"eBooks/audio need free digital membership.")
+               f"eBooks/audio need free [digital membership]({ls.JOIN_URL}).")
     out.append(f"🔎 [Full results]({r['search_url']})")
     return "\n".join(out)
 
@@ -207,7 +207,8 @@ def render_whats_new(r):
     for it in r["items"]:
         meta = " · ".join(b for b in (it["author"], it["year"]) if b)
         out.append(f"- {it['icon']} **{it['title']}** — {meta}")
-    out.append(f"\n🔎 [See more]({r['search_url']})")
+    out.append(f"\n✅ **To borrow:** {ls.ELIGIBILITY['borrow_physical']}")
+    out.append(f"🔎 [See more]({r['search_url']})")
     return "\n".join(out)
 
 
@@ -225,7 +226,9 @@ def render_find_library(r):
            f"{r['address']}\n",
            f"**Today ({r['today']}):** {r['today_staffed'] or 'see below'}"]
     if r.get("unlocked_today"):
-        out.append(f"**Libraries Unlocked self-service:** {r['unlocked_today']}")
+        out.append(f"**Libraries Unlocked self-service:** {r['unlocked_today']} — "
+                   f"{ls.ELIGIBILITY['unlocked']} "
+                   f"[How to get access]({ls.UNLOCKED_URL})")
     if r.get("facilities"):
         out.append(f"\n**Facilities:** {', '.join(r['facilities'])}")
     out.append(f"\n✅ {ls.ELIGIBILITY['visit']}")
@@ -261,7 +264,8 @@ def render_events(r):
 def render_online_hub(r):
     out = ["💻 **Free online — with your library card:**\n"]
     for it in r["items"][:5]:
-        out.append(f"**{it['name']}** — {it['summary']}")
+        name = f"[{it['name']}]({it['url']})" if it.get("url") else it["name"]
+        out.append(f"**{name}** — {it['summary']}")
         if it.get("what_you_need"):
             out.append(f"  - ✅ **What you need:** {it['what_you_need']}")
         if it.get("access"):
@@ -278,7 +282,8 @@ def render_online_hub(r):
 def render_unlocked(r):
     out = ["🔓 **Libraries Unlocked** — use the library 8am–8pm, Mon–Sat, even "
            "when it's unstaffed.",
-           f"\n✅ **What you need:** {r['what_you_need']}"]
+           f"\n✅ **What you need:** {r['what_you_need']} "
+           f"Not a member yet? [Join online]({ls.JOIN_URL}) first."]
     if r.get("unlocks"):
         out.append(f"\n{r['unlocks']}")
     else:
@@ -294,7 +299,9 @@ def render_unlocked(r):
 def render_membership(r):
     out = ["🪪 **What you need to sign up:**\n"]
     for tier in r["tiers"]:
-        out.append(f"**{tier['tier']}** — {tier['what_you_need']}")
+        name = (f"[{tier['tier']}]({tier['url']})" if tier.get("url")
+                else tier["tier"])
+        out.append(f"**{name}** — {tier['what_you_need']}")
         out.append(f"  - _Unlocks:_ {tier['unlocks']}\n")
     if r.get("need"):
         out.append(f"➡️ For your question: **{r['need']}**")
@@ -329,7 +336,11 @@ def render_graph(r):
         out = [f"🧭 Libraries matching **{crit}**:\n"]
         for b in r["branches"]:
             lu = " · open to 8pm" if b["libraries_unlocked"] else ""
-            out.append(f"- **{b['name']}**{lu} — {', '.join(b['facilities'])}")
+            name = f"[{b['name']}]({b['url']})" if b.get("url") else b["name"]
+            addr = f" — {b['address']}" if b.get("address") else ""
+            out.append(f"- **{name}**{lu}{addr} — {', '.join(b['facilities'])}")
+        out.append("\n💬 Ask me _\"is it open now?\"_ about any of these for "
+                   "live hours.")
         return "\n".join(out)
     if r["kind"] == "entity":
         if not r["entities"]:

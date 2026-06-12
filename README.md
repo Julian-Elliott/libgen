@@ -36,6 +36,9 @@ back from the council's own systems, and explains it:
 Every reply carries a **“checked live just now” footer** with the tool used and a
 link back to the official page.
 
+Each answer is designed around a customer journey — what the person is trying
+to do and the next action the reply must hand them. See **[JOURNEYS.md](JOURNEYS.md)**.
+
 ## The honest small-model fit
 
 The model never invents library facts. The intelligence lives in the **live

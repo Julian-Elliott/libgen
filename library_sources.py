@@ -38,6 +38,8 @@ CATALOGUE_SEARCH = (
 MOBILE_INDEX = f"{GOV}/council-services/libraries/your-library-membership/mobile-library"
 EVENTS_URL = f"{GOV}/council-services/libraries/library-events-and-activities"
 PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-services"
+UNLOCKED_URL = f"{GOV}/council-services/libraries/libraries-unlocked"
+JOIN_URL = f"{GOV}/council-services/libraries/your-library-membership/join-library"
 ONLINE_HUB = f"{GOV}/council-services/libraries/online-library-hub"
 
 UA = (
@@ -331,11 +333,12 @@ PRINT_YOUR_WAY = {
     ),
     "device_requirements": "Android 12+, iOS 16+, macOS 12 (Monterey)+, or Windows 11.",
     "steps": [
-        "Be a full library member (free to join with a library card).",
+        f"Be a full library member — free, [join online]({JOIN_URL}) or in any library.",
         "Top up your PaperCut print account at a self-service kiosk in any "
         "Worcestershire library (some kiosks are cash-only, so check first).",
         "One-time setup: download and follow the Print Your Way guide for your "
-        "device (Android / iOS / macOS / Windows).",
+        f"device — Android, iOS, macOS and Windows guides are on the "
+        f"[printing page]({PRINTING_URL}).",
         "Open your document, choose the mono or colour print queue, set your "
         "options and send — authenticate with your library number and PIN.",
         "Release the job at any public printer in any Worcestershire library "
@@ -379,8 +382,10 @@ def kb() -> dict:
 
 # "What you need to sign up" — the eligibility that varies per service.
 ELIGIBILITY = {
-    "borrow_physical": "Free **full membership** (join online + collect, or in any library).",
-    "borrow_digital": "Free **digital membership** — instant, just a Worcestershire postcode.",
+    "borrow_physical": f"Free **full membership** ([join online]({JOIN_URL}) + collect, "
+                       "or in any library).",
+    "borrow_digital": f"Free **digital membership** — instant, just a Worcestershire "
+                      f"postcode ([sign up]({JOIN_URL})).",
     "printing": "Full membership + top up a PaperCut account at a library kiosk.",
     "mobile": "Free full membership — you can join on the van.",
     "unlocked": "Full member, aged 15+, after a short one-off staff induction.",
@@ -471,7 +476,7 @@ def libraries_unlocked(branch: str | None = None) -> dict:
            "hours": "8:00am to 8:00pm, Monday to Saturday",
            "what_you_need": tier.get("what_you_need", ELIGIBILITY["unlocked"]),
            "unlocks": tier.get("unlocks", ""),
-           "page_url": tier.get("url", f"{GOV}/council-services/libraries/libraries-unlocked"),
+           "page_url": tier.get("url", UNLOCKED_URL),
            "checked": _now()}
     if branch:
         b = branch.strip().lower()
@@ -490,7 +495,9 @@ CURATED_HUB = {
         "what_you_need": "Worcestershire library card number + PIN (free full membership, residents). No separate PressReader account needed.",
         "at_home": True,
         "access": [
-            "Get the PressReader app (or use pressreader.com).",
+            "Get the PressReader app — [iPhone/iPad](https://apps.apple.com/app/pressreader/id313904711) "
+            "or [Android](https://play.google.com/store/apps/details?id=com.newspaperdirect.pressreader.android) — "
+            "or read in your browser at [pressreader.com](https://www.pressreader.com).",
             "Tap 'Libraries & Groups' and search/select 'Worcestershire'.",
             "Sign in with your library card number + PIN.",
             "At home you get a 30-day pass (re-confirm monthly); on library Wi-Fi it's 7 days.",
@@ -504,7 +511,8 @@ CURATED_HUB = {
         "what_you_need": "Library card number + PIN; choose 'Worcestershire' in the app.",
         "at_home": True,
         "access": [
-            "Download the BorrowBox app.",
+            "Download the BorrowBox app — [iPhone/iPad](https://apps.apple.com/app/borrowbox-library/id562843562) "
+            "or [Android](https://play.google.com/store/apps/details?id=com.bolindadigital.BorrowBoxLibrary).",
             "Select 'Worcestershire' as your library service.",
             "Sign in with your card number + PIN.",
         ],
@@ -648,7 +656,7 @@ def online_hub(topic: str | None = None) -> dict:
 def membership_help(service: str | None = None) -> dict:
     """What you need to sign up — the cross-service membership matrix."""
     out = {"tiers": kb().get("membership_tiers", []),
-           "page_url": f"{GOV}/council-services/libraries/your-library-membership/join-library",
+           "page_url": JOIN_URL,
            "checked": _now()}
     if service:
         s = service.lower()

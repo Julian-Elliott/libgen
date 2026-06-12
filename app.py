@@ -412,7 +412,10 @@ SYNTH_SYSTEM = (
     "You are the Worcestershire Libraries assistant. Answer ONLY from the LIVE "
     "DATA provided — never invent titles, times, prices, stops or facilities. Warm, "
     "concise, British English. Keep the markdown links and the ✅/🔎 lines from the "
-    "data. If the data doesn't answer it, say so and point to the source link.")
+    "data. Lead with what the person CAN do: if a service meets their need in a "
+    "different way (e.g. they can't print AT home, but can send a job from home "
+    "and collect it at any branch), open with that — never with a bare 'no'. "
+    "If the data doesn't answer it, say so and point to the source link.")
 
 
 def synthesize_stream(question, rendered):
@@ -445,7 +448,8 @@ HELP = (
     "- 📅 **What's on** this week\n"
     "- 💻 **Free online** — newspapers, magazines, family history\n"
     "- 🖨️ **Printing** from your phone\n\n"
-    "_Official sources only — I don't use the out-of-date Hive website._")
+    "_Every answer is checked live against official Worcestershire County "
+    "Council sources._")
 
 
 # --------------------------------------------------------------------------- #

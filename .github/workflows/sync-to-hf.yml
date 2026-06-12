@@ -47,6 +47,10 @@ jobs:
               commit_message="Sync from GitHub",
               ignore_patterns=[".git*", ".github*", "**/__pycache__/**",
                                "*.pyc", "traces.jsonl", ".DS_Store"],
+              # Mirror: remove stale Python/cache left on the Space that aren't
+              # in this repo anymore (e.g. old v1 files). Keeps docs/json/html.
+              delete_patterns=["*.py", "*.pyc", "__pycache__/**",
+                               "**/__pycache__/**"],
           )
           print("✓ Synced to", REPO)
           PY

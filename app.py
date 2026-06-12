@@ -225,7 +225,9 @@ def render_find_library(r):
            f"{r['address']}\n",
            f"**Today ({r['today']}):** {r['today_staffed'] or 'see below'}"]
     if r.get("unlocked_today"):
-        out.append(f"**Libraries Unlocked self-service:** {r['unlocked_today']}")
+        out.append(f"**Libraries Unlocked self-service:** {r['unlocked_today']} — "
+                   f"{ls.ELIGIBILITY['unlocked']} "
+                   f"[How to get access]({ls.UNLOCKED_URL})")
     if r.get("facilities"):
         out.append(f"\n**Facilities:** {', '.join(r['facilities'])}")
     out.append(f"\n✅ {ls.ELIGIBILITY['visit']}")

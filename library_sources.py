@@ -38,6 +38,7 @@ CATALOGUE_SEARCH = (
 MOBILE_INDEX = f"{GOV}/council-services/libraries/your-library-membership/mobile-library"
 EVENTS_URL = f"{GOV}/council-services/libraries/library-events-and-activities"
 PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-services"
+UNLOCKED_URL = f"{GOV}/council-services/libraries/libraries-unlocked"
 ONLINE_HUB = f"{GOV}/council-services/libraries/online-library-hub"
 
 UA = (
@@ -471,7 +472,7 @@ def libraries_unlocked(branch: str | None = None) -> dict:
            "hours": "8:00am to 8:00pm, Monday to Saturday",
            "what_you_need": tier.get("what_you_need", ELIGIBILITY["unlocked"]),
            "unlocks": tier.get("unlocks", ""),
-           "page_url": tier.get("url", f"{GOV}/council-services/libraries/libraries-unlocked"),
+           "page_url": tier.get("url", UNLOCKED_URL),
            "checked": _now()}
     if branch:
         b = branch.strip().lower()

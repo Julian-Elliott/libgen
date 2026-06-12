@@ -99,13 +99,37 @@ ROUTER_SYSTEM = (
     "You route a Worcestershire Libraries question to exactly one tool.\nTools:\n"
     + "\n".join(f"- {n}: {t['desc']}" for n, t in TOOLS.items())
     + "\n- none: greeting / off-topic / general 'what can you do'.\n\n"
+    "If conversation context is provided, resolve references like 'there', 'it' "
+    "or 'that one' from it (e.g. 'what's on there?' after a Malvern answer -> "
+    "library_events with Malvern).\n"
     "Reply with ONLY JSON: {\"tool\": \"<name>\", \"args\": {...}}. No prose."
 )
+
+
+def _content_text(content):
+    # Gradio 6 Chatbot content can be a list of blocks rather than a string.
+    if isinstance(content, list):
+        return " ".join(b.get("text", "") for b in content
+                        if isinstance(b, dict)).strip()
+    return content or ""
+
+
+def _history_text(history, limit=4):
+    lines = []
+    for m in (history or [])[-limit:]:
+        c = _content_text(m.get("content"))
+        if c:
+            lines.append(f"{m.get('role', 'user')}: {c[:200]}")
+    return "\n".join(lines)
 
 
 # --------------------------------------------------------------------------- #
 # Routing — LLM first, deterministic keyword fallback always available
 # --------------------------------------------------------------------------- #
+
+_QWORDS = {"what", "whats", "when", "where", "which", "who", "how", "is", "are",
+           "do", "does", "can", "tell", "any", "the", "this", "a", "i", "my"}
+
 
 def keyword_route(q: str) -> tuple[str, dict]:
     t = q.lower()
@@ -139,7 +163,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "membership_help", {"service": q}
     if re.search(r"\b(event|events|what'?s on|whats on|activit|class|club|session|"
                  r"group|happening|this week)\b", t):
-        return "library_events", {"query": ""}
+        m = [w for w in re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
+             if w.lower() not in _QWORDS]
+        return "library_events", {"query": (m[-1] if m else "")}
     if re.search(r"\b(new|newest|latest|recommend|hot take|just in|good read|"
                  r"suggestion)\b", t):
         return "whats_new", {"genre": re.sub(r"\b(new|newest|latest|recommend|any|"
@@ -155,12 +181,16 @@ def keyword_route(q: str) -> tuple[str, dict]:
     return "none", {}
 
 
-def route(q: str) -> tuple[str, dict, str, int]:
+def route(q: str, history=None) -> tuple[str, dict, str, int]:
     t0 = time.time()
     if HF_TOKEN:
         try:
+            user = q
+            ctx = _history_text(history)
+            if ctx:
+                user = f"Conversation so far:\n{ctx}\n\nRoute this latest question: {q}"
             out = llm([{"role": "system", "content": ROUTER_SYSTEM},
-                       {"role": "user", "content": q}],
+                       {"role": "user", "content": user}],
                       max_tokens=120, temperature=0.0)
             m = re.search(r"\{.*\}", out.choices[0].message.content, re.S)
             if m:
@@ -391,11 +421,11 @@ def value_receipt(tool, raw):
 # (EAST: Easy=chips, Attractive=value, Social/Timely=nudge)
 NUDGES = {
     "search_catalogue": ("💡 No time to visit? Many titles are free on **BorrowBox** tonight.",
-                         ["Is it on BorrowBox?", "Reserve & collect — how?", "Hot takes on new books"]),
+                         ["Is {title} on BorrowBox?", "Reserve & collect — how?", "Hot takes on new books"]),
     "whats_new": ("💡 Reserve it free and collect at your branch.",
-                  ["More like this", "Is it an eBook?", "What's on this week?"]),
+                  ["More like this", "Is {title} an eBook?", "What's on this week?"]),
     "find_library": ("💡 Want in before/after staffed hours? **Libraries Unlocked** = 8am–8pm.",
-                     ["Tell me about Libraries Unlocked", "What's on there?", "How do I join?"]),
+                     ["Tell me about Libraries Unlocked", "What's on at {place}?", "How do I join?"]),
     "mobile_library": ("💡 Housebound? The **Home Library Service** brings books to your door.",
                        ["How do I join?", "What's on this week?", "Find my nearest library"]),
     "library_events": ("💡 Most events are free — just turn up.",
@@ -474,7 +504,7 @@ def respond(message, history):
         return
 
     tr = Trace(message, MODEL_ID)
-    tool, args, how, rms = route(message)
+    tool, args, how, rms = route(message, history)
     tr.set_route(tool, args, how, rms)
 
     if tool == "none":
@@ -504,6 +534,22 @@ def respond(message, history):
     # behaviour-change extras + provenance + open trace
     value = value_receipt(tool, raw)
     nudge, chips = NUDGES.get(tool, ("", []))
+    # Chips carry concrete names, not pronouns, so the follow-up routes
+    # correctly even in no-LLM mode. A chip whose slot we can't fill is dropped.
+    slots = {}
+    if raw.get("name"):
+        slots["place"] = re.sub(r"\s+Library$", "", raw["name"])
+    if raw.get("items"):
+        t = (raw["items"][0].get("title") or "").strip()
+        if t:
+            slots["title"] = t if len(t) <= 30 else t[:29] + "…"
+
+    def _fill(c):
+        try:
+            return c.format(**slots)
+        except (KeyError, IndexError):
+            return None
+    chips = [c for c in map(_fill, chips) if c]
     checked = raw.get("checked", "")
     footer = (f"\n\n<sub>🔎 Checked **live**"
               + (f" · {checked}" if checked else "")
@@ -590,19 +636,11 @@ def build_demo():
         def chip_turn(label, hist):
             return "", (hist or []) + [{"role": "user", "content": label}], *hide3()
 
-        def msg_text(content):
-            # Gradio 6 Chatbot returns content as a list of blocks
-            # ([{"text": ..., "type": "text"}]) rather than a plain string.
-            if isinstance(content, list):
-                return " ".join(b.get("text", "") for b in content
-                                if isinstance(b, dict)).strip()
-            return content or ""
-
         def bot_turn(hist):
             if not hist or hist[-1]["role"] != "user":
                 yield hist, *hide3()
                 return
-            msg = msg_text(hist[-1]["content"])
+            msg = _content_text(hist[-1]["content"])
             hist = hist + [{"role": "assistant", "content": ""}]
             final_chips = []
             for text, ch in respond(msg, hist[:-1]):

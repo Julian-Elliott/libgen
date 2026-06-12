@@ -382,8 +382,10 @@ def kb() -> dict:
 
 # "What you need to sign up" — the eligibility that varies per service.
 ELIGIBILITY = {
-    "borrow_physical": "Free **full membership** (join online + collect, or in any library).",
-    "borrow_digital": "Free **digital membership** — instant, just a Worcestershire postcode.",
+    "borrow_physical": f"Free **full membership** ([join online]({JOIN_URL}) + collect, "
+                       "or in any library).",
+    "borrow_digital": f"Free **digital membership** — instant, just a Worcestershire "
+                      f"postcode ([sign up]({JOIN_URL})).",
     "printing": "Full membership + top up a PaperCut account at a library kiosk.",
     "mobile": "Free full membership — you can join on the van.",
     "unlocked": "Full member, aged 15+, after a short one-off staff induction.",

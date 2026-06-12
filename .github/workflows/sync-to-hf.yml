@@ -53,4 +53,13 @@ jobs:
                                "**/__pycache__/**"],
           )
           print("✓ Synced to", REPO)
+
+          # Uploading alone doesn't guarantee a fresh boot: a Space that is
+          # paused or stuck in a build/runtime error keeps serving the old
+          # container. Log the stage for diagnosis, then force a full
+          # rebuild so the new code actually goes live.
+          runtime = api.get_space_runtime(REPO)
+          print("Space stage before restart:", runtime.stage)
+          api.restart_space(REPO, factory_reboot=True)
+          print("✓ Requested factory reboot of", REPO)
           PY

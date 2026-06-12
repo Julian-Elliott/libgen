@@ -527,15 +527,14 @@ footer { visibility:hidden; }
 
 
 def build_demo():
-    with gr.Blocks(css=CSS, title="Worcestershire Libraries — Live Assistant",
-                   theme=gr.themes.Soft(primary_hue="teal")) as demo:
+    with gr.Blocks(title="Worcestershire Libraries — Live Assistant") as demo:
         gr.HTML("<div id='hero'><span class='live'>● live data</span>"
                 "<h1>Worcestershire Libraries — Live Assistant</h1>"
                 "<p>Books, mobile library, events, printing and what's free online — "
                 "answered live from the council site & catalogue, with exactly what "
                 "you need to sign up.</p></div>")
 
-        chat = gr.Chatbot(type="messages", height=460, show_label=False,
+        chat = gr.Chatbot(height=460, show_label=False,
                           placeholder="📚 Ask me anything about your local library…",
                           elem_classes=["prose"])
         with gr.Row():
@@ -603,4 +602,6 @@ def build_demo():
 
 
 if __name__ == "__main__":
-    build_demo().queue().launch(server_name="0.0.0.0", server_port=7860)
+    build_demo().queue().launch(
+        server_name="0.0.0.0", server_port=7860,
+        css=CSS, theme=gr.themes.Soft(primary_hue="teal"))

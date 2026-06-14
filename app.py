@@ -214,6 +214,28 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"suggest (me )?a book|what should i read|choose (me )?a book|"
                  r"pick (me )?a book|recommend (me )?a book|reading suggestion)\b", t):
         return "account_and_loans", {"query": "ask for a book recommendation"}
+    # Room hire at council libraries (non-Hive) — check before the Hive block.
+    # Guard with feat_hits < 2 so "meeting room + parking" still goes to graph_search.
+    if (re.search(r"\bhire (a |the )?(meeting )?(room|space)|"
+                  r"\b(meeting room|room hire|hire a space|rent a room)\b|"
+                  r"(room|space) (for )?hire", t)
+            and not re.search(r"\bhive\b", t)
+            and feat_hits < 2):
+        return "account_and_loans", {"query": "room hire meeting room"}
+    # Study spaces (non-Hive) — route to graph_search to match branches by facility
+    if (re.search(r"\b(study (space|room|area)|quiet (space|area|room)|"
+                  r"where (can|to) .{0,10}study|need (a )?study|"
+                  r"good (place|spot) to study)\b", t)
+            and not re.search(r"\bhive\b", t)):
+        return "graph_search", {"query": q}
+    # Computer access — guard with feat_hits < 2 so multi-feature queries reach graph_search
+    if (re.search(r"\b(book|use|access|reserve|get) .{0,20}computer\b|"
+                  r"\bpublic computers?\b|\bbook a computer\b|"
+                  r"\binternet access\b|"
+                  r"\b(do|are there|have you got) .{0,20}computers?\b|"
+                  r"\bcomputer (at|in) (the |a )?library\b", t)
+            and feat_hits < 2):
+        return "account_and_loans", {"query": "book a computer"}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
                  r"worcester city librar|hire (a |the )?(room|space)|"
@@ -246,7 +268,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|"
-                         r"theory test|bfi|cobra|digital library|online (library )?hub)\b", t)
+                         r"theory test|bfi|cobra|digital library|online (library )?hub|"
+                         r"family (history|tree)|genealog(y|ical)?|the times archive|"
+                         r"patents?|national biography)\b", t)
     media = re.search(r"\b(ebooks?|e-books?|audiobooks?|emagazines?)\b", t)
     online_ctx = re.search(r"\b(online|free|digital|from home|at home|on my phone|"
                            r"app|stream(ing)?|download)\b", t)
@@ -627,6 +651,30 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Ask for a Book]({ab['url']})")
         return "\n".join(out)
 
+    if focus == "room_hire" and r.get("room_hire"):
+        rh = r["room_hire"]
+        out += ["🏢 **Hire a library meeting room:**\n",
+                rh["summary"],
+                f"\n✅ **What you need:** {rh['what_you_need']}\n"]
+        for i, step in enumerate(rh["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if rh.get("also_see"):
+            out.append(f"\n💡 _{rh['also_see']}_")
+        out.append(f"\n🔎 [Hire a library meeting room]({rh['url']})")
+        return "\n".join(out)
+
+    if focus == "computer" and r.get("computer_access"):
+        ca = r["computer_access"]
+        out += ["🖥️ **Public computers — free for library members:**\n",
+                ca["summary"],
+                f"\n✅ **What you need:** {ca['what_you_need']}\n"]
+        for i, step in enumerate(ca["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if ca.get("also_see"):
+            out.append(f"\n💡 _{ca['also_see']}_")
+        out.append(f"\n🔎 [Book a computer]({ca['url']})")
+        return "\n".join(out)
+
     if focus == "renewals":
         ren = r["renewals"]
         out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
@@ -737,8 +785,8 @@ NUDGES = {
         "💡 Renewing is quickest online — no queue, no trip to the library.",
         ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
 }
-HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
-              "What's on this week?", "How do I print from my phone?"]
+HELP_CHIPS = ["How do I get Wolf Hall?", "Can I read newspapers free?",
+              "How do I renew my books?", "What's at The Hive?"]
 
 
 # --------------------------------------------------------------------------- #
@@ -792,7 +840,8 @@ HELP = (
     "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
     "- 📅 **What's on** this week\n"
     "- 💻 **Free online** — newspapers, magazines, eBooks, family history, films\n"
-    "- 🖨️ **Printing** from your phone\n"
+    "- 🖥️ **Computers** — free public sessions; book online or walk in\n"
+    "- 🖨️ **Printing** from your phone (Print Your Way)\n"
     "- 🏢 **Room hire** — meeting rooms at libraries across the county\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "

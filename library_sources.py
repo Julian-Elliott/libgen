@@ -1111,6 +1111,93 @@ DONATIONS = {
     "url": f"{GOV}/council-services/libraries",
 }
 
+SCHOOL_VISITS = {
+    "summary": (
+        "Worcestershire libraries welcome school and group visits — tours, story "
+        "sessions, reading challenge registration and library inductions for "
+        "school classes. Visits help children build reading habits and discover "
+        "everything the library offers."
+    ),
+    "what_you_need": (
+        "Contact your local library branch in advance to arrange a group visit. "
+        "Availability varies by branch and time of year — early booking is recommended."
+    ),
+    "how_to": [
+        f"Call **{LIBRARY_PHONE}** or contact your local library directly to "
+        "discuss a school or group booking.",
+        "For visits to **The Hive** (Worcester), email "
+        "**bookings@thehiveworcester.org** — the Hive has a dedicated Children's "
+        "floor and a full programme of school activities.",
+        "Describe what you'd like: a library tour, story session, Summer Reading "
+        "Challenge sign-up, or a librarian-led reading lesson.",
+        "Most visits are free — confirm availability and any requirements with "
+        "the branch beforehand.",
+    ],
+    "also_see": (
+        f"The **[Summer Reading Challenge]({SUMMER_READING_URL})** runs July–September "
+        "and is free for all school-age children. "
+        f"Young people aged 13–24 can **[volunteer]({VOLUNTEERING_URL})** on the "
+        "challenge — great for CVs and the Duke of Edinburgh's Award."
+    ),
+    "url": f"{GOV}/council-services/libraries/read-and-discover",
+    "hive_booking_email": "bookings@thehiveworcester.org",
+}
+
+ACCESSIBLE_FORMATS = {
+    "summary": (
+        "Worcestershire Libraries offer several ways to access reading material "
+        "if you have a visual impairment, dyslexia or other print disability — "
+        "including large print books, eAudiobooks via BorrowBox, talking newspapers "
+        "via PressReader, and staff guidance on specialist services."
+    ),
+    "what_you_need": "Free library membership — most formats free to borrow.",
+    "options": [
+        "**Large print books** — available at all branches; search the catalogue "
+        "with 'large print [title]' or ask staff to check availability. Free to borrow.",
+        f"**eAudiobooks via BorrowBox** — borrow free with a library card; ideal "
+        f"if print is difficult. Borrow up to 4 at once, auto-return, no fines. "
+        f"[Get BorrowBox]({BORROWBOX})",
+        f"**Talking newspapers & magazines via PressReader** — listen to The Guardian, "
+        f"BBC Top Gear and 7,000+ titles with listen-to-article audio. Free with your "
+        f"card. [PressReader]({ONLINE_HUB})",
+        "**RNIB resources & Listening Books** — library staff can advise on how to "
+        "access RNIB Talking Books, the Listening Books service, and other "
+        "specialist accessible reading formats. Ask at any branch.",
+        f"**Reading Well** — free curated books on mental health and long-term "
+        f"conditions, available at all branches. "
+        f"[Reading Well collections]({READING_WELL_URL})",
+    ],
+    "also_see": (
+        "Ask staff at any branch for personal guidance on the format that suits "
+        "you best. Many branches also carry DAISY format audiobooks and talking "
+        "book collections — stock varies, so it's worth calling ahead."
+    ),
+    "url": READ_DISCOVER_URL,
+    "catalogue_tip": (
+        "Search the catalogue with 'large print [title]' or browse by format "
+        "to find specific accessible editions."
+    ),
+}
+
+UPDATE_DETAILS_INFO = {
+    "summary": (
+        "You can update your library account details — address, email, phone "
+        "number — online, by phone or in person at any Worcestershire library."
+    ),
+    "how_to": [
+        f"**Online (quickest):** Sign in to [your library account]({ACCOUNT_URL}) "
+        "and go to 'My Account' or 'Personal Details' to update your information.",
+        "**In person:** Visit any Worcestershire library — if changing your address, "
+        "bring a recent utility bill or official letter as proof.",
+        f"**By phone:** Call **{LIBRARY_PHONE}** during staffed hours.",
+    ],
+    "also_see": (
+        "If you've forgotten your PIN, use 'Forgotten PIN' on the "
+        f"[account sign-in page]({ACCOUNT_URL}), or ask staff at any branch."
+    ),
+    "url": ACCOUNT_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
@@ -1148,6 +1235,12 @@ def account_and_loans(query: str | None = None) -> dict:
         out["focus"] = "fines"
     elif any(w in q for w in ("reserve", "hold", "reservation", "request", "order")):
         out["focus"] = "reservations"
+    elif (any(w in q for w in ("update", "change", "amend", "correct"))
+          and any(w in q for w in ("address", "detail", "contact", "email",
+                                   "phone", "mobile", "name"))
+          and any(w in q for w in ("my", "account", "library"))):
+        out["focus"] = "update_details"
+        out["update_details"] = UPDATE_DETAILS_INFO
     elif any(w in q for w in ("account", "login", "log in", "sign in", "pin", "password")):
         out["focus"] = "account"
     elif any(w in q for w in ("home", "housebound", "deliver")):
@@ -1184,6 +1277,16 @@ def account_and_loans(query: str | None = None) -> dict:
     elif any(w in q for w in ("donat", "give books", "drop off book")):
         out["focus"] = "donations"
         out["donations"] = DONATIONS
+    elif any(w in q for w in ("school visit", "group visit", "class visit",
+                              "school tour", "school trip", "group booking",
+                              "school group", "class trip")):
+        out["focus"] = "school_visits"
+        out["school_visits"] = SCHOOL_VISITS
+    elif any(w in q for w in ("accessible format", "accessible reading", "braille",
+                              "print disability", "accessible book", "accessible edition",
+                              "daisy format", "daisy book", "rnib talking")):
+        out["focus"] = "accessible_formats"
+        out["accessible_formats"] = ACCESSIBLE_FORMATS
     else:
         out["focus"] = "general"
 
@@ -1205,6 +1308,12 @@ def account_and_loans(query: str | None = None) -> dict:
         out["room_hire_data"] = ROOM_HIRE
     if out["focus"] == "warm_space":
         out["warm_space"] = WARM_SPACE
+    if out["focus"] == "school_visits":
+        out.setdefault("school_visits", SCHOOL_VISITS)
+    if out["focus"] == "accessible_formats":
+        out.setdefault("accessible_formats", ACCESSIBLE_FORMATS)
+    if out["focus"] == "update_details":
+        out.setdefault("update_details", UPDATE_DETAILS_INFO)
 
     return out
 

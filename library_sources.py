@@ -467,8 +467,34 @@ def _open_status(staffed: str, now_min: int):
     return False, f"closed now (was open until {rng.group(2)})"
 
 
-def find_library(name: str | None = None) -> dict:
-    """Branch hours ('open now?'), address and facilities (toilets/parking…)."""
+_WEEKDAY_IDX = {d.lower(): i for i, d in enumerate(DAY_NAMES)}
+
+
+def _resolve_day(when: str | None, now: datetime):
+    """Map a free-text day hint ('tomorrow', 'monday', 'tonight', …) to a
+    (weekday_index, human_label, is_today) triple. Defaults to today."""
+    today_idx = now.weekday()
+    t = (when or "").lower()
+    if "tomorrow" in t:
+        idx = (today_idx + 1) % 7
+        return idx, f"tomorrow ({DAY_NAMES[idx]})", False
+    for name, idx in _WEEKDAY_IDX.items():
+        if re.search(rf"\b{name}\b", t):
+            label = f"today ({name.capitalize()})" if idx == today_idx else name.capitalize()
+            return idx, label, idx == today_idx
+    return today_idx, f"today ({DAY_NAMES[today_idx]})", True
+
+
+def _day_status(staffed: str):
+    """Open/closed summary for a day other than today (no 'now')."""
+    if not staffed or "close" in staffed.lower():
+        return "closed"
+    return f"open {staffed}"
+
+
+def find_library(name: str | None = None, when: str | None = None) -> dict:
+    """Branch hours, address and facilities. `when` is a free-text day hint
+    ('tomorrow', 'Monday', 'tonight'); absent or 'today'/'now' means today."""
     branches = kb().get("branches", [])
     if not (name or "").strip():
         return {"branches": [{"name": b["name"], "address": b.get("address", ""),
@@ -485,16 +511,23 @@ def find_library(name: str | None = None) -> dict:
                 "suggestions": [b["name"] for b in branches[:8]],
                 "page_url": f"{GOV}/council-services/libraries/find-library"}
     now = _uk_now()
-    today = DAY_NAMES[now.weekday()]
-    h = pick.get("hours", {}).get(today, {})
-    is_open, status = _open_status(h.get("staffed", ""), now.hour * 60 + now.minute)
+    idx, day_label, is_today = _resolve_day(when, now)
+    day_name = DAY_NAMES[idx]
+    h = pick.get("hours", {}).get(day_name, {})
+    staffed, unlocked = h.get("staffed", ""), h.get("unlocked", "")
+    if is_today:
+        open_now, status = _open_status(staffed, now.hour * 60 + now.minute)
+    else:
+        open_now, status = None, _day_status(staffed)
     return {
         "name": pick["name"], "address": pick.get("address", ""),
         "facilities": pick.get("facilities", []), "hours": pick.get("hours", {}),
         "libraries_unlocked": pick.get("libraries_unlocked", False),
-        "today": today, "today_staffed": h.get("staffed", ""),
-        "unlocked_today": h.get("unlocked", ""),
-        "open_now": is_open, "status": status,
+        "day_label": day_label, "is_today": is_today,
+        "staffed": staffed, "unlocked": unlocked,
+        # legacy keys kept for backward-compatibility (now the *requested* day)
+        "today": day_name, "today_staffed": staffed, "unlocked_today": unlocked,
+        "open_now": open_now, "status": status,
         "page_url": pick["url"], "checked": _now(),
     }
 

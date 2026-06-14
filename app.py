@@ -80,9 +80,12 @@ TOOLS = {
                 "args: {\"genre\": \"<genre/topic>\"}",
         "fn": lambda a: ls.whats_new(a.get("genre") or a.get("query"))},
     "find_library": {
-        "desc": "A branch's opening hours ('open now?'), address and facilities "
-                "(toilets, parking, café, study space). args: {\"name\": \"<branch>\"}",
-        "fn": lambda a: ls.find_library(a.get("name") or a.get("query"))},
+        "desc": "A branch's opening hours ('open now?', 'open tomorrow?'), address "
+                "and facilities (toilets, parking, café, study space). Include the "
+                "day if the user names one. args: {\"name\": \"<branch>\", "
+                "\"day\": \"today|tomorrow|<weekday>\"}",
+        "fn": lambda a: ls.find_library(a.get("name") or a.get("query"),
+                                        when=a.get("day") or a.get("when"))},
     "mobile_library": {
         "desc": "When/where the mobile library van visits a village. "
                 "args: {\"place\": \"<village>\"}",
@@ -154,6 +157,24 @@ def _history_text(history, limit=4):
 _QWORDS = {"what", "whats", "when", "where", "which", "who", "how", "is", "are",
            "do", "does", "can", "tell", "any", "the", "this", "a", "i", "my"}
 
+# Words to drop when pulling a branch/village name out of a question, so we
+# don't latch onto "What" or "library" instead of "bromsgrove".
+_PLACE_STOP = _QWORDS | {
+    "time", "times", "open", "opening", "opens", "close", "closing", "closed",
+    "hours", "hour", "library", "libraries", "branch", "today", "tomorrow",
+    "tonight", "now", "morning", "afternoon", "evening", "on", "at", "in", "to",
+    "for", "of", "me", "you", "it", "near", "address", "parking", "toilet",
+    "toilets", "facilities", "facility", "monday", "tuesday", "wednesday",
+    "thursday", "friday", "saturday", "sunday", "weekend", "week", "day", "next",
+    "mobile", "van", "visit", "visits", "comes", "service", "opened",
+}
+
+
+def _place_from(q: str) -> str:
+    """Branch/village name from a question — case-insensitive, stopword-filtered."""
+    toks = re.findall(r"[A-Za-z][A-Za-z'\-]*", q)
+    return " ".join(w for w in toks if w.lower() not in _PLACE_STOP).strip()
+
 
 def keyword_route(q: str) -> tuple[str, dict]:
     t = q.lower()
@@ -216,12 +237,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
             or feat_hits >= 2 or "overall" in t):
         return "graph_search", {"query": q}
     if re.search(r"\b(mobile library|mobile van|the van|comes to|visit)\b", t):
-        m = re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
-        return "mobile_library", {"place": (m[-1] if m else q.split()[-1])}
+        place = _place_from(q)
+        return "mobile_library", {"place": place or q.split()[-1]}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
                  r"facilit|where is|near me|study space)\b", t):
-        m = re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
-        return "find_library", {"name": (m[-1] if m else "")}
+        return "find_library", {"name": _place_from(q), "when": q}
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
                  r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
@@ -325,12 +345,19 @@ def render_find_library(r):
         for b in r["branches"][:25]:
             out.append(f"- **{b['name']}** — {b['address']}")
         return "\n".join(out)
-    badge = "🟢 **Open now**" if r["open_now"] else "🔴 **Closed now**"
-    out = [f"📍 **{r['name']}** — {badge} ({r['status']})",
-           f"{r['address']}\n",
-           f"**Today ({r['today']}):** {r['today_staffed'] or 'see below'}"]
-    if r.get("unlocked_today"):
-        out.append(f"**Libraries Unlocked self-service:** {r['unlocked_today']} — "
+    day_label = r.get("day_label", f"today ({r.get('today','')})")
+    heading = day_label[0].upper() + day_label[1:]
+    if r.get("is_today", True):
+        badge = "🟢 **Open now**" if r["open_now"] else "🔴 **Closed now**"
+        head = f"📍 **{r['name']}** — {badge} ({r['status']})"
+    else:
+        head = f"📍 **{r['name']}** — **{heading}:** {r['status']}"
+    closed_txt = ("closed (staffed) — but open for self-service below"
+                  if r.get("unlocked") else "closed")
+    out = [head, f"{r['address']}\n",
+           f"**{heading}:** {r.get('staffed') or closed_txt}"]
+    if r.get("unlocked"):
+        out.append(f"**Libraries Unlocked self-service:** {r['unlocked']} — "
                    f"{ls.ELIGIBILITY['unlocked']} "
                    f"[How to get access]({ls.UNLOCKED_URL})")
     if r.get("facilities"):

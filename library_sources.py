@@ -72,6 +72,7 @@ LEARN_UPSKILL_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-wo
 JOB_CLUBS_URL = f"{LEARN_UPSKILL_URL}/job-clubs"
 CHILDREN_URL = f"{GOV}/council-services/libraries/read-and-discover"
 SUMMER_READING_URL = f"{GOV}/council-services/libraries/read-and-discover/summer-reading-challenge"
+CLOSING_DATES_URL = f"{GOV}/council-services/libraries/2026-libraries-closing-dates"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -1199,6 +1200,33 @@ UPDATE_DETAILS_INFO = {
 }
 
 
+LOST_CARD = {
+    "summary": (
+        "If you've lost your library card — or it's been stolen — let the library "
+        "know as soon as possible so your account can be protected. You can get a "
+        "replacement card at any Worcestershire library branch."
+    ),
+    "what_to_do": [
+        f"**Contact the library now** — call **{LIBRARY_PHONE}** or visit any branch in "
+        "person. Staff can flag the card as lost or stolen to prevent unauthorised use.",
+        "**Get a replacement card in branch** — bring proof of identity (e.g. passport, "
+        "driving licence, or a utility bill). A small replacement charge may apply — "
+        f"see the [fees and charges page]({FEES_URL}) for current rates.",
+        "**Change your PIN** — if you're concerned someone may have both your card and "
+        f"PIN, reset it straight away via [your library account]({ACCOUNT_URL}) "
+        f"(use 'Forgotten PIN'), or ask staff to reset it in branch.",
+        "**Check your account online** — sign in to review your loans and reservations "
+        f"and confirm no unexpected items have been borrowed. [Sign in]({ACCOUNT_URL})",
+    ],
+    "also_see": (
+        "Your card number is also shown in any previous account correspondence. "
+        "You can still log in and manage your account using your card number and PIN "
+        "while you wait for a replacement card."
+    ),
+    "url": FEES_URL,
+}
+
+
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
@@ -1223,8 +1251,9 @@ def account_and_loans(query: str | None = None) -> dict:
         out["job_clubs"] = JOB_CLUBS
     elif any(w in q for w in ("renew", "renewal", "extend", "due date")):
         out["focus"] = "renewals"
-    elif ("card" in q and any(w in q for w in ("lost", "replace", "replacement", "stolen"))):
-        out["focus"] = "fines"  # card_replacement info lives in the fines section
+    elif ("card" in q and any(w in q for w in ("lost", "stolen", "replace", "replacement"))):
+        out["focus"] = "lost_card"
+        out["lost_card"] = LOST_CARD
     elif (any(w in q for w in ("lost", "damage", "damaged"))
           and any(w in q for w in ("book", "item", "dvd", "cd"))
           and "card" not in q):
@@ -1314,6 +1343,8 @@ def account_and_loans(query: str | None = None) -> dict:
         out.setdefault("accessible_formats", ACCESSIBLE_FORMATS)
     if out["focus"] == "update_details":
         out.setdefault("update_details", UPDATE_DETAILS_INFO)
+    if out["focus"] == "lost_card":
+        out.setdefault("lost_card", LOST_CARD)
 
     return out
 

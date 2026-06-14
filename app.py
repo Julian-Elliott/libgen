@@ -197,10 +197,15 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(how (long|many)\b[^?]{0,40}\b(borrow|loan|keep|renew|take out|"
                  r"out at once)|loan period|borrowing limit|how many (books|items) can i)\b", t):
         return "account_and_loans", {"query": "loan limits how long how many"}
+    # Lost / stolen library card — dedicated focus (before fines catch-all)
+    if re.search(r"\blost (my |a |the )?(library )?card\b|"
+                 r"(my |a )?(library )?card (is |was |has been )?(lost|stolen)\b|"
+                 r"(stolen|stole).{0,20}(library )?card\b|"
+                 r"\bmy card.{0,15}(stolen|stolen|missing)\b|"
+                 r"replace (a |my |the )?(library )?card\b", t):
+        return "account_and_loans", {"query": "lost stolen library card replacement"}
     if re.search(r"\b(fine|fines|overdue|late fee|pay (a |my )?(fee|fine)|"
-                 r"fees?[ -]and[ -]charges?|lost (my |a |the )?(library )?card|"
-                 r"(my |a )?(library )?card (is |was |has been )?lost|"
-                 r"replace (a |my |the )?(library )?card|lost (a |my )?book)\b", t):
+                 r"fees?[ -]and[ -]charges?|lost (a |my )?book)\b", t):
         return "account_and_loans", {"query": q}
     if re.search(r"\b(my (library )?account|online account|(sign|log) ?in(to)?|"
                  r"my (library )?pin|forgot (my )?(pin|password)|"
@@ -266,13 +271,18 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bdrop off books?\b|second[- ]?hand books? (to|for|at) (\w+ )?librar|"
                  r"\bbring books? (in|to) (the |a )?librar", t):
         return "account_and_loans", {"query": "donate books"}
+    # Early years / pre-school — check BEFORE school-visits to avoid misrouting
+    if re.search(r"\bearly years?\b|get school ready\b|"
+                 r"\bpre[- ]?school (library|books?|session|activit)\b|"
+                 r"\bschool ready\b", t):
+        return "children_services", {}
     # School and group visits to libraries
     if re.search(r"\bschool (visit|trip|group|class|tour)\b|"
-                 r"\b(teachers?|class(es)?|schools?) .{0,45}librar|"
+                 r"\b(teachers?|class(es)?) .{0,45}librar|"
                  r"\bgroup (visit|booking) .{0,40}librar|"
                  r"\barrange .{0,20}(school|class|group).{0,25}librar", t):
         return "account_and_loans", {"query": "school visit group visit"}
-    # Children's services — Storytime, Rhymetime, Summer Reading Challenge (not Hive-specific)
+    # Children's services — Storytime, Rhymetime, Summer Reading Challenge, early years (not Hive-specific)
     if (re.search(r"\b(storytime|story time|rhymetime|rhyme time|bounce and rhyme|"
                   r"summer reading|reading challenge|summer challenge|"
                   r"children'?s? (librar|service|activit|"
@@ -332,7 +342,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "mobile_library", {"place": place or q.split()[-1]}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
                  r"facilit|where is|near me|study space|wi-?fi|wireless|phone number|"
-                 r"telephone|contact (details?|number)|email address)\b", t):
+                 r"telephone|contact (details?|number)|email address|"
+                 r"bank holiday|public holiday|christmas|easter|good friday|new year'?s)\b", t):
         return "find_library", {"name": _place_from(q), "when": q}
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
                  r"evening access|open late|get in (early|late))\b", t):
@@ -367,6 +378,10 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "online_hub", {"topic": q}
     if re.search(r"\b(member|membership|join|library card|sign ?up|what do i need)\b", t):
         return "membership_help", {"service": q}
+    # Dementia-friendly / memory activities — route to events with a focused query
+    if re.search(r"\bdementia\b|dementia[- ]?friendly\b|memory (cafe|group|session|club|"
+                 r"activities?|support)\b|alzheimer\b|forget(ting|fulness)\b.{0,30}activit", t):
+        return "library_events", {"query": "dementia memory"}
     if re.search(r"\b(event|events|what'?s on|whats on|activit|class|club|session|"
                  r"group|happening|this week)\b", t):
         m = [w for w in re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
@@ -478,6 +493,7 @@ def render_find_library(r):
     if r.get("facilities"):
         out.append(f"\n**Facilities:** {', '.join(r['facilities'])}")
     out.append(f"\n✅ {ls.ELIGIBILITY['visit']}")
+    out.append(f"📅 _Bank holidays & special closures: [2026 closing dates]({ls.CLOSING_DATES_URL})_")
     out.append(f"🔎 [Branch page]({r['page_url']})")
     return "\n".join(out)
 
@@ -824,6 +840,16 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Library account login]({ud['url']})")
         return "\n".join(out)
 
+    if focus == "lost_card" and r.get("lost_card"):
+        lc = r["lost_card"]
+        out = ["🃏 **Lost or stolen library card:**\n", lc["summary"], "\n"]
+        for i, step in enumerate(lc["what_to_do"], 1):
+            out.append(f"{i}. {step}")
+        if lc.get("also_see"):
+            out.append(f"\n💡 _{lc['also_see']}_")
+        out.append(f"\n🔎 [Fees and charges]({lc['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -1076,7 +1102,8 @@ HELP = (
     "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
     "or borrow the eBook tonight\n"
     "- 🔄 **Account & loans** — renew books online, reserve or cancel items, "
-    "return items, pay fines, lost card, lost/damaged item\n"
+    "return items, pay fines, lost or stolen card, lost/damaged item\n"
+    "- 🃏 **Lost or stolen library card** — how to report it, get a replacement, and protect your account\n"
     "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
     "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
@@ -1250,7 +1277,11 @@ def build_demo():
              "Can I arrange a school visit to the library?",
              "Do you have books for people with visual impairments?",
              "How do I change my address on my library account?",
-             "Is there a Youth Hub at The Hive?"],
+             "Is there a Youth Hub at The Hive?",
+             "I've lost my library card — what do I do?",
+             "Is the library open on bank holidays?",
+             "Are there any dementia-friendly activities at the library?",
+             "Do you have activities for pre-school children?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

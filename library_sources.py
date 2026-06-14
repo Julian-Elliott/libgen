@@ -53,6 +53,11 @@ PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-serv
 UNLOCKED_URL = f"{GOV}/council-services/libraries/libraries-unlocked"
 JOIN_URL = f"{GOV}/council-services/libraries/your-library-membership/join-library"
 ONLINE_HUB = f"{GOV}/council-services/libraries/online-library-hub"
+ACCOUNT_URL = f"{GOV}/council-services/libraries/your-library-membership/login-my-library-account"
+RENEW_URL = f"{GOV}/council-services/libraries/your-library-membership/renew-loan"
+FEES_URL = f"{GOV}/council-services/libraries/your-library-membership/pay-fees-and-charges"
+RESERVE_URL = f"{GOV}/council-services/libraries/your-library-membership/reserve-your-library-books"
+HOME_LIBRARY_URL = f"{GOV}/council-services/libraries/your-library-membership/library-service-home"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -378,6 +383,135 @@ def printing_help() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# 4b. Account management: renewals, returns, PIN reset, fines, Library at Home
+# --------------------------------------------------------------------------- #
+
+# Sourced from official council pages (verified June 2026). The Hive renewal
+# line (01905 822866) is a 24-hour automated system, per the Hive's contact page.
+ACCOUNT_HELP = {
+    "renew": {
+        "title": "Renewing your library items",
+        "summary": (
+            "Renew your loans to borrow them for longer. You can renew online "
+            "anytime, in any branch, or by phone via The Hive's 24-hour automated "
+            "renewal line."
+        ),
+        "methods": [
+            f"**Online (24/7):** Log in at [My Account]({ACCOUNT_URL}) with your "
+            "library card number + PIN → select items → Renew. You can renew as long "
+            "as no one else has reserved the item.",
+            "**By phone (24-hour):** Call **01905 822866** for the automated renewal "
+            "line — have your card number and PIN ready.",
+            "**In branch:** Hand items to staff or use a self-service machine at any "
+            "Worcestershire library. You can renew at any branch, not just the one "
+            "you borrowed from.",
+            "**Mobile Library van:** Ask the driver to renew your items on your visit.",
+        ],
+        "digital_note": (
+            "BorrowBox eBooks & eAudiobooks auto-return at the end of the loan — "
+            "no action needed and no fines ever."
+        ),
+        "page_url": RENEW_URL,
+    },
+    "return": {
+        "title": "Returning library items",
+        "summary": (
+            "Return items to any Worcestershire library — not just the branch you "
+            "borrowed from. Every branch has a returns slot usable outside staffed hours."
+        ),
+        "methods": [
+            "**Returns slot (any time):** Every branch has a drop-box or door slot — "
+            "available even when the library is closed.",
+            "**Over the counter:** Hand items to staff at any Worcestershire library.",
+            f"**Mobile Library van:** Hand items to the driver on your village's visit. "
+            f"[Find your timetable]({MOBILE_INDEX})",
+        ],
+        "digital_note": (
+            "BorrowBox eBooks & eAudiobooks auto-return — nothing to bring back."
+        ),
+        "page_url": ACCOUNT_URL,
+    },
+    "pin": {
+        "title": "PIN reset, forgotten card number & lost cards",
+        "summary": (
+            "Log in to your library account with your card number + PIN to renew, "
+            "reserve, cancel holds and change your PIN."
+        ),
+        "methods": [
+            f"**Forgotten PIN:** Log in at [My Account]({ACCOUNT_URL}) and use the "
+            "'Forgotten PIN' link to reset it online, or ask staff at any branch.",
+            "**Forgotten card number:** Staff at any branch can look this up for you "
+            "— bring photo ID.",
+            "**Lost card:** Visit any branch; staff will deactivate the old card and "
+            "issue a replacement. There is a small replacement card charge.",
+        ],
+        "page_url": ACCOUNT_URL,
+    },
+    "fines": {
+        "title": "Fees, fines and overdue items",
+        "summary": (
+            "Borrowing library books is free, but items kept past their due date "
+            "incur a small daily late fee. Digital loans (BorrowBox) never incur fines."
+        ),
+        "avoid_fines": [
+            f"**Renew online** anytime at [My Account]({ACCOUNT_URL}) before your "
+            "due date — free and instant.",
+            "**Renew by phone:** 01905 822866, 24-hour automated line.",
+            "**Borrow eBooks/eAudiobooks** on BorrowBox — they auto-return with "
+            "zero fines.",
+        ],
+        "pay_detail": (
+            f"Pay outstanding fees online at [Fees & charges]({FEES_URL}), by card "
+            "in branch, or at a self-service kiosk."
+        ),
+        "page_url": FEES_URL,
+    },
+    "home_library": {
+        "title": "Library Service at Home",
+        "summary": (
+            "A free volunteer-run service that delivers library books, large print, "
+            "audiobooks and talking books directly to your door if you're unable to "
+            "visit a branch in person."
+        ),
+        "what_you_need": [
+            "Free full library membership (staff can help you join by post or phone).",
+            "Be unable to visit a branch due to disability, long-term illness or age "
+            "— or be a carer for someone who is.",
+        ],
+        "how_to": [
+            "Contact your local library or call **01905 822722** to enquire and sign up.",
+            "Tell staff your reading preferences — a volunteer will select and deliver "
+            "a regular selection tailored to your tastes.",
+        ],
+        "page_url": HOME_LIBRARY_URL,
+    },
+}
+
+
+def account_help(topic: str | None = None) -> dict:
+    """
+    Account management: renewals, returns, PIN reset, fines and the Library at Home
+    service. Routes by topic keyword; defaults to renewal info.
+    """
+    t = (topic or "").lower()
+    if any(w in t for w in ("home", "housebound", "deliver", "door", "volunteer")):
+        section = "home_library"
+    elif any(w in t for w in ("return", "bring back", "give back", "hand back", "drop")):
+        section = "return"
+    elif any(w in t for w in ("pin", "password", "log", "account", "card number",
+                              "lost", "forgot", "forgotten", "reset")):
+        section = "pin"
+    elif any(w in t for w in ("fine", "fines", "overdue", "late", "fee", "charge",
+                              "penalty", "pay")):
+        section = "fines"
+    else:
+        section = "renew"
+    data = ACCOUNT_HELP[section]
+    return {"section": section, "data": data,
+            "page_url": data["page_url"], "checked": _now()}
+
+
+# --------------------------------------------------------------------------- #
 # 5. Knowledge base — every library service page (built by build_kb.py)
 # --------------------------------------------------------------------------- #
 
@@ -411,6 +545,10 @@ ELIGIBILITY = {
     "hive_visit": "Nothing — The Hive is open to everyone, 8:30am–10pm every day.",
     "archives": "Free to visit Explore the Past (Level 2, The Hive); opening "
                 f"times and document-ordering rules are on [Explore the Past]({EXPLORE_PAST}).",
+    "home_library": (
+        "Free full library membership + unable to visit a branch in person due to "
+        "disability, illness or age (carers can also apply on behalf of someone)."
+    ),
 }
 
 DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -629,7 +767,14 @@ _HUB_SYNONYMS = {"newspaper": "pressreader", "magazine": "pressreader",
                  "genealogy": "ancestry", "ebook": "borrowbox",
                  "audiobook": "borrowbox", "business": "cobra",
                  "driving": "theory", "theory test": "theory",
-                 "dictionary": "oxford", "research": "ebsco"}
+                 "learner driver": "theory", "driving test": "theory",
+                 "dictionary": "oxford", "research": "ebsco",
+                 "academic": "ebsco", "journal": "ebsco",
+                 "patent": "espacenet", "invention": "espacenet",
+                 "ip ": "espacenet", "intellectual property": "espacenet",
+                 "film": "bfi", "movie": "bfi", "cinema": "bfi",
+                 "consumer": "which", "best buy": "which",
+                 "biography": "national biography", "who was": "national biography"}
 
 
 def online_hub(topic: str | None = None) -> dict:

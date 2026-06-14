@@ -615,8 +615,14 @@ CURATED_HUB = {
         "inside": "Practise the official DVSA driving theory test (car, motorcycle, LGV/PCV) including hazard-perception clips.",
     },
     "which": {
-        "what_you_need": "Library membership (often used in-branch — check the page).",
+        "what_you_need": "Library membership; available on library computers in-branch — ask staff for access.",
+        "at_home": False,
         "inside": "Independent product reviews and Best Buy buying advice.",
+        "access": [
+            "Ask a member of staff at any Worcestershire library to access Which? "
+            "on a library computer during staffed hours.",
+            f"Or visit the [Online Library Hub]({ONLINE_HUB}) for the current Which? access link.",
+        ],
     },
     "times digital archive": {
         "what_you_need": "Free digital membership.",
@@ -750,6 +756,11 @@ BORROWING_POLICY = {
              "any Worcestershire library or the mobile van."),
             "You'll get an email when it's ready to collect.",
         ],
+        "how_to_cancel": (
+            f"[Sign in to your account]({ACCOUNT_URL}), go to 'Reservations', "
+            "select the item and choose 'Cancel Hold'. Or ask staff at any branch "
+            "during staffed hours."
+        ),
         "url": RESERVE_URL,
     },
     "returning": {

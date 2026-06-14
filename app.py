@@ -202,6 +202,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"my (library )?pin|forgot (my )?(pin|password)|"
                  r"library card (number|login))\b", t):
         return "account_and_loans", {"query": q}
+    if "cancel" in t and re.search(r"reserv|\bhold\b", t):
+        return "account_and_loans", {"query": "cancel reservation"}
     if (re.search(r"\bhow (do|can) i (reserve|place a hold|request)|"
                   r"(make|place) a (reserve|reservation|hold)\b", t)
             and not re.search(r"\b(room|space|study|seat|hive)\b", t)):
@@ -787,6 +789,8 @@ def render_account_and_loans(r):
                 f"_{res['summary']}_ **{res['cost']}**\n"]
         for i, step in enumerate(res["how_to"], 1):
             out.append(f"{i}. {step}")
+        if res.get("how_to_cancel"):
+            out.append(f"\n↩️ **To cancel a reservation:** {res['how_to_cancel']}")
         out.append(f"\n🔎 [Reserve library books]({res['url']})")
 
     elif focus == "account":

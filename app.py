@@ -171,6 +171,7 @@ _PLACE_STOP = _QWORDS | {
     "toilets", "facilities", "facility", "monday", "tuesday", "wednesday",
     "thursday", "friday", "saturday", "sunday", "weekend", "week", "day", "next",
     "mobile", "van", "visit", "visits", "comes", "service", "opened",
+    "wi-fi", "wifi", "wi", "fi", "wireless", "internet", "broadband",
 }
 
 
@@ -185,10 +186,13 @@ def keyword_route(q: str) -> tuple[str, dict]:
     feat_hits = sum(1 for w in ("parking", "café", "cafe", "wifi", "wi-fi", "study",
                                 "toilet", "computer", "meeting room", "baby")
                     if w in t)
-    if re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t):
+    if (re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t)
+            and not re.search(r"\blarge.?print\b|\bbig.?print\b", t)):
         return "printing_help", {}
     # Account self-service: renewals, fines, reservations, home library
-    if re.search(r"\b(renew|renewal|extend (a |my )?(loan|book)|due date)\b", t):
+    if re.search(r"\b(renew|renewal|due date)\b|"
+                 r"\bextend(ing)? (a |my |the |)?(loan|book|borrow|borrowing|item|items|them|it)\b|"
+                 r"\bcan (i|we) (renew|extend)\b", t):
         return "account_and_loans", {"query": q}
     if re.search(r"\b(how (long|many)\b[^?]{0,40}\b(borrow|loan|keep|renew|take out|"
                  r"out at once)|loan period|borrowing limit|how many (books|items) can i)\b", t):
@@ -212,6 +216,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"housebound|books? delivered|deliver (books?|the library)|"
                  r"can.{0,12}t get to (the |a )?librar)\b", t):
         return "account_and_loans", {"query": q}
+    if re.search(r"\b(update|change|amend|correct) (my )?(address|detail|contact|"
+                 r"email|phone|mobile|name)\b|"
+                 r"\bi'?ve? moved\b|"
+                 r"\bmy (address|detail) (has |have |is |)(changed|wrong|moved|updated)\b", t):
+        return "account_and_loans", {"query": "update my account details address"}
     if re.search(r"\breturn(ing)? (a |my |the )?(book|item|loan)\b|"
                  r"how (do|to|can) (i )?return\b", t):
         return "account_and_loans", {"query": "return book"}
@@ -257,6 +266,12 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bdrop off books?\b|second[- ]?hand books? (to|for|at) (\w+ )?librar|"
                  r"\bbring books? (in|to) (the |a )?librar", t):
         return "account_and_loans", {"query": "donate books"}
+    # School and group visits to libraries
+    if re.search(r"\bschool (visit|trip|group|class|tour)\b|"
+                 r"\b(teachers?|class(es)?|schools?) .{0,45}librar|"
+                 r"\bgroup (visit|booking) .{0,40}librar|"
+                 r"\barrange .{0,20}(school|class|group).{0,25}librar", t):
+        return "account_and_loans", {"query": "school visit group visit"}
     # Children's services — Storytime, Rhymetime, Summer Reading Challenge (not Hive-specific)
     if (re.search(r"\b(storytime|story time|rhymetime|rhyme time|bounce and rhyme|"
                   r"summer reading|reading challenge|summer challenge|"
@@ -281,6 +296,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
                   r"visual impair|sight impair|partially sighted)\b", t)
             and re.search(r"\blibrar", t)):
         return "graph_search", {"query": q}
+    # Youth Hub / Careers Hub at The Hive — route even without 'hive' keyword
+    if re.search(r"\b(youth hub|careers hub|career hub|careers centre|careers center)\b|"
+                 r"\bhive.{0,25}(career|youth|young people)\b|"
+                 r"\b(career|youth).{0,25}\bhive\b", t):
+        return "hive_info", {"topic": "youth hub careers"}
     # Non-Hive meeting room hire — Hive-specific queries fall through to hive_info below
     if (re.search(r"\bhire (a |the )?(meeting )?room\b|(meeting )?room (for )?hire\b|"
                   r"book a (meeting )?room\b|meeting room hire\b", t)
@@ -317,6 +337,12 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
                  r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
+    # Accessible reading formats — general (Braille, print disability, accessible editions)
+    if re.search(r"\baccessible? (read(?:s|ing)?|books?|formats?|edition)\b|"
+                 r"\baccessible reading\b|"
+                 r"\bbraille\b|\bprint.?disabilit\b|"
+                 r"\b(visual|sight).{0,12}impair.{0,25}\b(books?|reading|formats?)\b", t):
+        return "account_and_loans", {"query": "accessible formats reading"}
     # Talking books / accessible audio — route to BorrowBox via online_hub
     if re.search(r"\b(talking books?|daisy (format|books?|reader)\b|rnib\b|"
                  r"listening books? (service|online)?\b|"
@@ -764,6 +790,40 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Worcestershire Libraries]({d['url']})")
         return "\n".join(out)
 
+    if focus == "school_visits" and r.get("school_visits"):
+        sv = r["school_visits"]
+        out = ["🏫 **School & group visits to Worcestershire Libraries:**\n", sv["summary"],
+               f"\n✅ **What to do:** {sv['what_you_need']}\n"]
+        for i, step in enumerate(sv["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if sv.get("also_see"):
+            out.append(f"\n💡 _{sv['also_see']}_")
+        out.append(f"\n🔎 [Children's library services]({sv['url']})")
+        return "\n".join(out)
+
+    if focus == "accessible_formats" and r.get("accessible_formats"):
+        af = r["accessible_formats"]
+        out = ["♿ **Accessible reading at Worcestershire Libraries:**\n", af["summary"],
+               f"\n✅ **What you need:** {af['what_you_need']}\n"]
+        for opt in af.get("options", []):
+            out.append(f"- {opt}")
+        if af.get("also_see"):
+            out.append(f"\n💡 _{af['also_see']}_")
+        if af.get("catalogue_tip"):
+            out.append(f"\n🔍 _{af['catalogue_tip']}_")
+        out.append(f"\n🔎 [Read & Discover]({af['url']})")
+        return "\n".join(out)
+
+    if focus == "update_details" and r.get("update_details"):
+        ud = r["update_details"]
+        out = ["✏️ **Update your library account details:**\n", ud["summary"], "\n"]
+        for step in ud.get("how_to", []):
+            out.append(f"- {step}")
+        if ud.get("also_see"):
+            out.append(f"\n💡 _{ud['also_see']}_")
+        out.append(f"\n🔎 [Library account login]({ud['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -1034,6 +1094,9 @@ HELP = (
     "- 🙋 **Volunteering, job clubs & adult learning** — free employment support "
     "and skills courses\n"
     "- 👧 **Children's services** — Storytime, Rhymetime, the Summer Reading Challenge\n"
+    "- 🏫 **School & group visits** — arrange a class visit or library tour\n"
+    "- ♿ **Accessible formats** — large print, eAudiobooks, talking newspapers, "
+    "Braille and specialist services\n"
     "- ☕ **Warm spaces** — free, no membership needed\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
@@ -1183,7 +1246,11 @@ def build_demo():
              "Are there adult learning courses at the library?",
              "Is there a book club at my local library?",
              "Can I donate books to the library?",
-             "Do you have large print books?"],
+             "Do you have large print books?",
+             "Can I arrange a school visit to the library?",
+             "Do you have books for people with visual impairments?",
+             "How do I change my address on my library account?",
+             "Is there a Youth Hub at The Hive?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

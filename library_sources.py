@@ -68,6 +68,7 @@ DIGITAL_INCLUSION_URL = f"{GOV}/council-services/libraries/learn-upskill-and-fin
 VOLUNTEERING_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work/volunteering-training-and-work-experience"
 READING_WELL_URL = f"{GOV}/council-services/libraries/read-and-discover/reading-well"
 WARM_WELCOME_URL = f"{GOV}/council-services/libraries/warm-welcome"
+SUMMER_READING_URL = f"{GOV}/council-services/libraries/read-and-discover/summer-reading-challenge"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -612,8 +613,15 @@ CURATED_HUB = {
         "inside": "Practise the official DVSA driving theory test (car, motorcycle, LGV/PCV) including hazard-perception clips.",
     },
     "which": {
-        "what_you_need": "Library membership (often used in-branch — check the page).",
-        "inside": "Independent product reviews and Best Buy buying advice.",
+        "what_you_need": "Library membership; available on library computers in-branch — ask staff for access.",
+        "at_home": False,
+        "inside": "Independent product reviews, Best Buy recommendations and consumer advice from Which? — covering technology, appliances, food, finance and more.",
+        "access": [
+            "Ask a member of staff at any Worcestershire library to access Which? "
+            "on a library computer during staffed hours.",
+            f"Or visit the [Online Library Hub]({ONLINE_HUB}) for the current "
+            "Which? access link.",
+        ],
     },
     "times digital archive": {
         "what_you_need": "Free digital membership.",
@@ -711,6 +719,11 @@ BORROWING_POLICY = {
         "summary": ("Log in to renew loans, reserve items, cancel reservations, "
                     "update your details and change your PIN."),
         "what_you_need": "Your library card number + PIN.",
+        "pin_reset": (
+            f"Forgotten your PIN? Use the 'Forgot PIN' link on the "
+            f"[account sign-in page]({ACCOUNT_URL}), or visit any library in person "
+            "with your library card."
+        ),
         "how_to": f"Visit [Login to my library account]({ACCOUNT_URL}).",
         "url": ACCOUNT_URL,
     },
@@ -747,6 +760,11 @@ BORROWING_POLICY = {
              "any Worcestershire library or the mobile van."),
             "You'll get an email when it's ready to collect.",
         ],
+        "how_to_cancel": (
+            f"[Sign in to your account]({ACCOUNT_URL}), go to 'Reservations', "
+            "select the item and choose 'Cancel Hold'. Or ask staff at any branch "
+            "during staffed hours."
+        ),
         "url": RESERVE_URL,
     },
     "returning": {
@@ -924,6 +942,34 @@ WARM_SPACE = {
     "url": WARM_WELCOME_URL,
 }
 
+SUMMER_READING_CHALLENGE = {
+    "summary": (
+        "The Summer Reading Challenge is a free annual programme encouraging "
+        "children to keep reading during the school summer holidays. "
+        "Children aged 4–11 borrow and read any six library books between July "
+        "and September, collecting stickers and rewards along the way — and "
+        "earning a certificate for completing the challenge."
+    ),
+    "what_you_need": (
+        "Free library membership for the child — sign up at any branch or online. "
+        "Children register for the Challenge at the library from July each year."
+    ),
+    "how_to": [
+        "Visit any Worcestershire library from July onwards to register your child "
+        "— registration is free.",
+        "Pick up your reading record booklet and choose your first books.",
+        "Return to the library after every two books to collect stickers and rewards.",
+        "Read six books by mid-September to earn a certificate (and a medal at "
+        "many branches).",
+    ],
+    "also_see": (
+        "Young people aged 13–24 can **volunteer** on the Summer Reading Challenge "
+        "— great for CVs and the Duke of Edinburgh's Award. "
+        f"See [volunteering and work experience]({VOLUNTEERING_URL}) for details."
+    ),
+    "url": SUMMER_READING_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
@@ -972,6 +1018,9 @@ def account_and_loans(query: str | None = None) -> dict:
     elif any(w in q for w in ("room hire", "hire a room", "meeting room",
                               "book a room", "room for hire")):
         out["focus"] = "room_hire"
+    elif any(w in q for w in ("summer reading", "reading challenge", "summer challenge",
+                              "summer holiday read")):
+        out["focus"] = "summer_reading"
     elif any(w in q for w in ("warm space", "warm welcome", "somewhere warm")):
         out["focus"] = "warm_space"
     else:
@@ -995,6 +1044,8 @@ def account_and_loans(query: str | None = None) -> dict:
         out["room_hire_data"] = ROOM_HIRE
     if out["focus"] == "warm_space":
         out["warm_space"] = WARM_SPACE
+    if out["focus"] == "summer_reading":
+        out["summer_reading"] = SUMMER_READING_CHALLENGE
 
     return out
 

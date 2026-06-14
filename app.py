@@ -120,6 +120,14 @@ TOOLS = {
                 "Library Service at Home (housebound delivery). "
                 "args: {\"query\": \"<optional topic>\"}",
         "fn": lambda a: ls.account_and_loans(a.get("query") or a.get("topic"))},
+    "computer_help": {
+        "desc": "Public computers at library branches — how to book a session, walk-in "
+                "access, free Wi-Fi available without a card. args: {}",
+        "fn": lambda a: ls.computer_help()},
+    "children_services": {
+        "desc": "Children's library activities: Storytime, Rhymetime, Summer Reading "
+                "Challenge, holiday events, children's eBooks on BorrowBox. args: {}",
+        "fn": lambda a: ls.children_services()},
 }
 
 ROUTER_SYSTEM = (
@@ -181,6 +189,31 @@ def keyword_route(q: str) -> tuple[str, dict]:
     feat_hits = sum(1 for w in ("parking", "café", "cafe", "wifi", "wi-fi", "study",
                                 "toilet", "computer", "meeting room", "baby")
                     if w in t)
+    # Children's programmes — before "book/read" → catalogue catch-all
+    if re.search(r"\b(storytime|story time|rhymetime|rhyme time|baby bounce|"
+                 r"toddler|summer reading( challenge)?|reading challenge|"
+                 r"children.s (activit|event|session|programme|club)|"
+                 r"kids.? (activit|event|session)|junior activit)\b", t):
+        return "library_events", {"query": q}
+    # Book clubs / reading groups — before "book" → catalogue catch-all
+    if re.search(r"\b(book club|reading (group|club)|book group|"
+                 r"reading circle|knit (and|&) natter|craft (club|group)|"
+                 r"coffee (morning|and chat)|social group)\b", t):
+        return "library_events", {"query": q}
+    # Public computers / internet access — before "book" → catalogue catch-all
+    if re.search(r"\b(public (computer|pc|internet)|book (a )?computer|"
+                 r"computer (session|booking|slot)|use (a |the )?(computer|pc|internet)|"
+                 r"internet access|free (computer|pc|internet)|online (access|session))\b", t):
+        return "computer_help", {}
+    # Business support / BIPC — specific enough to route before membership catch-all
+    if re.search(r"\b(bipc|business (advice|centre|center|support|ip|hub)|"
+                 r"intellectual property|start(ing)? a business|free business "
+                 r"(advice|support|help))\b", t):
+        return "hive_info", {"topic": "business"}
+    # Children's library (general) — before bare-word catch-alls
+    if re.search(r"\b(children.s library|kids.? library|junior library|"
+                 r"children.s (books?|section|floor|corner))\b", t):
+        return "children_services", {}
     if re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t):
         return "printing_help", {}
     # Account self-service: renewals, fines, reservations, home library
@@ -677,6 +710,40 @@ def render_account_and_loans(r):
     return "\n".join(out)
 
 
+def render_computer(r):
+    out = [
+        "💻 **Public computers at Worcestershire libraries**\n",
+        r["summary"],
+        f"\n✅ **What you need:** {r['what_you_need']}\n",
+        "**How to use a library computer:**",
+    ]
+    for i, step in enumerate(r["how_to"], 1):
+        out.append(f"{i}. {step}")
+    out += [
+        f"\n📶 _{r['wifi_note']}_",
+        f"\n💡 _{r['digital_also']}_",
+        f"\n🔎 [Book a computer session]({r['url']})",
+    ]
+    return "\n".join(out)
+
+
+def render_children(r):
+    out = [
+        "👧 **Children's library services in Worcestershire**\n",
+        r["summary"],
+        f"\n✅ **What you need:** {r['what_you_need']}\n",
+        "**What's available:**",
+    ]
+    for item in r["highlights"]:
+        out.append(f"- {item}")
+    out += [
+        f"\n🔎 [Events & activities — see what's on near you]({r['events_url']})",
+        f"📚 [Children's eBooks & audiobooks on BorrowBox]({r['borrowbox_url']})",
+        f"🪪 [Join the library free]({r['join_url']})",
+    ]
+    return "\n".join(out)
+
+
 RENDER = {
     "search_catalogue": render_catalogue, "whats_new": render_whats_new,
     "where_to_get": render_where_to_get, "hive_info": render_hive,
@@ -685,6 +752,8 @@ RENDER = {
     "libraries_unlocked": render_unlocked, "membership_help": render_membership,
     "printing_help": render_printing, "graph_search": render_graph,
     "account_and_loans": render_account_and_loans,
+    "computer_help": render_computer,
+    "children_services": render_children,
 }
 
 
@@ -735,6 +804,12 @@ NUDGES = {
     "account_and_loans": (
         "💡 Renewing is quickest online — no queue, no trip to the library.",
         ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
+    "computer_help": (
+        "💡 Free Wi-Fi needs no card — just connect on your own device.",
+        ["Book a computer session", "How do I join the library?", "What can I access online?"]),
+    "children_services": (
+        "💡 Most children's events are free — just turn up. Summer Reading Challenge runs every year.",
+        ["What's on for children this week?", "Children's eBooks on BorrowBox", "How do I join?"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
@@ -789,10 +864,16 @@ HELP = (
     "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
     "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
-    "- 📅 **What's on** this week\n"
-    "- 💻 **Free online** — newspapers, magazines, eBooks, family history, films\n"
+    "- 👧 **Children's services** — Storytime, Rhymetime, Summer Reading Challenge, "
+    "holiday events and children's eBooks\n"
+    "- 📅 **What's on** this week — events, book clubs, reading groups\n"
+    "- 💻 **Computers & Wi-Fi** — free public PCs at most branches; "
+    "free Wi-Fi everywhere, no card needed\n"
+    "- 🌐 **Free online** — newspapers, magazines, eBooks, family history, films\n"
     "- 🖨️ **Printing** from your phone\n"
-    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n\n"
+    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
+    "- 💼 **Business support (BIPC)** — free advice, IP information and databases "
+    "at The Hive\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
     "names its source._")

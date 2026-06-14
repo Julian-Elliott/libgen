@@ -815,6 +815,68 @@ ROOM_HIRE = {
     "url": ROOM_HIRE_URL,
 }
 
+COMPUTER_HELP = {
+    "summary": (
+        "Free public computers are available at most Worcestershire library branches. "
+        "Sessions can be pre-booked online or used on a walk-in basis when a machine is free."
+    ),
+    "what_you_need": (
+        f"Free library membership. [Book a computer session]({BOOK_COMPUTER_URL}) "
+        "online — or just walk in and use one if it's free."
+    ),
+    "how_to": [
+        f"**Book ahead:** [Reserve a session online]({BOOK_COMPUTER_URL}) — choose "
+        "your branch and preferred time slot.",
+        "**Walk in:** Turn up during staffed hours and ask staff — if a computer is "
+        "free you can use it straight away.",
+    ],
+    "wifi_note": (
+        "**Free Wi-Fi** is available at every branch — bring your own laptop, "
+        "tablet or phone and connect without needing a membership or library card."
+    ),
+    "digital_also": (
+        f"Members can also access many online resources from home — "
+        f"eBooks, newspapers, research databases and more via the "
+        f"[online library hub]({ONLINE_HUB})."
+    ),
+    "url": BOOK_COMPUTER_URL,
+}
+
+CHILDREN_SERVICES = {
+    "summary": (
+        "Worcestershire libraries run a wide range of free children's activities — "
+        "Storytime, Rhymetime, Summer Reading Challenge, holiday events and more — "
+        "across branches and at The Hive."
+    ),
+    "what_you_need": (
+        "Most sessions are free and need no booking — just turn up. "
+        "A few popular sessions may require advance booking; check the events listing."
+    ),
+    "highlights": [
+        "**Storytime & Rhymetime** — regular free sessions at many branches for babies, "
+        "toddlers and young children.",
+        "**Summer Reading Challenge** — the annual national reading challenge for "
+        "school-age children, free to join at any library during the summer holidays.",
+        "**Holiday activities** — special events, crafts and clubs throughout school holidays.",
+        "**Children's library at The Hive** — a dedicated children's floor with a wide "
+        "selection of books for all ages.",
+        f"**Children's eBooks & audiobooks** — available free via [BorrowBox]({BORROWBOX}).",
+    ],
+    "events_url": EVENTS_URL,
+    "borrowbox_url": BORROWBOX,
+    "join_url": JOIN_URL,
+}
+
+
+def computer_help() -> dict:
+    """Public computers, Wi-Fi and internet access in Worcestershire libraries."""
+    return {**COMPUTER_HELP, "checked": _now()}
+
+
+def children_services() -> dict:
+    """Children's library activities, Storytime, Rhymetime and Summer Reading Challenge."""
+    return {**CHILDREN_SERVICES, "checked": _now()}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """

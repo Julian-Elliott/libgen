@@ -423,6 +423,9 @@ def render_unlocked(r):
         out.append(f"\n✓ Yes — **{r['branch_match']}** has Libraries Unlocked.")
     elif r.get("branch_match") is None and "branch_match" in r:
         out.append("\nThat branch isn't on the Libraries Unlocked list yet.")
+    if r.get("get_started"):
+        out.append("\n**🚀 How to get started:**")
+        out += [f"{i}. {s}" for i, s in enumerate(r["get_started"], 1)]
     out.append(f"\n🔎 [Libraries Unlocked]({r['page_url']})")
     return "\n".join(out)
 
@@ -717,7 +720,8 @@ NUDGES = {
     "online_hub": ("💡 It's free with your card — set up tonight from your sofa.",
                    ["How do I sign up?", "What newspapers are there?", "BorrowBox limits"]),
     "libraries_unlocked": ("💡 It's free — just a quick one-off induction.",
-                           ["Which branches?", "How do I get the induction?", "What can I do there?"]),
+                           ["How do I join the library?", "Is Malvern library open now?",
+                            "What's on this week?"]),
     "printing_help": ("💡 No printer at home? Print from your phone, collect within 24h.",
                       ["Printing prices", "Find my nearest library", "How do I join?"]),
     "membership_help": ("💡 Digital membership is instant — no card needed.",

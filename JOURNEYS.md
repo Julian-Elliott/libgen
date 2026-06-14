@@ -15,7 +15,7 @@ The design loop for each journey:
 | 0 | "How do I **get** Wolf Hall?" | Walk out with (or download) THIS title today | `where_to_get` | Every format held, then the fastest route per format: **on the shelf at a named branch with shelf mark** (copy-level, live) → free reservation steps → **BorrowBox tonight** (direct link when the catalogue carries one) · eligibility per route |
 | 1 | "Do you have Harry Potter audiobooks?" | Borrow a specific title | `search_catalogue` | Matches with format/year + detail links · **To borrow:** join-online / digital-membership links · full-results link |
 | 2 | "Any good new crime novels?" | Discover something to read | `whats_new` | Newest titles · the same **To borrow** join link · see-more link |
-| 3 | "Is Malvern library open now?" | Visit a branch today | `find_library` | 🟢/🔴 open-now + today's hours · address · facilities · **Libraries Unlocked hours + how to get access** · branch page |
+| 3 | "Is Malvern library open now?" / "open tomorrow?" / "Saturday hours?" | Visit a branch on a given day | `find_library` | 🟢/🔴 open-now (today) **or** the asked-about day's hours (tomorrow / any weekday) · address · facilities · **Libraries Unlocked hours + how to get access** · branch page |
 | 4 | "A late-opening library with a café" | Pick the *right* branch | `graph_search` | Matching branches as **links with addresses** · "ask me 'is it open now?'" hint |
 | 5 | "When does the van visit Abberley?" | Catch the mobile library | `mobile_library` | Stop times · "join on the van" · enquiry email · timetable link |
 | 6 | "What's on this week?" | Take the kids somewhere | `library_events` | Events as links with dates/places · "most are free, just turn up" |

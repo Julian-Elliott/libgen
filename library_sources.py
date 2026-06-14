@@ -697,6 +697,21 @@ BORROWING_POLICY = {
                  "the branch you borrowed from."),
         "url": ACCOUNT_URL,
     },
+    "loan_limits": {
+        "summary": (
+            "Standard loans are for 3 weeks — books, DVDs, CDs and most other "
+            "physical items. You can renew as many times as needed, provided no "
+            "other member has reserved the item. For the current limit on how many "
+            "items you can borrow at once, see the membership page."
+        ),
+        "loan_period": "3 weeks (books, DVDs, CDs and other physical items).",
+        "digital": (
+            "eBooks and eAudiobooks via BorrowBox auto-return — no due dates, no fines. "
+            f"Borrow up to 4 eBooks and 4 eAudiobooks simultaneously. "
+            f"[Get BorrowBox]({BORROWBOX})"
+        ),
+        "url": MEMBERSHIP_HUB_URL,
+    },
     "lost_item": {
         "summary": ("If you've lost or damaged a library item, let the library know "
                     "as soon as possible. A replacement charge applies to lost items; "
@@ -772,11 +787,37 @@ ROOM_HIRE = {
     "url": ROOM_HIRE_URL,
 }
 
+COMPUTER_BOOKING = {
+    "summary": (
+        "Free public computers and internet access are available at every "
+        "Worcestershire library branch. Book a session in advance online or "
+        "walk in when a machine is free."
+    ),
+    "what_you_need": (
+        f"Free library membership — [join online]({JOIN_URL}) or at any branch. "
+        "Then sign in at the computer with your card number + PIN."
+    ),
+    "how_to": [
+        f"**Book ahead online:** [Book a computer session]({BOOK_COMPUTER_URL}) "
+        "— choose your branch and preferred time slot.",
+        "**Walk in:** Computers are available on demand when not pre-booked — "
+        "ask at the desk or check the screen.",
+        "Sign in at the machine with your library card number + PIN.",
+    ],
+    "also_see": (
+        "The Hive (Worcester) has 250+ computers across multiple floors including "
+        "a dedicated silent study floor on Level 4. Sessions at The Hive can be "
+        "booked at the Level 1 helpdesk."
+    ),
+    "url": BOOK_COMPUTER_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
-    lost/damaged items, personalised book recommendations, and Library Service at Home.
+    lost/damaged items, loan limits / periods, computer booking, room hire,
+    personalised book recommendations, and Library Service at Home.
     Surfaces the right sub-topic from the query.
     """
     q = (query or "").lower()
@@ -806,6 +847,16 @@ def account_and_loans(query: str | None = None) -> dict:
                               "suggest a book", "suggestion", "what should i read",
                               "choose a book", "pick a book")):
         out["focus"] = "ask_book"
+    elif any(w in q for w in ("computer", "internet access", "pc session",
+                              "book a computer", "computer session", "use the internet")):
+        out["focus"] = "computer"
+    elif any(w in q for w in ("room hire", "meeting room", "hire a room",
+                              "book a room", "community room", "hire room")):
+        out["focus"] = "room_hire"
+    elif any(w in q for w in ("how long", "loan period", "loan length",
+                              "how many books", "how many items", "borrow limit",
+                              "loan limit", "loan time", "keep them for")):
+        out["focus"] = "loan_limits"
     else:
         out["focus"] = "general"
 
@@ -815,6 +866,12 @@ def account_and_loans(query: str | None = None) -> dict:
 
     if out["focus"] == "ask_book":
         out["ask_book"] = ASK_FOR_A_BOOK
+
+    if out["focus"] == "computer":
+        out["computer_booking"] = COMPUTER_BOOKING
+
+    if out["focus"] == "room_hire":
+        out["room_hire_info"] = ROOM_HIRE
 
     return out
 

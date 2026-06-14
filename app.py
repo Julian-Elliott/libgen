@@ -193,6 +193,22 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"suggest (me )?a book|what should i read|choose (me )?a book|"
                  r"pick (me )?a book|recommend (me )?a book|reading suggestion)\b", t):
         return "account_and_loans", {"query": "ask for a book recommendation"}
+    # Loan periods / borrowing limits
+    if re.search(r"\bhow long.{0,25}borrow|loan period|loan length|loan limit|"
+                 r"borrow(ing)? limit|how many (books?|items?|things?|dvd)|"
+                 r"keep (books?|items?|them) for|how long can i keep\b", t):
+        return "account_and_loans", {"query": "loan limits how long how many"}
+    # Computer / internet access at the library
+    if re.search(r"\bbook (a |the )?computer|use (a |the )?computer|"
+                 r"computer (access|session|booking|time|use)|public (computer|pc|internet)|"
+                 r"internet access|use the internet (at|in)\b", t):
+        return "account_and_loans", {"query": "computer booking internet access"}
+    # Room hire — generic (not Hive-specific); Hive rooms caught below
+    if (re.search(r"\b(hire|rent).{0,20}(meeting |community )?(room|space)\b|"
+                  r"\b(meeting|community) room.{0,20}(hire|rent|book|available)\b|"
+                  r"\broom hire\b", t)
+            and "hive" not in t):
+        return "account_and_loans", {"query": "room hire meeting room"}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
                  r"worcester city librar|hire (a |the )?(room|space)|"
@@ -219,7 +235,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
         m = re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
         return "mobile_library", {"place": (m[-1] if m else q.split()[-1])}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
-                 r"facilit|where is|near me|study space)\b", t):
+                 r"facility|facilities|wi-?fi|where is|near me|study space|"
+                 r"contact|phone|telephone|email)\b", t):
         m = re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
         return "find_library", {"name": (m[-1] if m else "")}
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
@@ -236,7 +253,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(member|membership|join|library card|sign ?up|what do i need)\b", t):
         return "membership_help", {"service": q}
     if re.search(r"\b(event|events|what'?s on|whats on|activit|class|club|session|"
-                 r"group|happening|this week)\b", t):
+                 r"group|happening|this week|summer reading|reading challenge|"
+                 r"story ?time|rhyme ?time|holiday (club|activit)|"
+                 r"reading (group|scheme)|book (club|group))\b", t):
         m = [w for w in re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
              if w.lower() not in _QWORDS]
         return "library_events", {"query": (m[-1] if m else "")}
@@ -597,6 +616,38 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Ask for a Book]({ab['url']})")
         return "\n".join(out)
 
+    if focus == "computer" and r.get("computer_booking"):
+        cb = r["computer_booking"]
+        out += ["🖥️ **Public computers & internet access:**\n", cb["summary"],
+                f"\n✅ **What you need:** {cb['what_you_need']}\n"]
+        for i, step in enumerate(cb["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if cb.get("also_see"):
+            out.append(f"\n💡 _{cb['also_see']}_")
+        out.append(f"\n🔎 [Book a computer session]({cb['url']})")
+        return "\n".join(out)
+
+    if focus == "room_hire" and r.get("room_hire_info"):
+        rh = r["room_hire_info"]
+        out += ["🏢 **Hire a library meeting room:**\n", rh["summary"],
+                f"\n✅ **What you need:** {rh['what_you_need']}\n"]
+        for step in rh["how_to"]:
+            out.append(f"- {step}")
+        if rh.get("also_see"):
+            out.append(f"\n💡 _{rh['also_see']}_")
+        out.append(f"\n🔎 [Hire a library meeting room]({rh['url']})")
+        return "\n".join(out)
+
+    if focus == "loan_limits":
+        ll = r["loan_limits"]
+        ren = r["renewals"]
+        out += ["📅 **Borrowing periods & limits:**\n", ll["summary"],
+                f"\n- **Loan period:** {ll['loan_period']}",
+                f"- **Digital (BorrowBox):** {ll['digital']}",
+                f"- **Renewing:** {ren['summary']}",
+                f"\n🔎 [Membership & borrowing]({ll['url']})"]
+        return "\n".join(out)
+
     if focus == "renewals":
         ren = r["renewals"]
         out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
@@ -703,7 +754,7 @@ NUDGES = {
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
     "account_and_loans": (
         "💡 Renewing is quickest online — no queue, no trip to the library.",
-        ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
+        ["How do I renew my books?", "How many books can I borrow?", "Can you suggest a book for me?"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
@@ -752,13 +803,15 @@ HELP = (
     "or borrow the eBook tonight\n"
     "- 🔄 **Account & loans** — renew books online, reserve items, return items, "
     "pay fines, lost card, lost/damaged item\n"
+    "- 📅 **Borrowing** — loan periods (3 weeks standard), how many items, renewals\n"
     "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
-    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
+    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, Wi-Fi, study space\n"
+    "- 🖥️ **Computers & internet** — free public computers at every branch, book online\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
     "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
     "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
-    "- 📅 **What's on** this week\n"
+    "- 📅 **What's on** — events, book clubs, story time, summer reading challenge\n"
     "- 💻 **Free online** — newspapers, magazines, eBooks, family history, films\n"
     "- 🖨️ **Printing** from your phone\n"
     "- 🏢 **Room hire** — meeting rooms at libraries across the county\n\n"
@@ -887,6 +940,7 @@ def build_demo():
             ["How do I get Wolf Hall by Hilary Mantel?",
              "Can you suggest a book for me?",
              "How do I renew my library books?",
+             "How many books can I borrow at once?",
              "How do I reserve a book?",
              "How do I return library books?",
              "Do you have Harry Potter audiobooks?",
@@ -896,6 +950,9 @@ def build_demo():
              "When does the mobile library visit Abberley?",
              "Can I read newspapers for free?",
              "Can I watch old British TV programmes for free?",
+             "How do I book a computer at the library?",
+             "Can I hire a meeting room?",
+             "Is there a summer reading challenge?",
              "I can't get to the library — can books be delivered?"],
             inputs=box, label="Try one")
 

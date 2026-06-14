@@ -86,15 +86,17 @@ class Trace:
         r = self.d["route"]
         steps = " → ".join(s["type"] for s in self.d["steps"]) or "—"
         src = self.d["sources"][0] if self.d["sources"] else ""
-        srcline = f" · [source]({src})" if src else ""
         return (
-            "\n\n<details><summary>🔎 How I answered (agent trace)</summary>\n\n"
-            f"- **Route:** `{r.get('tool','?')}` via {r.get('router','?')} "
-            f"({r.get('latency_ms',0)} ms)\n"
-            f"- **Steps:** {steps}\n"
-            f"- **Model:** {self.d['model']} · **Total:** {self.d['total_ms']} ms · "
-            f"{self.d['ts']}{srcline}\n\n"
-            "<sub>Logged openly to `traces.jsonl` for the 📡 Open Trace badge.</sub>\n"
+            "\n\n<details><summary><small>🔧 dev trace</small></summary>\n\n"
+            f"```\n"
+            f"tool:    {r.get('tool','?')}  ({r.get('router','?')} router, "
+            f"{r.get('latency_ms',0)} ms routing)\n"
+            f"steps:   {steps}\n"
+            f"model:   {self.d['model']}\n"
+            f"total:   {self.d['total_ms']} ms  ·  {self.d['ts']}\n"
+            + (f"source:  {src}\n" if src else "")
+            + "```\n\n"
+            "<sub>Logged to `traces.jsonl` · 📡 Open Trace</sub>\n"
             "</details>"
         )
 

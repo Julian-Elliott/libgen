@@ -981,12 +981,20 @@ HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
 SYNTH_SYSTEM = (
     "You are the Worcestershire Libraries assistant. Answer ONLY from the LIVE "
     "DATA provided — never invent titles, times, prices, stops or facilities. Warm, "
-    "concise, British English. Keep the markdown links and the ✅/🔎 lines from the "
-    "data. Lead with what the person CAN do: if a service meets their need in a "
-    "different way (e.g. they can't print AT home, but can send a job from home "
-    "and collect it at any branch), open with that — never with a bare 'no'. "
-    "Keep any provenance footnote (e.g. 'From the Hive's own pages') intact. "
+    "concise, British English. "
+    "CRITICAL: copy every [text](url) markdown link and every 🔎 line EXACTLY as "
+    "they appear in the LIVE DATA — never replace links with phrases like 'visit the "
+    "website' or 'see the council pages'. If you must cut for length, cut prose "
+    "sentences but keep every link. "
+    "Keep the ✅ lines from the data. Keep any provenance footnote "
+    "(e.g. 'From the Hive's own pages') intact. "
     "If the data doesn't answer it, say so and point to the source link.")
+
+
+def _key_links(rendered: str) -> list[str]:
+    """🔎-prefixed action links from rendered output that must survive LLM synthesis."""
+    return [l.strip() for l in rendered.splitlines()
+            if l.strip().startswith("🔎") and "](http" in l]
 
 
 def synthesize_stream(question, rendered):
@@ -997,7 +1005,7 @@ def synthesize_stream(question, rendered):
         stream = llm([{"role": "system", "content": SYNTH_SYSTEM},
                       {"role": "user", "content": f"Question: {question}\n\n"
                        f"LIVE DATA:\n{rendered}"}],
-                     max_tokens=650, temperature=0.3, stream=True)
+                     max_tokens=900, temperature=0.3, stream=True)
         acc = ""
         for chunk in stream:
             d = chunk.choices[0].delta.content or ""
@@ -1078,6 +1086,11 @@ def respond(message, history):
         yield answer, None
     tr.step("synthesis", model=MODEL_ID, ms=_ms(t2))
 
+    # Re-inject any 🔎 action links the LLM stripped from the rendered output
+    for link in _key_links(rendered):
+        if link not in answer:
+            answer += f"\n{link}"
+
     # behaviour-change extras + provenance + open trace
     value = value_receipt(tool, raw)
     nudge, chips = NUDGES.get(tool, ("", []))
@@ -1100,10 +1113,10 @@ def respond(message, history):
     checked = raw.get("checked", "")
     label = ("page-level KB" if tool == "hive_info" and raw.get("as_of")
              else "**live**")
+    src_html = f' · <a href="{source}">source ↗</a>' if source else ""
     footer = (f"\n\n<sub>🔎 Checked {label}"
               + (f" · {checked}" if checked else "")
-              + f" · tool `{tool}` ({how})"
-              + (f" · [source]({source})" if source else "") + "</sub>")
+              + src_html + "</sub>")
     tr.finish(answer, [source]).save()
 
     final = answer
@@ -1158,33 +1171,16 @@ def build_demo():
 
         gr.Examples(
             ["How do I get Wolf Hall by Hilary Mantel?",
-             "Can you suggest a book for me?",
-             "How do I renew my library books?",
-             "How do I reserve a book?",
-             "How do I cancel a reservation?",
-             "How do I return library books?",
-             "Do you have Harry Potter audiobooks?",
              "What can I do at The Hive?",
              "Is Malvern library open now?",
-             "Is there free Wi-Fi at the library?",
-             "A late-opening library with a café and meeting rooms",
-             "When does the mobile library visit Abberley?",
+             "How do I renew my library books?",
              "Can I read newspapers for free?",
-             "Can I watch old British TV programmes for free?",
-             "I can't get to the library — can books be delivered?",
-             "Can I book a computer at the library?",
-             "How do I access the Oxford English Dictionary?",
-             "Are there books to help with mental health?",
-             "How do I join the Summer Reading Challenge?",
-             "Can I hire a meeting room at my local library?",
-             "Can I volunteer at the library?",
-             "I need help getting online — can the library help?",
+             "When does the mobile library visit Abberley?",
              "I forgot my library PIN — what do I do?",
-             "Are there adult learning courses at the library?",
-             "Is there a book club at my local library?",
-             "Can I donate books to the library?",
-             "Do you have large print books?"],
-            inputs=box, label="Try one")
+             "Are there books to help with mental health?",
+             "I can't get to the library — can books be delivered?",
+             "I need help getting online — can the library help?"],
+            inputs=box, label="Try an example")
 
         if not HF_TOKEN:
             gr.Markdown("> ⚠️ No `HF_TOKEN` set — **no-LLM mode**: you get the raw "

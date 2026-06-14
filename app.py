@@ -667,9 +667,6 @@ def value_receipt(tool, raw):
         return "💷 _Borrowing instead of buying ≈ **£9–£20 saved** per title._"
     if tool == "where_to_get" and raw.get("found"):
         return "💷 _Getting it from the library instead of buying ≈ **£9–£20 saved**._"
-    if tool == "online_hub":
-        return ("💷 _Free with your card — a newspaper or eBook subscription is "
-                "**~£8–£12/month** you don't pay._")
     if tool == "printing_help":
         return "💷 _Far cheaper than a high-street print shop._"
     return ""

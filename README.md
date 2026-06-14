@@ -98,6 +98,7 @@ testable against the live sites: `python library_sources.py`.
 ```bash
 pip install -r requirements.txt gradio
 export HF_TOKEN=hf_xxx            # optional — omit for no-LLM mode
+export TRACE_DATASET=you/wpl-traces  # optional — persist usage analytics (see below)
 python app.py                    # http://localhost:7860
 
 # refresh the knowledge bases + graph any time:
@@ -106,11 +107,25 @@ python build_hive_kb.py          # every Hive page -> hive_kb.json
 python graph_build.py            # both KBs        -> library_graph.json
 ```
 
+### Usage analytics (optional)
+
+The Space's container is wiped on every reboot, so the local `traces.jsonl`
+never accumulates. Set **`TRACE_DATASET`** (e.g. `you/wpl-traces`) with a
+write-scoped `HF_TOKEN` and every turn is persisted to a **private** Hugging
+Face Dataset — one small file per turn, written on a background worker so it
+adds no latency and can never break an answer. Unset, it's a silent no-op.
+
+That gives a queryable record of real behaviour to iterate on: questions that
+fall through to the help text (`route.tool == "none"` — a coverage gap), turns
+where the LLM router failed over to keyword matching (`route.router ==
+"keyword"`), and flaky live sources (a step with `ok == false`). Questions are
+user input, so the dataset is created private.
+
 ## Bonus quests in reach
 
 - 🤖 **Best Agent** — a real route → live-tool → synthesise loop.
 - 🎨 **Off-Brand** — custom-branded Worcestershire-teal UI.
-- 📡 **Open Trace** — each answer exposes its routing + source (easy to publish).
+- 📡 **Open Trace** — each answer exposes its routing + source, and with `TRACE_DATASET` set, every turn is persisted to a Hub dataset (see Usage analytics).
 - 📓 **Field Notes** — write-up of building it with/for Jack.
 
 ## License

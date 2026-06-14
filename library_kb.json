@@ -689,7 +689,17 @@
           "staffed": "8:30am to 10:00pm"
         }
       },
-      "facilities": [],
+      "facilities": [
+        "study space",
+        "café",
+        "wheelchair access",
+        "accessible toilet",
+        "public toilets",
+        "free Wi-Fi",
+        "public computers",
+        "meeting rooms",
+        "printing"
+      ],
       "libraries_unlocked": false
     },
     {

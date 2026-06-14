@@ -64,6 +64,10 @@ ASK_FOR_A_BOOK_URL = f"{GOV}/council-services/libraries/read-and-discover/ask-bo
 ROOM_HIRE_URL = f"{GOV}/council-services/libraries/hire-library-meeting-room"
 BOOK_COMPUTER_URL = f"{GOV}/council-services/libraries/your-library-membership/book-computer"
 READ_DISCOVER_URL = f"{GOV}/council-services/libraries/read-and-discover"
+DIGITAL_INCLUSION_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work/digital-inclusion-helping-you-online"
+VOLUNTEERING_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work/volunteering-training-and-work-experience"
+READING_WELL_URL = f"{GOV}/council-services/libraries/read-and-discover/reading-well"
+WARM_WELCOME_URL = f"{GOV}/council-services/libraries/warm-welcome"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -652,24 +656,44 @@ CURATED_HUB = {
         "inside": "Live digital talks and workshops you can join from home.",
     },
     "national biography": {
-        "what_you_need": "Free digital membership.",
+        "what_you_need": "Free digital membership — any Worcestershire resident, instant sign-up with a postcode.",
         "at_home": True,
-        "inside": "60,000+ biographies of notable people from British history (Oxford DNB).",
+        "access": [
+            f"Visit the council's [Oxford DNB hub page]({GOV}/council-services/libraries/online-library-hub/oxford-dictionary-national-biography) and click the access link.",
+            "Sign in with your Worcestershire library card number + PIN.",
+            f"Not a member yet? [Get free digital membership instantly]({JOIN_URL}) — just a Worcestershire postcode needed.",
+        ],
+        "inside": "60,000+ biographies of notable people from British history — statespeople, scientists, artists, writers and more.",
     },
     "oxford english": {
-        "what_you_need": "Free digital membership.",
+        "what_you_need": "Free digital membership — any Worcestershire resident, instant sign-up with a postcode.",
         "at_home": True,
-        "inside": "The complete Oxford English Dictionary — meanings, history and pronunciation.",
+        "access": [
+            f"Visit the council's [Oxford English Dictionary hub page]({GOV}/council-services/libraries/online-library-hub/oxford-english-dictionary) and click the access link.",
+            "Sign in with your Worcestershire library card number + PIN.",
+            f"Not a member yet? [Get free digital membership instantly]({JOIN_URL}) — just a Worcestershire postcode needed.",
+        ],
+        "inside": "The complete Oxford English Dictionary (OED) — meanings, history and pronunciation for 600,000+ words, old and new.",
     },
     "oxford reference": {
-        "what_you_need": "Free digital membership.",
+        "what_you_need": "Free digital membership — any Worcestershire resident, instant sign-up with a postcode.",
         "at_home": True,
-        "inside": "Thousands of dictionaries and reference works across every subject.",
+        "access": [
+            f"Visit the council's [Oxford Reference hub page]({GOV}/council-services/libraries/online-library-hub/oxford-reference) and click the access link.",
+            "Sign in with your Worcestershire library card number + PIN.",
+            f"Not a member yet? [Get free digital membership instantly]({JOIN_URL}) — just a Worcestershire postcode needed.",
+        ],
+        "inside": "Thousands of dictionaries, fact books and reference works across every subject — science, history, law, art, literature and more.",
     },
     "oxford research": {
-        "what_you_need": "Free digital membership.",
+        "what_you_need": "Free digital membership — any Worcestershire resident, instant sign-up with a postcode.",
         "at_home": True,
-        "inside": "In-depth peer-reviewed research encyclopaedias across many fields.",
+        "access": [
+            f"Visit the council's [Oxford Research Encyclopaedias hub page]({GOV}/council-services/libraries/online-library-hub/oxford-research-encyclopaedias) and click the access link.",
+            "Sign in with your Worcestershire library card number + PIN.",
+            f"Not a member yet? [Get free digital membership instantly]({JOIN_URL}) — just a Worcestershire postcode needed.",
+        ],
+        "inside": "In-depth, peer-reviewed research encyclopaedias across many fields — clear guides for study and independent research.",
     },
 }
 
@@ -815,6 +839,91 @@ ROOM_HIRE = {
     "url": ROOM_HIRE_URL,
 }
 
+COMPUTER_BOOKING = {
+    "summary": (
+        "Free public computers are available at most Worcestershire libraries. "
+        "Sessions can be booked in advance or simply used on a walk-in basis — "
+        "no appointment needed."
+    ),
+    "what_you_need": "Free library membership (any tier, including instant digital membership).",
+    "how_to": [
+        f"[Book a computer session online]({BOOK_COMPUTER_URL}) using your library card number + PIN, "
+        "or just walk in during staffed hours — computers are available on demand.",
+        "Sessions are free and typically up to 1 hour (extensions may be available if machines are free).",
+        "Free Wi-Fi is available at every library if you prefer to use your own device — no login needed.",
+    ],
+    "url": BOOK_COMPUTER_URL,
+}
+
+DIGITAL_SKILLS = {
+    "summary": (
+        "Worcestershire Libraries offer free digital skills support for everyone — "
+        "whether you're getting online for the first time or want to build confidence "
+        "with smartphones, email, online services or the internet."
+    ),
+    "what_you_need": "No membership needed to drop in — just turn up during staffed hours.",
+    "services": [
+        f"**[Digital Inclusion support page]({DIGITAL_INCLUSION_URL})** — links to all resources and guidance.",
+        "**Learn My Way** — free, structured online courses to build digital skills at your own pace. "
+        "Library staff can help you sign up and get started.",
+        "**Digital Champions** — staff and volunteers available during staffed hours to help with "
+        "devices, apps, online forms and internet safety.",
+        "**Public computers and free Wi-Fi** — available at all libraries, no booking needed.",
+        f"**[Get Online Week sessions]** — seasonal digital skills events; check [library events]({EVENTS_URL}) for dates.",
+    ],
+    "url": DIGITAL_INCLUSION_URL,
+}
+
+VOLUNTEERING = {
+    "summary": (
+        "Worcestershire Libraries welcomes volunteers in branches across the county. "
+        "It's a rewarding way to give back to your community, learn new skills and meet people."
+    ),
+    "what_you_need": (
+        f"No specific experience needed — just enthusiasm for libraries. Speak to staff "
+        f"at your local library or call **{LIBRARY_PHONE}** to find out what opportunities "
+        "are available near you."
+    ),
+    "also_see": (
+        f"Young people aged 13–24 can volunteer during the **Summer Reading Challenge**. "
+        f"Work experience and training placements are also available — see "
+        f"[Volunteering, training and work experience]({VOLUNTEERING_URL})."
+    ),
+    "url": f"{GOV}/news/discover-volunteering-opportunities-your-local-library",
+}
+
+READING_WELL = {
+    "summary": (
+        "Reading Well is a free, curated book collection providing information and "
+        "support for mental health, wellbeing and long-term health conditions. "
+        "Endorsed by health professionals, all titles are available to borrow free "
+        "from any Worcestershire library."
+    ),
+    "what_you_need": "Free library membership — borrow any Reading Well title from any branch.",
+    "collections": [
+        "**Reading Well for Adults** — books on managing mental health, anxiety, depression and long-term conditions.",
+        "**Reading Well for Young People** — helping teenagers navigate difficult times.",
+        "**Reading Well for Children** — supporting younger readers to understand their feelings.",
+        "**Reading Well for Families** — guidance for families through pregnancy and early parenthood.",
+    ],
+    "url": READING_WELL_URL,
+}
+
+WARM_SPACE = {
+    "summary": (
+        "All Worcestershire libraries are free, warm and welcoming spaces — no "
+        "membership needed and no need to buy anything. Part of the Warm Welcome "
+        "Network, libraries offer a safe, comfortable environment with free Wi-Fi, "
+        "computers, reading material and knowledgeable staff."
+    ),
+    "what_you_need": "Nothing — anyone can walk in during staffed hours.",
+    "also_see": (
+        "Library staff can also signpost visitors to local support services, "
+        "community groups, health information and wellbeing resources."
+    ),
+    "url": WARM_WELCOME_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
@@ -849,6 +958,22 @@ def account_and_loans(query: str | None = None) -> dict:
                               "suggest a book", "suggestion", "what should i read",
                               "choose a book", "pick a book")):
         out["focus"] = "ask_book"
+    elif any(w in q for w in ("computer", "pc session", "book a computer",
+                              "use a computer", "computer session")):
+        out["focus"] = "computer"
+    elif any(w in q for w in ("volunteer", "volunteering", "work experience")):
+        out["focus"] = "volunteer"
+    elif any(w in q for w in ("digital skill", "get online", "learn my way",
+                              "digital champion", "computer skill", "learn to use")):
+        out["focus"] = "digital_skills"
+    elif any(w in q for w in ("reading well", "wellbeing book", "mental health book",
+                              "books for mental health", "books for wellbeing")):
+        out["focus"] = "reading_well"
+    elif any(w in q for w in ("room hire", "hire a room", "meeting room",
+                              "book a room", "room for hire")):
+        out["focus"] = "room_hire"
+    elif any(w in q for w in ("warm space", "warm welcome", "somewhere warm")):
+        out["focus"] = "warm_space"
     else:
         out["focus"] = "general"
 
@@ -858,24 +983,66 @@ def account_and_loans(query: str | None = None) -> dict:
 
     if out["focus"] == "ask_book":
         out["ask_book"] = ASK_FOR_A_BOOK
+    if out["focus"] == "computer":
+        out["computer_booking"] = COMPUTER_BOOKING
+    if out["focus"] == "volunteer":
+        out["volunteering"] = VOLUNTEERING
+    if out["focus"] == "digital_skills":
+        out["digital_skills"] = DIGITAL_SKILLS
+    if out["focus"] == "reading_well":
+        out["reading_well"] = READING_WELL
+    if out["focus"] == "room_hire":
+        out["room_hire_data"] = ROOM_HIRE
+    if out["focus"] == "warm_space":
+        out["warm_space"] = WARM_SPACE
 
     return out
 
 
 _HUB_SYNONYMS = {
+    # Oxford — specific multi-word keys first to avoid "research" matching ebsco
+    "oxford english dictionary": "oxford english",
+    "oxford english": "oxford english",
+    "oxford research encyclopaedias": "oxford research encyclopaedias",
+    "oxford research encyclopedia": "oxford research encyclopaedias",
+    "oxford research": "oxford research encyclopaedias",
+    "oxford reference": "oxford reference",
+    "oxford dictionary of national biography": "oxford dictionary of national biography",
+    "oxford dnb": "oxford dictionary of national biography",
+    "oed": "oxford english",
+    "oxford dictionary": "oxford english",
+    "encyclopaedia": "oxford research encyclopaedias",
+    "encyclopedia": "oxford research encyclopaedias",
+    "word history": "oxford english",
+    "word meaning": "oxford english",
+    # PressReader
     "newspaper": "pressreader", "magazine": "pressreader", "news": "pressreader",
     "press": "pressreader", "guardian": "pressreader", "times newspaper": "pressreader",
+    # Ancestry
     "family history": "ancestry", "ancestry": "ancestry", "genealogy": "ancestry",
+    # BorrowBox
     "ebook": "borrowbox", "audiobook": "borrowbox", "audio book": "borrowbox",
+    # Business / COBRA
     "business": "cobra", "start a business": "cobra", "company": "cobra",
+    # Theory Test Pro
     "driving": "theory test pro", "theory test": "theory test pro",
     "driving test": "theory test pro", "dvsa": "theory test pro",
-    "dictionary": "oxford english", "research": "ebsco", "journal": "ebsco",
+    # General Oxford (after specific multi-word entries)
+    "dictionary": "oxford english",
+    # Research/journals (after oxford research entries)
+    "research": "ebsco", "journal": "ebsco",
+    # Patents
     "patent": "espacenet", "patents": "espacenet", "intellectual property": "espacenet",
+    # BFI
     "film": "bfi", "tv": "bfi", "television": "bfi", "movie": "bfi",
     "british film": "bfi", "archive film": "bfi", "old tv": "bfi",
+    # Biography
     "biography": "national biography", "who was": "national biography",
+    # Reference
     "reference": "oxford reference",
+    # Which?
+    "consumer advice": "which", "product review": "which",
+    "buying guide": "which", "best buy": "which",
 }
 
 

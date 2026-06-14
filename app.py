@@ -214,10 +214,28 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"suggest (me )?a book|what should i read|choose (me )?a book|"
                  r"pick (me )?a book|recommend (me )?a book|reading suggestion)\b", t):
         return "account_and_loans", {"query": "ask for a book recommendation"}
-    # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
+    if re.search(r"\bbook (a )?computer\b|use (a |the )?computer|pc session|"
+                 r"computer session|book a pc\b", t):
+        return "account_and_loans", {"query": "book a computer"}
+    if re.search(r"\bvolunteer(ing)?\b|work experience (at|in) (a |the )?librar\b", t):
+        return "account_and_loans", {"query": "volunteering"}
+    if re.search(r"\bdigital (skills?|inclusion|champion)\b|learn my way\b|"
+                 r"get online\b|learn to use (a )?computer\b", t):
+        return "account_and_loans", {"query": "digital skills"}
+    if re.search(r"\breading well\b|mental health books?|wellbeing books?|"
+                 r"books? (for|about) (mental health|wellbeing)\b|"
+                 r"(library|have|borrow).{0,20}(mental health|wellbeing)\b", t):
+        return "account_and_loans", {"query": "reading well"}
+    if re.search(r"\bwarm (space|welcome|place)\b|somewhere warm\b", t):
+        return "account_and_loans", {"query": "warm space"}
+    # Non-Hive meeting room hire — Hive-specific queries fall through to hive_info below
+    if (re.search(r"\bhire (a |the )?(meeting )?room\b|(meeting )?room (for )?hire\b|"
+                  r"book a (meeting )?room\b|meeting room hire\b", t)
+            and not re.search(r"\bhive\b", t)):
+        return "account_and_loans", {"query": "room hire meeting room"}
+    # The Hive / its extended offer (archives, archaeology, study spaces, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
-                 r"worcester city librar|hire (a |the )?(room|space)|"
-                 r"(room|space) (for )?hire|book a (room|space|study)", t):
+                 r"worcester city librar|book a (space|study)\b", t):
         topic = re.sub(r"\b(the|hive|at|in|about|tell|me|what|can|i|do|you|"
                        r"know|is|are|there)\b", " ", t)
         return "hive_info", {"topic": topic.strip(" ?.") or None}
@@ -245,8 +263,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
                  r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
-    platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|"
-                         r"theory test|bfi|cobra|digital library|online (library )?hub)\b", t)
+    platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|oed|"
+                         r"theory test|bfi|cobra|digital library|online (library )?hub|"
+                         r"encyclopaedia|encyclopedia)\b", t)
     media = re.search(r"\b(ebooks?|e-books?|audiobooks?|emagazines?)\b", t)
     online_ctx = re.search(r"\b(online|free|digital|from home|at home|on my phone|"
                            r"app|stream(ing)?|download)\b", t)
@@ -589,6 +608,62 @@ def render_account_and_loans(r):
     focus = r.get("focus", "general")
     out = []
 
+    if focus == "computer" and r.get("computer_booking"):
+        cb = r["computer_booking"]
+        out = ["💻 **Public computers at Worcestershire libraries:**\n", cb["summary"],
+               f"\n✅ **What you need:** {cb['what_you_need']}"]
+        for step in cb.get("how_to", []):
+            out.append(f"- {step}")
+        out.append(f"\n🔎 [Book a computer session]({cb['url']})")
+        return "\n".join(out)
+
+    if focus == "volunteer" and r.get("volunteering"):
+        vol = r["volunteering"]
+        out = ["🙋 **Volunteering at Worcestershire Libraries:**\n", vol["summary"],
+               f"\n✅ **How to get involved:** {vol['what_you_need']}"]
+        if vol.get("also_see"):
+            out.append(f"\n💡 {vol['also_see']}")
+        out.append(f"\n🔎 [Discover volunteering opportunities]({vol['url']})")
+        return "\n".join(out)
+
+    if focus == "digital_skills" and r.get("digital_skills"):
+        ds = r["digital_skills"]
+        out = ["🖥️ **Free digital skills support at your library:**\n", ds["summary"],
+               f"\n✅ **Entry:** {ds['what_you_need']}"]
+        for svc in ds.get("services", []):
+            out.append(f"- {svc}")
+        out.append(f"\n🔎 [Digital Inclusion — Helping You Online]({ds['url']})")
+        return "\n".join(out)
+
+    if focus == "reading_well" and r.get("reading_well"):
+        rw = r["reading_well"]
+        out = ["📖 **Reading Well — free wellbeing books at your library:**\n",
+               rw["summary"], f"\n✅ **What you need:** {rw['what_you_need']}"]
+        for col in rw.get("collections", []):
+            out.append(f"- {col}")
+        out.append(f"\n🔎 [Reading Well collections]({rw['url']})")
+        return "\n".join(out)
+
+    if focus == "room_hire" and r.get("room_hire_data"):
+        rh = r["room_hire_data"]
+        out = ["🏢 **Meeting rooms for hire at Worcestershire libraries:**\n",
+               rh["summary"], f"\n✅ **What you need:** {rh['what_you_need']}"]
+        for step in rh.get("how_to", []):
+            out.append(f"- {step}")
+        if rh.get("also_see"):
+            out.append(f"\n💡 {rh['also_see']}")
+        out.append(f"\n🔎 [Hire a library meeting room]({rh['url']})")
+        return "\n".join(out)
+
+    if focus == "warm_space" and r.get("warm_space"):
+        ws = r["warm_space"]
+        out = ["☕ **Warm, welcoming spaces — free at every library:**\n", ws["summary"],
+               f"\n✅ **Entry:** {ws['what_you_need']}"]
+        if ws.get("also_see"):
+            out.append(f"\n💡 {ws['also_see']}")
+        out.append(f"\n🔎 [Warm Welcome]({ws['url']})")
+        return "\n".join(out)
+
     if focus == "home" and r.get("home_library"):
         h = r["home_library"]
         out += [
@@ -698,6 +773,17 @@ def value_receipt(tool, raw):
     if tool == "where_to_get" and raw.get("found"):
         return "💷 _Getting it from the library instead of buying ≈ **£9–£20 saved**._"
     if tool == "online_hub":
+        items = raw.get("items", [])
+        if items:
+            n = items[0].get("name", "").lower()
+            if "pressreader" in n:
+                return "💷 _PressReader is typically **~£9.99/month** — free with your library card._"
+            if "theory test" in n:
+                return "💷 _Theory Test Pro costs **£29.99** to buy — free with your library card._"
+            if "which" in n:
+                return "💷 _Which? subscription is **£10.99/month** — free with your library card._"
+            if "borrowbox" in n or "ebook" in n or "audiobook" in n:
+                return "💷 _eBooks and audiobooks via BorrowBox are free — each would cost £9–£15 to buy._"
         return ("💷 _Free with your card — a newspaper or eBook subscription is "
                 "**~£8–£12/month** you don't pay._")
     if tool == "printing_help":
@@ -791,9 +877,14 @@ HELP = (
     "- 🚐 **Mobile library** times for your village\n"
     "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
     "- 📅 **What's on** this week\n"
-    "- 💻 **Free online** — newspapers, magazines, eBooks, family history, films\n"
-    "- 🖨️ **Printing** from your phone\n"
-    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n\n"
+    "- 💻 **Free online** — newspapers (PressReader), eBooks (BorrowBox), family history (Ancestry), "
+    "the OED, Oxford Reference, BFI films and more\n"
+    "- 🖥️ **Computers & digital skills** — free public computers, Wi-Fi, and digital skills support\n"
+    "- 🖨️ **Printing** from your phone (Print Your Way)\n"
+    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
+    "- 📖 **Reading Well** — free curated books for mental health and wellbeing\n"
+    "- 🙋 **Volunteering** — opportunities at your local library\n"
+    "- ☕ **Warm spaces** — free, no membership needed\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
     "names its source._")
@@ -928,7 +1019,13 @@ def build_demo():
              "When does the mobile library visit Abberley?",
              "Can I read newspapers for free?",
              "Can I watch old British TV programmes for free?",
-             "I can't get to the library — can books be delivered?"],
+             "I can't get to the library — can books be delivered?",
+             "Can I book a computer at the library?",
+             "How do I access the Oxford English Dictionary?",
+             "Are there books to help with mental health?",
+             "Can I hire a meeting room at my local library?",
+             "Can I volunteer at the library?",
+             "I need help getting online — can the library help?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

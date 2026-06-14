@@ -184,7 +184,15 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "account_and_loans", {"query": q}
     if re.search(r"\breturn(ing)? (a |my |the )?(book|item|loan)\b|"
                  r"how (do|to|can) (i )?return\b", t):
-        return "account_and_loans", {"query": q}
+        return "account_and_loans", {"query": "return book"}
+    if (re.search(r"\b(lost|damaged|damage).{0,20}\b(book|item|dvd)\b|"
+                  r"\b(book|item|dvd).{0,15}(lost|damaged)\b", t)
+            and "card" not in t):
+        return "account_and_loans", {"query": "lost damaged book item"}
+    if re.search(r"\b(ask for a book|book recommendation|personalised (book|read)|"
+                 r"suggest (me )?a book|what should i read|choose (me )?a book|"
+                 r"pick (me )?a book|recommend (me )?a book|reading suggestion)\b", t):
+        return "account_and_loans", {"query": "ask for a book recommendation"}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
                  r"worcester city librar|hire (a |the )?(room|space)|"
@@ -563,6 +571,32 @@ def render_account_and_loans(r):
         ]
         return "\n".join(out)
 
+    if focus == "returning":
+        ret = r["returning"]
+        out += ["↩️ **Returning library items:**\n", f"_{ret['summary']}_\n"]
+        for m in ret["methods"]:
+            out.append(f"- {m}")
+        out += [f"\n💡 _{ret['note']}_",
+                f"\n🔎 [Your library account]({ret['url']})"]
+        return "\n".join(out)
+
+    if focus == "lost_item":
+        li = r["lost_item"]
+        out += ["⚠️ **Lost or damaged library item:**\n", f"_{li['summary']}_\n"]
+        for step in li["what_to_do"]:
+            out.append(f"- {step}")
+        out.append(f"\n🔎 [Fees and charges]({li['url']})")
+        return "\n".join(out)
+
+    if focus == "ask_book" and r.get("ask_book"):
+        ab = r["ask_book"]
+        out += ["📖 **Ask for a Book — free personalised recommendations:**\n",
+                ab["summary"], f"\n✅ **What you need:** {ab['what_you_need']}\n"]
+        for i, step in enumerate(ab["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n🔎 [Ask for a Book]({ab['url']})")
+        return "\n".join(out)
+
     if focus == "renewals":
         ren = r["renewals"]
         out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
@@ -669,7 +703,7 @@ NUDGES = {
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
     "account_and_loans": (
         "💡 Renewing is quickest online — no queue, no trip to the library.",
-        ["How do I renew my books?", "How do I make a reservation?", "Pay a fine online"]),
+        ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
@@ -716,16 +750,18 @@ HELP = (
     "and catalogue *live* and can help you:\n\n"
     "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
     "or borrow the eBook tonight\n"
-    "- 🔄 **Account & loans** — renew books online, reserve items, pay fines, "
-    "lost card, borrowing policy\n"
+    "- 🔄 **Account & loans** — renew books online, reserve items, return items, "
+    "pay fines, lost card, lost/damaged item\n"
+    "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
     "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
     "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
     "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
     "- 📅 **What's on** this week\n"
-    "- 💻 **Free online** — newspapers, magazines, eBooks, family history\n"
-    "- 🖨️ **Printing** from your phone\n\n"
+    "- 💻 **Free online** — newspapers, magazines, eBooks, family history, films\n"
+    "- 🖨️ **Printing** from your phone\n"
+    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
     "names its source._")
@@ -849,14 +885,17 @@ def build_demo():
 
         gr.Examples(
             ["How do I get Wolf Hall by Hilary Mantel?",
+             "Can you suggest a book for me?",
              "How do I renew my library books?",
              "How do I reserve a book?",
+             "How do I return library books?",
              "Do you have Harry Potter audiobooks?",
              "What can I do at The Hive?",
              "Is Malvern library open now?",
              "A late-opening library with a café and meeting rooms",
              "When does the mobile library visit Abberley?",
              "Can I read newspapers for free?",
+             "Can I watch old British TV programmes for free?",
              "I can't get to the library — can books be delivered?"],
             inputs=box, label="Try one")
 

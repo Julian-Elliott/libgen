@@ -60,6 +60,9 @@ RESERVE_URL = f"{GOV}/council-services/libraries/your-library-membership/reserve
 HOME_LIBRARY_URL = f"{GOV}/council-services/libraries/your-library-membership/library-service-home"
 MEMBERSHIP_HUB_URL = f"{GOV}/council-services/libraries/your-library-membership"
 ASK_FOR_A_BOOK_URL = f"{GOV}/council-services/libraries/read-and-discover/ask-book"
+ROOM_HIRE_URL = f"{GOV}/council-services/libraries/hire-library-meeting-room"
+BOOK_COMPUTER_URL = f"{GOV}/council-services/libraries/your-library-membership/book-computer"
+READ_DISCOVER_URL = f"{GOV}/council-services/libraries/read-and-discover"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -418,6 +421,11 @@ ELIGIBILITY = {
     "hive_visit": "Nothing — The Hive is open to everyone, 8:30am–10pm every day.",
     "archives": "Free to visit Explore the Past (Level 2, The Hive); opening "
                 f"times and document-ordering rules are on [Explore the Past]({EXPLORE_PAST}).",
+    "ask_book": (f"Any adult — free, no prior membership needed to request. "
+                 f"[Ask for a Book]({ASK_FOR_A_BOOK_URL})"),
+    "computer": (f"Free library membership. [Book a computer session]({BOOK_COMPUTER_URL}) "
+                 "online or just walk in — sessions available on demand or pre-booked."),
+    "room_hire": f"Anyone can hire a library meeting room. [Check availability and book]({ROOM_HIRE_URL}).",
 }
 
 DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -674,6 +682,35 @@ BORROWING_POLICY = {
         ],
         "url": RESERVE_URL,
     },
+    "returning": {
+        "summary": ("Return items at any Worcestershire library — even if you borrowed "
+                    "from a different branch. Many branches have a 24-hour drop-box "
+                    "outside for returns when the library is unstaffed."),
+        "methods": [
+            "Hand items to staff or use a **self-service kiosk** at any Worcestershire library.",
+            "Post items in the **24-hour external drop-box** if your branch has one "
+            "(available outside staffed hours, including Libraries Unlocked hours).",
+            "Return to the **mobile library van** on its next visit.",
+        ],
+        "note": ("Items clear from your account automatically when checked in. "
+                 "Returning to a different branch is fine — no need to go back to "
+                 "the branch you borrowed from."),
+        "url": ACCOUNT_URL,
+    },
+    "lost_item": {
+        "summary": ("If you've lost or damaged a library item, let the library know "
+                    "as soon as possible. A replacement charge applies to lost items; "
+                    "damaged items may incur a smaller charge depending on severity."),
+        "what_to_do": [
+            "**Contact your library** — by phone during staffed hours, in person, "
+            "or online via the council website.",
+            f"**Lost item:** a replacement charge applies — see the [fees page]({FEES_URL}) "
+            "for current rates.",
+            "**Damaged item:** return it and speak to staff — minor wear may attract a "
+            "small charge; severe damage may be treated as lost.",
+        ],
+        "url": FEES_URL,
+    },
     "page_url": MEMBERSHIP_HUB_URL,
 }
 
@@ -693,18 +730,70 @@ HOME_LIBRARY_SERVICE = {
     ),
 }
 
+ASK_FOR_A_BOOK = {
+    "summary": (
+        "Ask for a Book is a free personalised reading recommendation service. "
+        "Tell the library what you enjoy and library staff will curate up to three "
+        "books matched to your taste — ready to collect at your local branch."
+    ),
+    "what_you_need": (
+        f"Any adult — free, no prior membership needed to make a request. "
+        f"You'll need a library card to collect the books; [join free]({JOIN_URL}) "
+        "online or at any branch."
+    ),
+    "how_to": [
+        f"Visit the [Ask for a Book page]({ASK_FOR_A_BOOK_URL}) and fill in the short form.",
+        "Describe what you enjoy — genres, favourite authors, themes, or things you "
+        "want to avoid.",
+        "A librarian will hand-pick up to three books matched to your preferences.",
+        "You'll be notified when your recommendations are ready to collect at your "
+        "chosen branch.",
+    ],
+    "url": ASK_FOR_A_BOOK_URL,
+}
+
+ROOM_HIRE = {
+    "summary": (
+        "Worcestershire libraries offer affordable meeting rooms and spaces for hire — "
+        "suitable for business meetings, community groups, training sessions and events."
+    ),
+    "what_you_need": (
+        "Anyone can hire a library meeting room — membership is not required. "
+        "Spaces vary by branch; prices and availability are on the booking page."
+    ),
+    "how_to": [
+        f"Browse available rooms and check pricing at [Hire a library meeting room]({ROOM_HIRE_URL}).",
+        "Book online or contact the relevant library branch directly.",
+    ],
+    "also_see": (
+        "The Hive (Worcester) also offers larger venues and specialist spaces — "
+        "ask me about 'room hire at The Hive' for details."
+    ),
+    "url": ROOM_HIRE_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
-    Online account, renewing loans, fines / late fees, reservations, and
-    the Library Service at Home. Surfaces the right sub-topic from the query.
+    Online account, renewing loans, fines / late fees, reservations, returning,
+    lost/damaged items, personalised book recommendations, and Library Service at Home.
+    Surfaces the right sub-topic from the query.
     """
     q = (query or "").lower()
     out = dict(BORROWING_POLICY)
     out["checked"] = _now()
 
+    # More specific checks first to avoid substring false-positives.
     if any(w in q for w in ("renew", "renewal", "extend", "due date")):
         out["focus"] = "renewals"
+    elif ("card" in q and any(w in q for w in ("lost", "replace", "replacement", "stolen"))):
+        out["focus"] = "fines"  # card_replacement info lives in the fines section
+    elif (any(w in q for w in ("lost", "damage", "damaged"))
+          and any(w in q for w in ("book", "item", "dvd", "cd"))
+          and "card" not in q):
+        out["focus"] = "lost_item"
+    elif any(w in q for w in ("return", "returning", "bring back", "drop off", "hand back")):
+        out["focus"] = "returning"
     elif any(w in q for w in ("fine", "charge", "fee", "owe", "overdue", "late", "pay")):
         out["focus"] = "fines"
     elif any(w in q for w in ("reserve", "hold", "reservation", "request", "order")):
@@ -713,6 +802,10 @@ def account_and_loans(query: str | None = None) -> dict:
         out["focus"] = "account"
     elif any(w in q for w in ("home", "housebound", "deliver")):
         out["focus"] = "home"
+    elif any(w in q for w in ("recommend", "ask for a book", "personalised",
+                              "suggest a book", "suggestion", "what should i read",
+                              "choose a book", "pick a book")):
+        out["focus"] = "ask_book"
     else:
         out["focus"] = "general"
 
@@ -720,15 +813,27 @@ def account_and_loans(query: str | None = None) -> dict:
             w in q for w in ("home library", "housebound", "deliver")):
         out["home_library"] = HOME_LIBRARY_SERVICE
 
+    if out["focus"] == "ask_book":
+        out["ask_book"] = ASK_FOR_A_BOOK
+
     return out
 
 
-_HUB_SYNONYMS = {"newspaper": "pressreader", "magazine": "pressreader",
-                 "family history": "ancestry", "ancestry": "ancestry",
-                 "genealogy": "ancestry", "ebook": "borrowbox",
-                 "audiobook": "borrowbox", "business": "cobra",
-                 "driving": "theory", "theory test": "theory",
-                 "dictionary": "oxford", "research": "ebsco"}
+_HUB_SYNONYMS = {
+    "newspaper": "pressreader", "magazine": "pressreader", "news": "pressreader",
+    "press": "pressreader", "guardian": "pressreader", "times newspaper": "pressreader",
+    "family history": "ancestry", "ancestry": "ancestry", "genealogy": "ancestry",
+    "ebook": "borrowbox", "audiobook": "borrowbox", "audio book": "borrowbox",
+    "business": "cobra", "start a business": "cobra", "company": "cobra",
+    "driving": "theory test pro", "theory test": "theory test pro",
+    "driving test": "theory test pro", "dvsa": "theory test pro",
+    "dictionary": "oxford english", "research": "ebsco", "journal": "ebsco",
+    "patent": "espacenet", "patents": "espacenet", "intellectual property": "espacenet",
+    "film": "bfi", "tv": "bfi", "television": "bfi", "movie": "bfi",
+    "british film": "bfi", "archive film": "bfi", "old tv": "bfi",
+    "biography": "national biography", "who was": "national biography",
+    "reference": "oxford reference",
+}
 
 
 def online_hub(topic: str | None = None) -> dict:

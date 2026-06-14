@@ -300,7 +300,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|oed|"
                          r"theory test|bfi|cobra|digital library|online (library )?hub|"
                          r"encyclopaedia|encyclopedia|family (history|tree)|"
-                         r"genealog(y|ical)|patents?|national biography|census)\b", t)
+                         r"genealog(y|ical)|patents?|national biography|census|"
+                         r"consumer advice|product review|best buy)\b", t)
     media = re.search(r"\b(ebooks?|e-books?|audiobooks?|emagazines?)\b", t)
     online_ctx = re.search(r"\b(online|free|digital|from home|at home|on my phone|"
                            r"app|stream(ing)?|download)\b", t)

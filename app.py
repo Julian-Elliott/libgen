@@ -111,6 +111,12 @@ TOOLS = {
         "desc": "Match a library by a COMBINATION of features, e.g. 'late-opening "
                 "with a café and parking'. args: {\"query\": \"<the request>\"}",
         "fn": lambda a: graph_rag.graph_search(a.get("query", ""))},
+    "account_and_loans": {
+        "desc": "Renew loans, check/pay fines, make reservations, access the online "
+                "account, borrowing policies, returning items, lost cards, and the "
+                "Library Service at Home (housebound delivery). "
+                "args: {\"query\": \"<optional topic>\"}",
+        "fn": lambda a: ls.account_and_loans(a.get("query") or a.get("topic"))},
 }
 
 ROUTER_SYSTEM = (
@@ -156,6 +162,29 @@ def keyword_route(q: str) -> tuple[str, dict]:
                     if w in t)
     if re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t):
         return "printing_help", {}
+    # Account self-service: renewals, fines, reservations, home library
+    if re.search(r"\b(renew|renewal|extend (a |my )?(loan|book)|due date)\b", t):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\b(fine|fines|overdue|late fee|pay (a |my )?(fee|fine)|"
+                 r"fees?[ -]and[ -]charges?|lost (my |a |the )?(library )?card|"
+                 r"(my |a )?(library )?card (is |was |has been )?lost|"
+                 r"replace (a |my |the )?(library )?card|lost (a |my )?book)\b", t):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\b(my (library )?account|online account|(sign|log) ?in(to)?|"
+                 r"my (library )?pin|forgot (my )?(pin|password)|"
+                 r"library card (number|login))\b", t):
+        return "account_and_loans", {"query": q}
+    if (re.search(r"\bhow (do|can) i (reserve|place a hold|request)|"
+                  r"(make|place) a (reserve|reservation|hold)\b", t)
+            and not re.search(r"\b(room|space|study|seat|hive)\b", t)):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\b(home library|library (service )?(at home|at-home|home)|"
+                 r"housebound|books? delivered|deliver (books?|the library)|"
+                 r"can.{0,12}t get to (the |a )?librar)\b", t):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\breturn(ing)? (a |my |the )?(book|item|loan)\b|"
+                 r"how (do|to|can) (i )?return\b", t):
+        return "account_and_loans", {"query": q}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
                  r"worcester city librar|hire (a |the )?(room|space)|"
@@ -518,6 +547,72 @@ def render_hive(r):
     return "\n".join(out)
 
 
+def render_account_and_loans(r):
+    focus = r.get("focus", "general")
+    out = []
+
+    if focus == "home" and r.get("home_library"):
+        h = r["home_library"]
+        out += [
+            "🏠 **Library Service at Home**\n",
+            h["summary"],
+            f"\n✅ **What you need:** {h['what_you_need']}",
+            f"📞 **Contact:** {h['contact']}",
+            f"\n{h['also_see']}",
+            f"\n🔎 [Library Service at Home]({h['url']})",
+        ]
+        return "\n".join(out)
+
+    if focus == "renewals":
+        ren = r["renewals"]
+        out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
+        for m in ren["methods"]:
+            out.append(f"- {m}")
+        out += [f"\n⚠️ _{ren['note']}_",
+                f"\n🔎 [Renew a loan online]({ren['url']})"]
+
+    elif focus == "fines":
+        f_data = r["fines"]
+        out += ["💷 **Fees and charges:**\n", f_data["summary"],
+                f"\n- {f_data['how_to_pay']}",
+                f"- {f_data['card_replacement']}",
+                f"\n🔎 [Fees and charges]({f_data['url']})"]
+
+    elif focus == "reservations":
+        res = r["reservations"]
+        out += ["🔖 **Reserving items:**\n",
+                f"_{res['summary']}_ **{res['cost']}**\n"]
+        for i, step in enumerate(res["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n🔎 [Reserve library books]({res['url']})")
+
+    elif focus == "account":
+        acc = r["account"]
+        out += ["🔑 **Your library account:**\n", acc["summary"],
+                f"\n✅ **What you need:** {acc['what_you_need']}",
+                f"\n🔎 {acc['how_to']}"]
+
+    else:  # general
+        acc, ren = r["account"], r["renewals"]
+        f_data, res = r["fines"], r["reservations"]
+        out += [
+            "🪪 **Your library account — manage it online:**\n",
+            f"🔑 **[Sign in to your account]({acc['url']})** — {acc['summary']} "
+            f"_{acc['what_you_need']}_",
+            f"🔄 **[Renew loans]({ren['url']})** — {ren['summary']}",
+            f"🔖 **[Reserve items]({res['url']})** — {res['summary']} {res['cost']}",
+            f"💷 **[Fees & charges]({f_data['url']})** — {f_data['summary']}",
+            f"\n🔎 [Your library membership]({r['page_url']})",
+        ]
+
+    if r.get("home_library") and focus != "home":
+        h = r["home_library"]
+        out.append(f"\n🏠 _Can't get to a library?_ **[Library Service at Home]"
+                   f"({h['url']})** — volunteer-run home delivery of books.")
+
+    return "\n".join(out)
+
+
 RENDER = {
     "search_catalogue": render_catalogue, "whats_new": render_whats_new,
     "where_to_get": render_where_to_get, "hive_info": render_hive,
@@ -525,6 +620,7 @@ RENDER = {
     "library_events": render_events, "online_hub": render_online_hub,
     "libraries_unlocked": render_unlocked, "membership_help": render_membership,
     "printing_help": render_printing, "graph_search": render_graph,
+    "account_and_loans": render_account_and_loans,
 }
 
 
@@ -554,7 +650,7 @@ NUDGES = {
     "find_library": ("💡 Want in before/after staffed hours? **Libraries Unlocked** = 8am–8pm.",
                      ["Tell me about Libraries Unlocked", "What's on at {place}?", "How do I join?"]),
     "mobile_library": ("💡 Housebound? The **Home Library Service** brings books to your door.",
-                       ["How do I join?", "What's on this week?", "Find my nearest library"]),
+                       ["Home Library Service", "How do I join?", "Find my nearest library"]),
     "library_events": ("💡 Most events are free — just turn up.",
                        ["Children's events", "Do I need to book?", "Find my nearest library"]),
     "online_hub": ("💡 It's free with your card — set up tonight from your sofa.",
@@ -571,6 +667,9 @@ NUDGES = {
                      ["Is it on BorrowBox?", "Which branch is nearest?", "How do I join?"]),
     "hive_info": ("💡 The Hive is open 8:30am–10pm every single day — and anyone can walk in.",
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
+    "account_and_loans": (
+        "💡 Renewing is quickest online — no queue, no trip to the library.",
+        ["How do I renew my books?", "How do I make a reservation?", "Pay a fine online"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
@@ -617,12 +716,15 @@ HELP = (
     "and catalogue *live* and can help you:\n\n"
     "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
     "or borrow the eBook tonight\n"
-    "- 📍 **Branch hours, 'open now?', toilets, parking**\n"
+    "- 🔄 **Account & loans** — renew books online, reserve items, pay fines, "
+    "lost card, borrowing policy\n"
+    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
     "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
+    "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
     "- 📅 **What's on** this week\n"
-    "- 💻 **Free online** — newspapers, magazines, family history\n"
+    "- 💻 **Free online** — newspapers, magazines, eBooks, family history\n"
     "- 🖨️ **Printing** from your phone\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
@@ -747,13 +849,15 @@ def build_demo():
 
         gr.Examples(
             ["How do I get Wolf Hall by Hilary Mantel?",
+             "How do I renew my library books?",
+             "How do I reserve a book?",
              "Do you have Harry Potter audiobooks?",
              "What can I do at The Hive?",
-             "Tell me about the archives at the Hive",
              "Is Malvern library open now?",
              "A late-opening library with a café and meeting rooms",
              "When does the mobile library visit Abberley?",
-             "Can I read newspapers for free?"],
+             "Can I read newspapers for free?",
+             "I can't get to the library — can books be delivered?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

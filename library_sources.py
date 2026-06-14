@@ -53,6 +53,13 @@ PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-serv
 UNLOCKED_URL = f"{GOV}/council-services/libraries/libraries-unlocked"
 JOIN_URL = f"{GOV}/council-services/libraries/your-library-membership/join-library"
 ONLINE_HUB = f"{GOV}/council-services/libraries/online-library-hub"
+ACCOUNT_URL = f"{GOV}/council-services/libraries/your-library-membership/login-my-library-account"
+RENEW_URL = f"{GOV}/council-services/libraries/your-library-membership/renew-loan"
+FEES_URL = f"{GOV}/council-services/libraries/your-library-membership/pay-fees-and-charges"
+RESERVE_URL = f"{GOV}/council-services/libraries/your-library-membership/reserve-your-library-books"
+HOME_LIBRARY_URL = f"{GOV}/council-services/libraries/your-library-membership/library-service-home"
+MEMBERSHIP_HUB_URL = f"{GOV}/council-services/libraries/your-library-membership"
+ASK_FOR_A_BOOK_URL = f"{GOV}/council-services/libraries/read-and-discover/ask-book"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -622,6 +629,98 @@ def _merge_curated(name: str) -> dict:
         if key in n or n in key:
             return data
     return {}
+
+
+BORROWING_POLICY = {
+    "account": {
+        "summary": ("Log in to renew loans, reserve items, cancel reservations, "
+                    "update your details and change your PIN."),
+        "what_you_need": "Your library card number + PIN.",
+        "how_to": f"Visit [Login to my library account]({ACCOUNT_URL}).",
+        "url": ACCOUNT_URL,
+    },
+    "renewals": {
+        "summary": "Extend your loan by renewing — online, by phone, or in person.",
+        "methods": [
+            f"**Online (easiest):** [Sign in to your account]({ACCOUNT_URL}) "
+            "with your card number + PIN, then choose 'Renew'.",
+            "**In person:** Ask staff or use a self-service kiosk at any Worcestershire library.",
+            "**By phone:** Call your local branch during staffed hours.",
+        ],
+        "note": ("You may not be able to renew if another member has a reservation on the item — "
+                 "in that case, return it on time and the other member will be notified."),
+        "url": RENEW_URL,
+    },
+    "fines": {
+        "summary": ("Borrowing books is free. If items are not returned or renewed by the due "
+                    "date, late fees will apply. A full list of fees and charges is available online."),
+        "how_to_pay": (f"[Pay fees and charges]({FEES_URL}) online, or settle them in person "
+                       "at any library."),
+        "card_replacement": (f"Lost your library card? Visit any library and speak to staff — "
+                             f"they can issue a replacement. Replacement charges are listed at "
+                             f"[fees and charges]({FEES_URL})."),
+        "url": FEES_URL,
+    },
+    "reservations": {
+        "summary": ("Reserve items online — they'll be held at your chosen branch and "
+                    "you'll be emailed when ready to collect."),
+        "cost": "Reservations are free.",
+        "how_to": [
+            "Search for the item in the catalogue or browse online.",
+            "Open the item page and sign in with your card number + PIN.",
+            ("Choose 'Place Hold' and select your collection branch — "
+             "any Worcestershire library or the mobile van."),
+            "You'll get an email when it's ready to collect.",
+        ],
+        "url": RESERVE_URL,
+    },
+    "page_url": MEMBERSHIP_HUB_URL,
+}
+
+HOME_LIBRARY_SERVICE = {
+    "summary": (
+        "The Library Service at Home is a free, volunteer-run service for people who "
+        "find it difficult or impossible to visit a library in person. Volunteers "
+        "select and deliver books and other library materials directly to your home."
+    ),
+    "what_you_need": "Full library membership (free). Contact your local library to register.",
+    "contact": "Call 01905 822722 or ask staff at any Worcestershire library.",
+    "url": HOME_LIBRARY_URL,
+    "also_see": (
+        f"The **mobile library** also visits 160 villages across Worcestershire every "
+        f"4–5 weeks — a great option for many rural residents. "
+        f"[Mobile library timetables]({MOBILE_INDEX})"
+    ),
+}
+
+
+def account_and_loans(query: str | None = None) -> dict:
+    """
+    Online account, renewing loans, fines / late fees, reservations, and
+    the Library Service at Home. Surfaces the right sub-topic from the query.
+    """
+    q = (query or "").lower()
+    out = dict(BORROWING_POLICY)
+    out["checked"] = _now()
+
+    if any(w in q for w in ("renew", "renewal", "extend", "due date")):
+        out["focus"] = "renewals"
+    elif any(w in q for w in ("fine", "charge", "fee", "owe", "overdue", "late", "pay")):
+        out["focus"] = "fines"
+    elif any(w in q for w in ("reserve", "hold", "reservation", "request", "order")):
+        out["focus"] = "reservations"
+    elif any(w in q for w in ("account", "login", "log in", "sign in", "pin", "password")):
+        out["focus"] = "account"
+    elif any(w in q for w in ("home", "housebound", "deliver")):
+        out["focus"] = "home"
+    else:
+        out["focus"] = "general"
+
+    if out["focus"] == "home" or any(
+            w in q for w in ("home library", "housebound", "deliver")):
+        out["home_library"] = HOME_LIBRARY_SERVICE
+
+    return out
 
 
 _HUB_SYNONYMS = {"newspaper": "pressreader", "magazine": "pressreader",

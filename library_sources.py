@@ -674,6 +674,13 @@ BORROWING_POLICY = {
         ],
         "url": RESERVE_URL,
     },
+    "ask_for_book": {
+        "summary": ("Can't find a title in our catalogue? Suggest a purchase using the "
+                    "Ask for a Book service — staff review requests and add popular or "
+                    "requested titles to the collection."),
+        "what_you_need": "Free library membership (any tier).",
+        "url": ASK_FOR_A_BOOK_URL,
+    },
     "page_url": MEMBERSHIP_HUB_URL,
 }
 
@@ -707,12 +714,17 @@ def account_and_loans(query: str | None = None) -> dict:
         out["focus"] = "renewals"
     elif any(w in q for w in ("fine", "charge", "fee", "owe", "overdue", "late", "pay")):
         out["focus"] = "fines"
+    elif ("card" in q and any(w in q for w in ("lost", "replace", "replacement", "damaged"))):
+        out["focus"] = "card"
     elif any(w in q for w in ("reserve", "hold", "reservation", "request", "order")):
         out["focus"] = "reservations"
     elif any(w in q for w in ("account", "login", "log in", "sign in", "pin", "password")):
         out["focus"] = "account"
     elif any(w in q for w in ("home", "housebound", "deliver")):
         out["focus"] = "home"
+    elif ("suggest" in q or "purchase" in q or "buy" in q or "stock" in q) and any(
+            w in q for w in ("book", "title")):
+        out["focus"] = "ask_for_book"
     else:
         out["focus"] = "general"
 
@@ -728,7 +740,8 @@ _HUB_SYNONYMS = {"newspaper": "pressreader", "magazine": "pressreader",
                  "genealogy": "ancestry", "ebook": "borrowbox",
                  "audiobook": "borrowbox", "business": "cobra",
                  "driving": "theory", "theory test": "theory",
-                 "dictionary": "oxford", "research": "ebsco"}
+                 "dictionary": "oxford", "research": "ebsco",
+                 "film": "bfi", "documentary": "bfi", "cinema": "bfi"}
 
 
 def online_hub(topic: str | None = None) -> dict:

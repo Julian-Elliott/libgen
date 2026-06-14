@@ -180,10 +180,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "account_and_loans", {"query": q}
     if re.search(r"\b(home library|library (service )?(at home|at-home|home)|"
                  r"housebound|books? delivered|deliver (books?|the library)|"
-                 r"can.{0,12}t get to (the |a )?librar)\b", t):
+                 r"can.{0,12}t get to (the |a )?librar(?:y|ies)?)\b", t):
         return "account_and_loans", {"query": q}
     if re.search(r"\breturn(ing)? (a |my |the )?(book|item|loan)\b|"
-                 r"how (do|to|can) (i )?return\b", t):
+                 r"how (do|to|can) (i )?return\b|"
+                 r"\b(book drop|return (slot|box|chute|point)|drop.{0,6}(box|off point))\b", t):
         return "account_and_loans", {"query": q}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
@@ -204,6 +205,10 @@ def keyword_route(q: str) -> tuple[str, dict]:
         q2 = q2.strip(" ?.")
         if q2:
             return "where_to_get", {"query": q2}
+    # Accessibility — route to graph_search so FACILITY_TERMS can filter
+    if re.search(r"\b(wheelchair|accessible|disability|disabled) (access|librar|friendly)\b", t) or \
+            (re.search(r"\b(wheelchair|accessible|disabled)\b", t) and re.search(r"\blibrar", t)):
+        return "graph_search", {"query": q}
     if (re.search(r"\b(which|what) librar|librar(y|ies) (with|that has)\b", t)
             or feat_hits >= 2 or "overall" in t):
         return "graph_search", {"query": q}
@@ -232,6 +237,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
         m = [w for w in re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
              if w.lower() not in _QWORDS]
         return "library_events", {"query": (m[-1] if m else "")}
+    # "Suggest / ask for a book" — route to account_and_loans (Ask for a Book service)
+    if re.search(r"\b(suggest (a |the )?(book|title|purchase)|ask for (a |the )?(new )?book|"
+                 r"request (a |the )?(new |)(book|title)|"
+                 r"(ask|want) (us|you|the library) to (buy|stock|order))\b", t):
+        return "account_and_loans", {"query": "suggest a book purchase"}
     if re.search(r"\b(new|newest|latest|recommend|hot take|just in|good read|"
                  r"suggestion)\b", t):
         return "whats_new", {"genre": re.sub(r"\b(new|newest|latest|recommend|any|"
@@ -282,7 +292,10 @@ def render_catalogue(r):
         return f"_Couldn't reach the catalogue: {r['error']}_"
     if not r["items"]:
         return (f"I searched for **{r['query']}** but found nothing — try fewer or "
-                f"different words.\n\n🔎 [Search the catalogue]({r['search_url']})")
+                f"different words.\n\n"
+                f"💡 Not in stock? [Ask us to buy it]({ls.ASK_FOR_A_BOOK_URL}) — "
+                f"staff review suggestions.\n\n"
+                f"🔎 [Search the catalogue]({r['search_url']})")
     out = [f"Found ~**{r.get('total_hint', r['count'])}** matches for **{r['query']}** "
            f"— top {r['count']}:\n"]
     for it in r["items"]:
@@ -315,7 +328,8 @@ def render_find_library(r):
     if "branches" in r:  # list mode
         out = ["📍 **Worcestershire libraries:**\n"]
         for b in r["branches"][:25]:
-            out.append(f"- **{b['name']}** — {b['address']}")
+            name = f"[{b['name']}]({b['url']})" if b.get("url") else b["name"]
+            out.append(f"- **{name}** — {b['address']}")
         return "\n".join(out)
     badge = "🟢 **Open now**" if r["open_now"] else "🔴 **Closed now**"
     out = [f"📍 **{r['name']}** — {badge} ({r['status']})",
@@ -563,6 +577,25 @@ def render_account_and_loans(r):
         ]
         return "\n".join(out)
 
+    if focus == "card":
+        f_data = r["fines"]
+        out += [
+            "🪪 **Lost or damaged library card:**\n",
+            f_data["card_replacement"],
+            f"\n🔎 [Fees and charges]({f_data['url']})",
+        ]
+        return "\n".join(out)
+
+    if focus == "ask_for_book":
+        afb = r["ask_for_book"]
+        out += [
+            "📬 **Ask for a Book:**\n",
+            afb["summary"],
+            f"\n✅ **What you need:** {afb['what_you_need']}",
+            f"\n🔎 [Ask for a Book]({afb['url']})",
+        ]
+        return "\n".join(out)
+
     if focus == "renewals":
         ren = r["renewals"]
         out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
@@ -595,6 +628,7 @@ def render_account_and_loans(r):
     else:  # general
         acc, ren = r["account"], r["renewals"]
         f_data, res = r["fines"], r["reservations"]
+        afb = r["ask_for_book"]
         out += [
             "🪪 **Your library account — manage it online:**\n",
             f"🔑 **[Sign in to your account]({acc['url']})** — {acc['summary']} "
@@ -602,6 +636,7 @@ def render_account_and_loans(r):
             f"🔄 **[Renew loans]({ren['url']})** — {ren['summary']}",
             f"🔖 **[Reserve items]({res['url']})** — {res['summary']} {res['cost']}",
             f"💷 **[Fees & charges]({f_data['url']})** — {f_data['summary']}",
+            f"📬 **[Suggest a purchase]({afb['url']})** — can't find a title? Ask us to buy it.",
             f"\n🔎 [Your library membership]({r['page_url']})",
         ]
 
@@ -664,15 +699,14 @@ NUDGES = {
     "graph_search": ("💡 Tell me what matters (late, café, study space) and I'll match a branch.",
                      ["Late-opening + café", "Find a book", "What's on this week?"]),
     "where_to_get": ("💡 Reservations are free — collect at any branch, or the van.",
-                     ["Is it on BorrowBox?", "Which branch is nearest?", "How do I join?"]),
+                     ["Is it on BorrowBox?", "Suggest a book for purchase", "How do I join?"]),
     "hive_info": ("💡 The Hive is open 8:30am–10pm every single day — and anyone can walk in.",
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
     "account_and_loans": (
         "💡 Renewing is quickest online — no queue, no trip to the library.",
         ["How do I renew my books?", "How do I make a reservation?", "Pay a fine online"]),
 }
-HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
-              "What's on this week?", "How do I print from my phone?"]
+HELP_CHIPS = ["How do I get Wolf Hall?", "What's on this week?", "How do I join?"]
 
 
 # --------------------------------------------------------------------------- #
@@ -717,15 +751,17 @@ HELP = (
     "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
     "or borrow the eBook tonight\n"
     "- 🔄 **Account & loans** — renew books online, reserve items, pay fines, "
-    "lost card, borrowing policy\n"
-    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
+    "lost or damaged card, borrowing policy\n"
+    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space, "
+    "wheelchair access\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
     "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
     "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
     "- 📅 **What's on** this week\n"
-    "- 💻 **Free online** — newspapers, magazines, eBooks, family history\n"
-    "- 🖨️ **Printing** from your phone\n\n"
+    "- 💻 **Free online** — newspapers, magazines, eBooks, family history, BFI films\n"
+    "- 🖨️ **Printing** from your phone\n"
+    "- 📬 **Suggest a book** — ask us to buy a title we don't stock yet\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
     "names its source._")

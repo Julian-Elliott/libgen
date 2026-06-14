@@ -63,8 +63,8 @@ def graph() -> dict:
 
 def _area_in_query(q: str) -> str:
     areas = [n["label"] for n in graph()["by_type"].get("Area", [])]
-    for a in areas:
-        if a.lower() in q:
+    for a in sorted(areas, key=len, reverse=True):  # longest match first
+        if re.search(r"\b" + re.escape(a.lower()) + r"\b", q):
             return a
     return ""
 

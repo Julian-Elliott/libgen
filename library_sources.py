@@ -68,6 +68,9 @@ DIGITAL_INCLUSION_URL = f"{GOV}/council-services/libraries/learn-upskill-and-fin
 VOLUNTEERING_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work/volunteering-training-and-work-experience"
 READING_WELL_URL = f"{GOV}/council-services/libraries/read-and-discover/reading-well"
 WARM_WELCOME_URL = f"{GOV}/council-services/libraries/warm-welcome"
+LEARN_UPSKILL_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work"
+JOB_CLUBS_URL = f"{LEARN_UPSKILL_URL}/job-clubs"
+CHILDREN_URL = f"{GOV}/council-services/libraries/read-and-discover"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -778,6 +781,37 @@ BORROWING_POLICY = {
         ],
         "url": FEES_URL,
     },
+    "loan_limits": {
+        "summary": (
+            "Standard loans are for 3 weeks — books, DVDs, CDs and most other "
+            "physical items. You can renew as many times as needed, provided no "
+            "other member has reserved the item. For the current limit on how many "
+            "items you can borrow at once, see the membership page."
+        ),
+        "loan_period": "3 weeks (books, DVDs, CDs and other physical items).",
+        "digital": (
+            "eBooks and eAudiobooks via BorrowBox auto-return — no due dates, no fines. "
+            f"Borrow up to 4 eBooks and 4 eAudiobooks simultaneously. "
+            f"[Get BorrowBox]({BORROWBOX})"
+        ),
+        "url": MEMBERSHIP_HUB_URL,
+    },
+    "pin_reset": {
+        "summary": "Forgotten your library PIN? Reset it online, by phone or in person.",
+        "how_to": [
+            f"**Online (quickest):** Go to [Login to my library account]({ACCOUNT_URL}) "
+            "and use the 'Forgotten PIN' link — you'll need your library card number.",
+            "**In person:** Visit any Worcestershire library with proof of identity — "
+            "staff can issue a new PIN on the spot.",
+            f"**By phone:** Call **{LIBRARY_PHONE}** during staffed hours.",
+        ],
+        "note": (
+            "If you've also lost your library card, get a replacement card in person "
+            f"first (a small charge may apply — see [fees page]({FEES_URL})), then "
+            "reset your PIN."
+        ),
+        "url": ACCOUNT_URL,
+    },
     "page_url": MEMBERSHIP_HUB_URL,
 }
 
@@ -924,6 +958,50 @@ WARM_SPACE = {
     "url": WARM_WELCOME_URL,
 }
 
+JOB_CLUBS = {
+    "summary": (
+        "Library Job Clubs are free, friendly sessions where you can get help with "
+        "CV writing, job applications, interview preparation and online job searching. "
+        "Run at various Worcestershire libraries — no appointment usually needed."
+    ),
+    "what_you_need": "Free to attend — library membership is not required for Job Club sessions.",
+    "how_to": [
+        f"Check the [library events page]({EVENTS_URL}) for Job Club dates and locations near you.",
+        "Drop in during the session, or call your local library to confirm times.",
+        "Bring your CV or any job-related documents you'd like help with.",
+    ],
+    "also_see": (
+        f"Also handy: free [public computers]({BOOK_COMPUTER_URL}) for job searching and CV "
+        f"printing, and [adult learning courses]({LEARN_UPSKILL_URL}) to build new skills."
+    ),
+    "url": JOB_CLUBS_URL,
+}
+
+CHILDREN_SERVICES = {
+    "summary": (
+        "Worcestershire libraries run a wide range of free children's activities — "
+        "Storytime, Rhymetime, the Summer Reading Challenge, holiday events and more — "
+        "across branches and at The Hive."
+    ),
+    "what_you_need": (
+        "Most sessions are free and need no booking — just turn up. "
+        "A few popular sessions may require advance booking; check the events listing."
+    ),
+    "highlights": [
+        "**Storytime & Rhymetime** — regular free sessions at many branches for babies, "
+        "toddlers and young children.",
+        "**Summer Reading Challenge** — the annual national reading challenge for "
+        "school-age children, free to join at any library during the summer holidays.",
+        "**Holiday activities** — special events, crafts and clubs throughout school holidays.",
+        "**Children's library at The Hive** — a dedicated children's floor with a wide "
+        "selection of books for all ages.",
+        f"**Children's eBooks & audiobooks** — available free via [BorrowBox]({BORROWBOX}).",
+    ],
+    "events_url": EVENTS_URL,
+    "borrowbox_url": BORROWBOX,
+    "join_url": JOIN_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
@@ -936,7 +1014,18 @@ def account_and_loans(query: str | None = None) -> dict:
     out["checked"] = _now()
 
     # More specific checks first to avoid substring false-positives.
-    if any(w in q for w in ("renew", "renewal", "extend", "due date")):
+    if (("pin" in q or "password" in q)
+            and any(w in q for w in ("forgot", "forgotten", "reset", "change", "new", "lost"))):
+        out["focus"] = "pin_reset"
+    elif any(w in q for w in ("loan limit", "loan period", "borrowing limit",
+                              "how long", "how many", "how many books", "how many items")):
+        out["focus"] = "loan_limits"
+    elif any(w in q for w in ("job club", "cv help", "cv writing", "job search",
+                              "job seeking", "job-seeking", "employment support",
+                              "find work", "looking for work", "interview prep")):
+        out["focus"] = "job_clubs"
+        out["job_clubs"] = JOB_CLUBS
+    elif any(w in q for w in ("renew", "renewal", "extend", "due date")):
         out["focus"] = "renewals"
     elif ("card" in q and any(w in q for w in ("lost", "replace", "replacement", "stolen"))):
         out["focus"] = "fines"  # card_replacement info lives in the fines section
@@ -999,6 +1088,11 @@ def account_and_loans(query: str | None = None) -> dict:
     return out
 
 
+def children_services() -> dict:
+    """Children's library activities — Storytime, Rhymetime, Summer Reading Challenge."""
+    return {**CHILDREN_SERVICES, "checked": _now()}
+
+
 _HUB_SYNONYMS = {
     # Oxford — specific multi-word keys first to avoid "research" matching ebsco
     "oxford english dictionary": "oxford english",
@@ -1020,13 +1114,18 @@ _HUB_SYNONYMS = {
     "press": "pressreader", "guardian": "pressreader", "times newspaper": "pressreader",
     # Ancestry
     "family history": "ancestry", "ancestry": "ancestry", "genealogy": "ancestry",
+    "family tree": "ancestry", "genealogical": "ancestry", "census": "ancestry",
+    "birth record": "ancestry", "death record": "ancestry", "marriage record": "ancestry",
     # BorrowBox
     "ebook": "borrowbox", "audiobook": "borrowbox", "audio book": "borrowbox",
     # Business / COBRA
     "business": "cobra", "start a business": "cobra", "company": "cobra",
+    "sole trader": "cobra", "self employed": "cobra", "self-employed": "cobra",
+    "startup": "cobra", "start-up": "cobra",
     # Theory Test Pro
     "driving": "theory test pro", "theory test": "theory test pro",
     "driving test": "theory test pro", "dvsa": "theory test pro",
+    "hazard perception": "theory test pro",
     # General Oxford (after specific multi-word entries)
     "dictionary": "oxford english",
     # Research/journals (after oxford research entries)
@@ -1036,6 +1135,7 @@ _HUB_SYNONYMS = {
     # BFI
     "film": "bfi", "tv": "bfi", "television": "bfi", "movie": "bfi",
     "british film": "bfi", "archive film": "bfi", "old tv": "bfi",
+    "classic film": "bfi", "archive tv": "bfi", "documentary": "bfi",
     # Biography
     "biography": "national biography", "who was": "national biography",
     # Reference

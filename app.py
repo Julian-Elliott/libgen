@@ -116,10 +116,14 @@ TOOLS = {
         "fn": lambda a: graph_rag.graph_search(a.get("query", ""))},
     "account_and_loans": {
         "desc": "Renew loans, check/pay fines, make reservations, access the online "
-                "account, borrowing policies, returning items, lost cards, and the "
-                "Library Service at Home (housebound delivery). "
+                "account, borrowing periods & limits, returning items, lost cards, "
+                "PIN reset, job clubs, and the Library Service at Home (housebound). "
                 "args: {\"query\": \"<optional topic>\"}",
         "fn": lambda a: ls.account_and_loans(a.get("query") or a.get("topic"))},
+    "children_services": {
+        "desc": "Children's library activities — Storytime, Rhymetime, the Summer "
+                "Reading Challenge, holiday events and children's books. args: {}",
+        "fn": lambda a: ls.children_services()},
 }
 
 ROUTER_SYSTEM = (
@@ -186,6 +190,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
     # Account self-service: renewals, fines, reservations, home library
     if re.search(r"\b(renew|renewal|extend (a |my )?(loan|book)|due date)\b", t):
         return "account_and_loans", {"query": q}
+    if re.search(r"\b(how (long|many)\b[^?]{0,40}\b(borrow|loan|keep|renew|take out|"
+                 r"out at once)|loan period|borrowing limit|how many (books|items) can i)\b", t):
+        return "account_and_loans", {"query": "loan limits how long how many"}
     if re.search(r"\b(fine|fines|overdue|late fee|pay (a |my )?(fee|fine)|"
                  r"fees?[ -]and[ -]charges?|lost (my |a |the )?(library )?card|"
                  r"(my |a )?(library )?card (is |was |has been )?lost|"
@@ -228,6 +235,30 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "account_and_loans", {"query": "reading well"}
     if re.search(r"\bwarm (space|welcome|place)\b|somewhere warm\b", t):
         return "account_and_loans", {"query": "warm space"}
+    if re.search(r"\bjob club\b|job[- ]?seeking|job search|cv (help|writing|advice)|"
+                 r"employment support|find work|looking for work|interview (prep|help)\b", t):
+        return "account_and_loans", {"query": "job club cv employment"}
+    # Children's services — Storytime, Rhymetime, Summer Reading Challenge (not Hive-specific)
+    if (re.search(r"\b(storytime|story time|rhymetime|rhyme time|bounce and rhyme|"
+                  r"summer reading|children'?s? (librar|service|activit|"
+                  r"event|book|section)|kids'? (activit|event|club|book)|toddler|"
+                  r"under[- ]?5s?|baby (rhyme|group)|for (kids|children|toddlers))", t)
+            and not re.search(r"\bhive\b", t)):
+        return "children_services", {}
+    # Business support / BIPC — based at The Hive
+    if re.search(r"\bbipc\b|business (advice|support|centre|center)|"
+                 r"intellectual property|start (a |my )?business\b", t):
+        return "hive_info", {"topic": "business"}
+    # Study / quiet space — match a branch by facility via the graph
+    if (re.search(r"\b(where can i study|somewhere to study|a (quiet|study) "
+                  r"(space|spot|area|room)|need (a )?(quiet|study) (space|spot|room|area)|"
+                  r"quiet (place|spot|space) to (study|work|read))\b", t)
+            and not re.search(r"\bhive\b", t)):
+        return "graph_search", {"query": q}
+    # Accessibility — match an accessible branch via the graph
+    if (re.search(r"\b(wheelchair|accessible|accessibility|disabled|disability|"
+                  r"step[- ]free)\b", t) and re.search(r"\blibrar", t)):
+        return "graph_search", {"query": q}
     # Non-Hive meeting room hire — Hive-specific queries fall through to hive_info below
     if (re.search(r"\bhire (a |the )?(meeting )?room\b|(meeting )?room (for )?hire\b|"
                   r"book a (meeting )?room\b|meeting room hire\b", t)
@@ -258,14 +289,16 @@ def keyword_route(q: str) -> tuple[str, dict]:
         place = _place_from(q)
         return "mobile_library", {"place": place or q.split()[-1]}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
-                 r"facilit|where is|near me|study space)\b", t):
+                 r"facilit|where is|near me|study space|wi-?fi|phone number|"
+                 r"telephone|contact (details?|number)|email address)\b", t):
         return "find_library", {"name": _place_from(q), "when": q}
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
                  r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|oed|"
                          r"theory test|bfi|cobra|digital library|online (library )?hub|"
-                         r"encyclopaedia|encyclopedia)\b", t)
+                         r"encyclopaedia|encyclopedia|family (history|tree)|"
+                         r"genealog(y|ical)|patents?|national biography|census)\b", t)
     media = re.search(r"\b(ebooks?|e-books?|audiobooks?|emagazines?)\b", t)
     online_ctx = re.search(r"\b(online|free|digital|from home|at home|on my phone|"
                            r"app|stream(ing)?|download)\b", t)
@@ -329,7 +362,9 @@ def render_catalogue(r):
         return f"_Couldn't reach the catalogue: {r['error']}_"
     if not r["items"]:
         return (f"I searched for **{r['query']}** but found nothing — try fewer or "
-                f"different words.\n\n🔎 [Search the catalogue]({r['search_url']})")
+                f"different words.\n\n💡 Not in stock? [Ask us to buy it]"
+                f"({ls.ASK_FOR_A_BOOK_URL}) — staff review suggestions.\n\n"
+                f"🔎 [Search the catalogue]({r['search_url']})")
     out = [f"Found ~**{r.get('total_hint', r['count'])}** matches for **{r['query']}** "
            f"— top {r['count']}:\n"]
     for it in r["items"]:
@@ -362,7 +397,8 @@ def render_find_library(r):
     if "branches" in r:  # list mode
         out = ["📍 **Worcestershire libraries:**\n"]
         for b in r["branches"][:25]:
-            out.append(f"- **{b['name']}** — {b['address']}")
+            name = f"[{b['name']}]({b['url']})" if b.get("url") else b["name"]
+            out.append(f"- **{name}** — {b['address']}")
         return "\n".join(out)
     day_label = r.get("day_label", f"today ({r.get('today','')})")
     heading = day_label[0].upper() + day_label[1:]
@@ -664,6 +700,34 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Warm Welcome]({ws['url']})")
         return "\n".join(out)
 
+    if focus == "loan_limits":
+        ll, ren = r["loan_limits"], r["renewals"]
+        out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
+               f"\n- **Loan period:** {ll['loan_period']}",
+               f"- **Digital (BorrowBox):** {ll['digital']}",
+               f"- **Renewing:** {ren['summary']}",
+               f"\n🔎 [Membership & borrowing]({ll['url']})"]
+        return "\n".join(out)
+
+    if focus == "pin_reset":
+        pr = r["pin_reset"]
+        out = ["🔑 **Forgotten your PIN?**\n", f"_{pr['summary']}_\n"]
+        for step in pr["how_to"]:
+            out.append(f"- {step}")
+        out += [f"\n⚠️ _{pr['note']}_",
+                f"\n🔎 [Login to your library account]({pr['url']})"]
+        return "\n".join(out)
+
+    if focus == "job_clubs" and r.get("job_clubs"):
+        jc = r["job_clubs"]
+        out = ["💼 **Library Job Clubs — free employment support:**\n", jc["summary"],
+               f"\n✅ **What you need:** {jc['what_you_need']}\n"]
+        for i, step in enumerate(jc["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{jc['also_see']}_")
+        out.append(f"\n🔎 [Job Clubs]({jc['url']})")
+        return "\n".join(out)
+
     if focus == "home" and r.get("home_library"):
         h = r["home_library"]
         out += [
@@ -752,6 +816,17 @@ def render_account_and_loans(r):
     return "\n".join(out)
 
 
+def render_children(r):
+    out = ["👧 **Children's library services in Worcestershire**\n", r["summary"],
+           f"\n✅ **What you need:** {r['what_you_need']}\n", "**What's available:**"]
+    for item in r["highlights"]:
+        out.append(f"- {item}")
+    out += [f"\n🔎 [Events & activities — what's on near you]({r['events_url']})",
+            f"📚 [Children's eBooks & audiobooks on BorrowBox]({r['borrowbox_url']})",
+            f"🪪 [Join the library free]({r['join_url']})"]
+    return "\n".join(out)
+
+
 RENDER = {
     "search_catalogue": render_catalogue, "whats_new": render_whats_new,
     "where_to_get": render_where_to_get, "hive_info": render_hive,
@@ -760,6 +835,7 @@ RENDER = {
     "libraries_unlocked": render_unlocked, "membership_help": render_membership,
     "printing_help": render_printing, "graph_search": render_graph,
     "account_and_loans": render_account_and_loans,
+    "children_services": render_children,
 }
 
 
@@ -822,6 +898,9 @@ NUDGES = {
     "account_and_loans": (
         "💡 Renewing is quickest online — no queue, no trip to the library.",
         ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
+    "children_services": (
+        "💡 Most children's sessions are free and need no booking — just turn up.",
+        ["What's on this week?", "Children's eBooks", "Find my nearest library"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
@@ -883,7 +962,8 @@ HELP = (
     "- 🖨️ **Printing** from your phone (Print Your Way)\n"
     "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
     "- 📖 **Reading Well** — free curated books for mental health and wellbeing\n"
-    "- 🙋 **Volunteering** — opportunities at your local library\n"
+    "- 🙋 **Volunteering & job clubs** — opportunities and free employment support\n"
+    "- 👧 **Children's services** — Storytime, Rhymetime, the Summer Reading Challenge\n"
     "- ☕ **Warm spaces** — free, no membership needed\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "

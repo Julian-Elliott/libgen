@@ -52,6 +52,7 @@ EVENTS_URL = f"{GOV}/council-services/libraries/library-events-and-activities"
 PRINTING_URL = f"{GOV}/council-services/libraries/printing-and-photocopying-services"
 UNLOCKED_URL = f"{GOV}/council-services/libraries/libraries-unlocked"
 JOIN_URL = f"{GOV}/council-services/libraries/your-library-membership/join-library"
+LIBRARY_PHONE = "01905 822722"  # bookings/enquiries incl. Unlocked inductions
 ONLINE_HUB = f"{GOV}/council-services/libraries/online-library-hub"
 ACCOUNT_URL = f"{GOV}/council-services/libraries/your-library-membership/login-my-library-account"
 RENEW_URL = f"{GOV}/council-services/libraries/your-library-membership/renew-loan"
@@ -544,6 +545,15 @@ def libraries_unlocked(branch: str | None = None) -> dict:
            "hours": "8:00am to 8:00pm, Monday to Saturday",
            "what_you_need": tier.get("what_you_need", ELIGIBILITY["unlocked"]),
            "unlocks": tier.get("unlocks", ""),
+           "get_started": [
+               f"Pop into a Libraries Unlocked branch during **staffed hours** and "
+               f"ask for the one-off induction — or call **{LIBRARY_PHONE}** to book "
+               f"a slot in advance.",
+               f"It takes a few minutes: staff show you how the self-service entry "
+               f"and safety procedures work, then your card is upgraded — free.",
+               f"Already a full member aged 15+? That's all you need. Not a member "
+               f"yet? [Join online first]({JOIN_URL}) (free, takes minutes).",
+           ],
            "page_url": tier.get("url", UNLOCKED_URL),
            "checked": _now()}
     if branch:

@@ -807,12 +807,32 @@ ROOM_HIRE = {
     "how_to": [
         f"Browse available rooms and check pricing at [Hire a library meeting room]({ROOM_HIRE_URL}).",
         "Book online or contact the relevant library branch directly.",
+        "For larger venues or specialist spaces in Worcester, ask about room hire at The Hive.",
     ],
     "also_see": (
         "The Hive (Worcester) also offers larger venues and specialist spaces — "
         "ask me about 'room hire at The Hive' for details."
     ),
     "url": ROOM_HIRE_URL,
+}
+
+COMPUTER_ACCESS = {
+    "summary": (
+        "All Worcestershire libraries with public computers offer free sessions for "
+        "library members. You can walk in on the day or book a session in advance online."
+    ),
+    "what_you_need": ELIGIBILITY["computer"],
+    "how_to": [
+        f"[Book a computer session online]({BOOK_COMPUTER_URL}) — sign in with your "
+        "library card number + PIN and choose a branch and time slot.",
+        "Or walk in during staffed hours — ask staff or use the self-service booking screen "
+        "at the branch.",
+        "Sessions are typically 1 hour; extensions may be available if the machine is free.",
+    ],
+    "also_see": (
+        "Free Wi-Fi is available at all branches — bring your own device if you prefer."
+    ),
+    "url": BOOK_COMPUTER_URL,
 }
 
 
@@ -849,6 +869,12 @@ def account_and_loans(query: str | None = None) -> dict:
                               "suggest a book", "suggestion", "what should i read",
                               "choose a book", "pick a book")):
         out["focus"] = "ask_book"
+    elif any(w in q for w in ("hire", "meeting room", "room hire", "book a room",
+                              "rent a room", "hire a space")):
+        out["focus"] = "room_hire"
+    elif any(w in q for w in ("computer", "pc", "internet access",
+                              "book a computer", "use a computer", "public computer")):
+        out["focus"] = "computer"
     else:
         out["focus"] = "general"
 
@@ -859,23 +885,57 @@ def account_and_loans(query: str | None = None) -> dict:
     if out["focus"] == "ask_book":
         out["ask_book"] = ASK_FOR_A_BOOK
 
+    if out["focus"] == "room_hire":
+        out["room_hire"] = ROOM_HIRE
+
+    if out["focus"] == "computer":
+        out["computer_access"] = COMPUTER_ACCESS
+
     return out
 
 
 _HUB_SYNONYMS = {
+    # Newspapers / magazines
     "newspaper": "pressreader", "magazine": "pressreader", "news": "pressreader",
     "press": "pressreader", "guardian": "pressreader", "times newspaper": "pressreader",
+    "periodical": "pressreader", "daily paper": "pressreader",
+    # Family history
     "family history": "ancestry", "ancestry": "ancestry", "genealogy": "ancestry",
+    "family tree": "ancestry", "birth records": "ancestry", "census": "ancestry",
+    "local history": "ancestry",
+    # eBooks / audiobooks
     "ebook": "borrowbox", "audiobook": "borrowbox", "audio book": "borrowbox",
+    "children's book": "borrowbox", "kids book": "borrowbox",
+    "read online": "borrowbox", "borrow online": "borrowbox",
+    "listen": "borrowbox", "audio": "borrowbox",
+    # Business
     "business": "cobra", "start a business": "cobra", "company": "cobra",
+    "startup": "cobra", "self employed": "cobra",
+    # Driving theory
     "driving": "theory test pro", "theory test": "theory test pro",
     "driving test": "theory test pro", "dvsa": "theory test pro",
-    "dictionary": "oxford english", "research": "ebsco", "journal": "ebsco",
+    "hazard perception": "theory test pro",
+    # Reference / academic
+    "dictionary": "oxford english", "oed": "oxford english",
+    "oxford english dictionary": "oxford english",
+    "research": "ebsco", "journal": "ebsco", "academic": "ebsco",
+    "oxford reference": "oxford reference", "encyclopaedia": "oxford reference",
+    "encyclopedia": "oxford reference",
+    # Patents
     "patent": "espacenet", "patents": "espacenet", "intellectual property": "espacenet",
+    "invention": "espacenet",
+    # Film / TV
     "film": "bfi", "tv": "bfi", "television": "bfi", "movie": "bfi",
     "british film": "bfi", "archive film": "bfi", "old tv": "bfi",
+    "classic film": "bfi", "archive tv": "bfi",
+    # Biography / history
     "biography": "national biography", "who was": "national biography",
+    "notable people": "national biography", "dnb": "national biography",
+    # Reference
     "reference": "oxford reference",
+    # Times archive
+    "the times": "times digital archive", "newspaper archive": "times digital archive",
+    "times archive": "times digital archive",
 }
 
 

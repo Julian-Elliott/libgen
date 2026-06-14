@@ -578,11 +578,13 @@ CURATED_HUB = {
             "or read in your browser at [pressreader.com](https://www.pressreader.com).",
             "Tap 'Libraries & Groups' and search/select 'Worcestershire'.",
             "Sign in with your library card number + PIN.",
-            "At home you get a 30-day pass (re-confirm monthly); on library Wi-Fi it's 7 days.",
+            "At home you get a 30-day pass — re-confirm monthly by entering your PIN when prompted. "
+            "On library Wi-Fi the pass is renewed for 7 days automatically.",
         ],
         "inside": "7,000+ full-page newspapers & magazines, 60+ languages, 120+ countries.",
         "titles": ["The Guardian", "The Independent", "Newsweek", "Vogue", "GQ",
                    "Hello!", "BBC Top Gear", "Le Monde", "El País"],
+        "limits": "⚠️ Access expires after 30 days at home — re-enter your library PIN when prompted to renew.",
         "extras": "Free account adds offline download, article translation and listen-to-article audio.",
     },
     "borrowbox": {
@@ -754,6 +756,22 @@ BORROWING_POLICY = {
         ],
         "url": FEES_URL,
     },
+    "pin_reset": {
+        "summary": "Forgotten your library PIN? Reset it online, by phone or in person.",
+        "how_to": [
+            f"**Online (quickest):** Go to [Login to my library account]({ACCOUNT_URL}) "
+            "and use the 'Forgotten PIN' link — you'll need your library card number.",
+            f"**In person:** Visit any Worcestershire library with proof of identity — "
+            "staff can issue a new PIN on the spot.",
+            f"**By phone:** Call **{LIBRARY_PHONE}** during staffed hours.",
+        ],
+        "note": (
+            "If you've also lost your library card, get a replacement card in person "
+            f"first (a small charge may apply — see [fees page]({FEES_URL})), then "
+            "reset your PIN."
+        ),
+        "url": ACCOUNT_URL,
+    },
     "page_url": MEMBERSHIP_HUB_URL,
 }
 
@@ -815,11 +833,91 @@ ROOM_HIRE = {
     "url": ROOM_HIRE_URL,
 }
 
+COMPUTER_BOOKING = {
+    "summary": (
+        "All Worcestershire libraries with public computers let you walk in and "
+        "use them for free — for job applications, online forms, emails, CVs, "
+        "research and general internet use. You can also book a session in advance."
+    ),
+    "what_you_need": ELIGIBILITY["computer"],
+    "how_to": [
+        f"[Book a computer session online]({BOOK_COMPUTER_URL}) in advance, "
+        "or walk in and ask staff — sessions are available on demand when machines are free.",
+        "Bring your library card number; if you haven't got one yet, staff can "
+        f"set you up with free membership on the spot ([join online first]({JOIN_URL}) "
+        "to save time).",
+        "Sessions are timed — if you need longer and machines are free, staff can extend.",
+    ],
+    "also_see": (
+        f"Need to print too? Use **Print Your Way** — send a document from your phone "
+        f"or the library PC and collect it at any branch printer. "
+        f"[Printing help]({PRINTING_URL})."
+    ),
+    "url": BOOK_COMPUTER_URL,
+}
+
+DIGITAL_SKILLS = {
+    "summary": (
+        "Worcestershire Libraries offer free digital skills support for anyone who "
+        "finds computers or the internet daunting. Walk-in help from staff and "
+        "volunteers is available at every branch, alongside the free 'Learn My Way' "
+        "online learning platform."
+    ),
+    "what_you_need": (
+        "Nothing — walk into any library and ask for help. Free for everyone, "
+        "no library card or appointment needed to get started."
+    ),
+    "how_to": [
+        "Visit any Worcestershire library and ask a member of staff — they can "
+        "sit with you and help with emails, online forms, smartphones and more.",
+        "Try **Learn My Way** (learnnmyway.com) on a library computer — "
+        "a free, beginner-friendly course covering using the internet, staying "
+        "safe online, video calls and using government services.",
+        "Ask your local library about upcoming digital skills sessions or "
+        "one-to-one appointments — these are often free.",
+        f"All library computers are free to use — [book a session]({BOOK_COMPUTER_URL}) "
+        "or walk in.",
+    ],
+    "also_see": (
+        "Already online? The library's free digital resources — eBooks, newspapers "
+        "and research databases — are available 24/7 from any device. "
+        f"[Online library hub]({ONLINE_HUB})."
+    ),
+    "url": f"{GOV}/council-services/libraries",
+}
+
+READING_WELL = {
+    "summary": (
+        "Reading Well is a curated collection of books that provides information "
+        "and support for managing mental health and wellbeing — for adults, children "
+        "and young people. All titles are endorsed by health professionals and "
+        "available free at every Worcestershire library."
+    ),
+    "what_you_need": (
+        f"Free library membership — [join online]({JOIN_URL}) or at any branch. "
+        "Reading Well books are on the shelves at all Worcestershire libraries; "
+        "ask staff if you can't find them."
+    ),
+    "how_to": [
+        "Browse the Reading Well section at your local library — look for the "
+        "dedicated display or ask staff.",
+        "Borrow any title for free with a library card.",
+        "Titles cover a wide range: anxiety, depression, sleep, addiction, "
+        "dementia support, LGBTQ+ wellbeing, and children's mental health.",
+    ],
+    "also_see": (
+        f"**'Ask for a Book'** — tell a librarian what you're going through and "
+        f"they'll personally select titles for you: [{ASK_FOR_A_BOOK_URL}]({ASK_FOR_A_BOOK_URL})."
+    ),
+    "url": f"{GOV}/council-services/libraries/read-and-discover/reading-well",
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
-    lost/damaged items, personalised book recommendations, and Library Service at Home.
+    lost/damaged items, personalised book recommendations, Library Service at Home,
+    computer booking, digital skills, room hire, PIN reset, and Reading Well.
     Surfaces the right sub-topic from the query.
     """
     q = (query or "").lower()
@@ -841,10 +939,25 @@ def account_and_loans(query: str | None = None) -> dict:
         out["focus"] = "fines"
     elif any(w in q for w in ("reserve", "hold", "reservation", "request", "order")):
         out["focus"] = "reservations"
+    elif (any(w in q for w in ("forgot", "reset", "lost")) and "pin" in q):
+        out["focus"] = "pin_reset"
     elif any(w in q for w in ("account", "login", "log in", "sign in", "pin", "password")):
         out["focus"] = "account"
     elif any(w in q for w in ("home", "housebound", "deliver")):
         out["focus"] = "home"
+    elif any(w in q for w in ("computer", "pc", "internet access", "book a computer",
+                              "use a computer", "public computer")):
+        out["focus"] = "computer"
+    elif any(w in q for w in ("digital skill", "learn my way", "get online",
+                              "online skill", "learn to use", "digital help",
+                              "it help", "computing help")):
+        out["focus"] = "digital_skills"
+    elif any(w in q for w in ("room hire", "meeting room", "hire a room", "hire room",
+                              "book a room", "rent a room", "conference room", "venue")):
+        out["focus"] = "room_hire"
+    elif any(w in q for w in ("reading well", "wellbeing book", "mental health book",
+                              "wellbeing read", "health book")):
+        out["focus"] = "reading_well"
     elif any(w in q for w in ("recommend", "ask for a book", "personalised",
                               "suggest a book", "suggestion", "what should i read",
                               "choose a book", "pick a book")):
@@ -859,23 +972,46 @@ def account_and_loans(query: str | None = None) -> dict:
     if out["focus"] == "ask_book":
         out["ask_book"] = ASK_FOR_A_BOOK
 
+    if out["focus"] == "computer":
+        out["computer"] = COMPUTER_BOOKING
+
+    if out["focus"] == "digital_skills":
+        out["digital_skills"] = DIGITAL_SKILLS
+
+    if out["focus"] == "room_hire":
+        out["room_hire"] = ROOM_HIRE
+
+    if out["focus"] == "reading_well":
+        out["reading_well"] = READING_WELL
+
     return out
 
 
 _HUB_SYNONYMS = {
     "newspaper": "pressreader", "magazine": "pressreader", "news": "pressreader",
     "press": "pressreader", "guardian": "pressreader", "times newspaper": "pressreader",
+    "vogue": "pressreader", "hello": "pressreader", "newsweek": "pressreader",
     "family history": "ancestry", "ancestry": "ancestry", "genealogy": "ancestry",
+    "census": "ancestry", "birth record": "ancestry", "death record": "ancestry",
     "ebook": "borrowbox", "audiobook": "borrowbox", "audio book": "borrowbox",
+    "e-book": "borrowbox", "e-audiobook": "borrowbox", "listen to book": "borrowbox",
     "business": "cobra", "start a business": "cobra", "company": "cobra",
+    "self employed": "cobra", "sole trader": "cobra",
     "driving": "theory test pro", "theory test": "theory test pro",
     "driving test": "theory test pro", "dvsa": "theory test pro",
+    "hazard perception": "theory test pro",
     "dictionary": "oxford english", "research": "ebsco", "journal": "ebsco",
+    "academic": "ebsco", "article": "ebsco",
     "patent": "espacenet", "patents": "espacenet", "intellectual property": "espacenet",
+    "invention": "espacenet",
     "film": "bfi", "tv": "bfi", "television": "bfi", "movie": "bfi",
     "british film": "bfi", "archive film": "bfi", "old tv": "bfi",
+    "classic film": "bfi", "bbc archive": "bfi",
     "biography": "national biography", "who was": "national biography",
-    "reference": "oxford reference",
+    "historical figure": "national biography", "famous person": "national biography",
+    "reference": "oxford reference", "encyclop": "oxford reference",
+    "times archive": "times digital archive", "old times": "times digital archive",
+    "1785": "times digital archive",
 }
 
 

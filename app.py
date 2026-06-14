@@ -202,6 +202,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"my (library )?pin|forgot (my )?(pin|password)|"
                  r"library card (number|login))\b", t):
         return "account_and_loans", {"query": q}
+    if "cancel" in t and re.search(r"reserv|\bhold\b", t):
+        return "account_and_loans", {"query": "cancel reservation"}
     if (re.search(r"\bhow (do|can) i (reserve|place a hold|request)|"
                   r"(make|place) a (reserve|reservation|hold)\b", t)
             and not re.search(r"\b(room|space|study|seat|hive)\b", t)):
@@ -298,7 +300,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|oed|"
                          r"theory test|bfi|cobra|digital library|online (library )?hub|"
                          r"encyclopaedia|encyclopedia|family (history|tree)|"
-                         r"genealog(y|ical)|patents?|national biography|census)\b", t)
+                         r"genealog(y|ical)|patents?|national biography|census|"
+                         r"consumer advice|product review|best buy)\b", t)
     media = re.search(r"\b(ebooks?|e-books?|audiobooks?|emagazines?)\b", t)
     online_ctx = re.search(r"\b(online|free|digital|from home|at home|on my phone|"
                            r"app|stream(ing)?|download)\b", t)
@@ -787,6 +790,8 @@ def render_account_and_loans(r):
                 f"_{res['summary']}_ **{res['cost']}**\n"]
         for i, step in enumerate(res["how_to"], 1):
             out.append(f"{i}. {step}")
+        if res.get("how_to_cancel"):
+            out.append(f"\n↩️ **To cancel a reservation:** {res['how_to_cancel']}")
         out.append(f"\n🔎 [Reserve library books]({res['url']})")
 
     elif focus == "account":

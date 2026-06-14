@@ -641,9 +641,11 @@ def render_hive(r):
         out.append("**More than a branch:**")
         for c in r.get("capabilities", [])[:9]:
             if isinstance(c, dict):
-                src = f" — [source]({c['source']})" if c.get("source") else ""
-                out.append(f"- **{c.get('capability', '')}** — "
-                           f"{c.get('detail', '')[:160]}{src}")
+                cap = c.get("capability", "")
+                src = c.get("source", "")
+                # Link IN the heading so the LLM can't strip it as a trailing suffix
+                cap_fmt = f"**[{cap}]({src})**" if src else f"**{cap}**"
+                out.append(f"- {cap_fmt} — {c.get('detail', '')[:160]}")
         out.append(f"\n✅ {ls.ELIGIBILITY['hive_visit']}")
     else:
         for p in r.get("pages", []):
@@ -992,9 +994,22 @@ SYNTH_SYSTEM = (
 
 
 def _key_links(rendered: str) -> list[str]:
-    """🔎-prefixed action links from rendered output that must survive LLM synthesis."""
-    return [l.strip() for l in rendered.splitlines()
-            if l.strip().startswith("🔎") and "](http" in l]
+    """Action links from rendered output that must survive LLM synthesis.
+
+    Captures two patterns:
+    - 🔎-prefixed navigation lines  (e.g. "🔎 [thehiveworcester.org](url)")
+    - Bold-linked capability headers (e.g. "- **[Service Name](url)** — detail")
+    """
+    out = []
+    for l in rendered.splitlines():
+        s = l.strip()
+        if not s or "](http" not in s:
+            continue
+        if s.startswith("🔎"):
+            out.append(s)
+        elif s.startswith("- **["):
+            out.append(s)
+    return out
 
 
 def synthesize_stream(question, rendered):

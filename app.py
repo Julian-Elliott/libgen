@@ -711,7 +711,8 @@ NUDGES = {
                          ["Is {title} on BorrowBox?", "Reserve & collect — how?", "Hot takes on new books"]),
     "whats_new": ("💡 Reserve it free and collect at your branch.",
                   ["More like this", "Is {title} an eBook?", "What's on this week?"]),
-    "find_library": ("💡 Want in before/after staffed hours? **Libraries Unlocked** = 8am–8pm.",
+    "find_library": (f"💡 Want in before/after staffed hours? "
+                     f"[**Libraries Unlocked**]({ls.UNLOCKED_URL}) = 8am–8pm.",
                      ["Tell me about Libraries Unlocked", "What's on at {place}?", "How do I join?"]),
     "mobile_library": ("💡 Housebound? The **Home Library Service** brings books to your door.",
                        ["Home Library Service", "How do I join?", "Find my nearest library"]),

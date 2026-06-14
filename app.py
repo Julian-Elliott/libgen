@@ -224,7 +224,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"pick (me )?a book|recommend (me )?a book|reading suggestion)\b", t):
         return "account_and_loans", {"query": "ask for a book recommendation"}
     if re.search(r"\bbook (a )?computer\b|use (a |the )?computer|pc session|"
-                 r"computer session|book a pc\b", t):
+                 r"computer session|book a pc\b|"
+                 r"computers?.{0,30}librar|(library|libraries).{0,15}computers?\b", t):
         return "account_and_loans", {"query": "book a computer"}
     if re.search(r"\bvolunteer(ing)?\b|work experience (at|in) (a |the )?librar\b", t):
         return "account_and_loans", {"query": "volunteering"}
@@ -242,7 +243,8 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "account_and_loans", {"query": "job club cv employment"}
     # Children's services — Storytime, Rhymetime, Summer Reading Challenge (not Hive-specific)
     if (re.search(r"\b(storytime|story time|rhymetime|rhyme time|bounce and rhyme|"
-                  r"summer reading|children'?s? (librar|service|activit|"
+                  r"summer reading|reading challenge|summer challenge|"
+                  r"children'?s? (librar|service|activit|"
                   r"event|book|section)|kids'? (activit|event|club|book)|toddler|"
                   r"under[- ]?5s?|baby (rhyme|group)|for (kids|children|toddlers))", t)
             and not re.search(r"\bhive\b", t)):
@@ -261,6 +263,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if (re.search(r"\b(wheelchair|accessible|accessibility|disabled|disability|"
                   r"step[- ]free)\b", t) and re.search(r"\blibrar", t)):
         return "graph_search", {"query": q}
+    # Cancel / remove a reservation or hold
+    if "cancel" in t and any(w in t for w in ("reserv", "hold")):
+        return "account_and_loans", {"query": "cancel reservation"}
     # Non-Hive meeting room hire — Hive-specific queries fall through to hive_info below
     if (re.search(r"\bhire (a |the )?(meeting )?room\b|(meeting )?room (for )?hire\b|"
                   r"book a (meeting )?room\b|meeting room hire\b", t)
@@ -291,7 +296,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
         place = _place_from(q)
         return "mobile_library", {"place": place or q.split()[-1]}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
-                 r"facilit|where is|near me|study space|wi-?fi|phone number|"
+                 r"facilit|where is|near me|study space|wi-?fi|wireless|phone number|"
                  r"telephone|contact (details?|number)|email address)\b", t):
         return "find_library", {"name": _place_from(q), "when": q}
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
@@ -797,8 +802,10 @@ def render_account_and_loans(r):
     elif focus == "account":
         acc = r["account"]
         out += ["🔑 **Your library account:**\n", acc["summary"],
-                f"\n✅ **What you need:** {acc['what_you_need']}",
-                f"\n🔎 {acc['how_to']}"]
+                f"\n✅ **What you need:** {acc['what_you_need']}"]
+        if acc.get("pin_reset"):
+            out.append(f"\n🔐 **Forgotten your PIN?** {acc['pin_reset']}")
+        out.append(f"\n🔎 {acc['how_to']}")
 
     else:  # general
         acc, ren = r["account"], r["renewals"]
@@ -908,7 +915,7 @@ NUDGES = {
         ["What's on this week?", "Children's eBooks", "Find my nearest library"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
-              "What's on this week?", "How do I print from my phone?"]
+              "What's on this week?"]
 
 
 # --------------------------------------------------------------------------- #
@@ -952,8 +959,8 @@ HELP = (
     "and catalogue *live* and can help you:\n\n"
     "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
     "or borrow the eBook tonight\n"
-    "- 🔄 **Account & loans** — renew books online, reserve items, return items, "
-    "pay fines, lost card, lost/damaged item\n"
+    "- 🔄 **Account & loans** — renew books online, reserve or cancel items, "
+    "return items, pay fines, lost card, lost/damaged item\n"
     "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
     "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
@@ -1096,10 +1103,12 @@ def build_demo():
              "Can you suggest a book for me?",
              "How do I renew my library books?",
              "How do I reserve a book?",
+             "How do I cancel a reservation?",
              "How do I return library books?",
              "Do you have Harry Potter audiobooks?",
              "What can I do at The Hive?",
              "Is Malvern library open now?",
+             "Is there free Wi-Fi at the library?",
              "A late-opening library with a café and meeting rooms",
              "When does the mobile library visit Abberley?",
              "Can I read newspapers for free?",
@@ -1108,9 +1117,11 @@ def build_demo():
              "Can I book a computer at the library?",
              "How do I access the Oxford English Dictionary?",
              "Are there books to help with mental health?",
+             "How do I join the Summer Reading Challenge?",
              "Can I hire a meeting room at my local library?",
              "Can I volunteer at the library?",
-             "I need help getting online — can the library help?"],
+             "I need help getting online — can the library help?",
+             "I forgot my library PIN — what do I do?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

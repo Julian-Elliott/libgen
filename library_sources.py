@@ -1047,6 +1047,70 @@ SUMMER_READING_CHALLENGE = {
     "url": SUMMER_READING_URL,
 }
 
+ADULT_LEARNING = {
+    "summary": (
+        "Worcestershire libraries support adult learning and skills development — "
+        "including IT and computer courses, English and maths classes, and access "
+        "to free online learning tools. Sessions are held in-branch and online."
+    ),
+    "what_you_need": (
+        "Most courses and sessions are free to attend. Library membership may be "
+        "needed to access online platforms like Learn My Way."
+    ),
+    "how_to": [
+        f"Browse current courses and sessions on the [Learn, Upskill and Find Work]({LEARN_UPSKILL_URL}) page.",
+        "Call your local library to ask what adult learning is available near you.",
+        f"[Learn My Way]({DIGITAL_INCLUSION_URL}) is a free beginner-friendly platform "
+        "covering internet basics, email, online safety and more — accessible from home.",
+    ],
+    "also_see": (
+        f"[Job Clubs]({JOB_CLUBS_URL}) offer free CV and employment support; "
+        f"[Digital Champions]({DIGITAL_INCLUSION_URL}) give one-to-one help getting online."
+    ),
+    "url": LEARN_UPSKILL_URL,
+}
+
+BOOK_CLUBS = {
+    "summary": (
+        "Worcestershire libraries host and support book clubs and reading groups — "
+        "a free, friendly way to discover new books and share views with other readers. "
+        "Groups meet regularly at various branches."
+    ),
+    "what_you_need": (
+        "Usually free to attend. A library card is helpful so you can borrow reading "
+        "copies. Contact your nearest library for details of local groups."
+    ),
+    "how_to": [
+        f"Check the [library events listing]({EVENTS_URL}) for book club dates near you.",
+        "Contact your nearest library branch to ask about active reading groups.",
+        "Libraries can often supply reading copies of the chosen book for group members.",
+    ],
+    "also_see": (
+        f"[PressReader]({ONLINE_HUB}) gives free access to thousands of literary "
+        "magazines — great for keeping up with reviews between meetings."
+    ),
+    "url": EVENTS_URL,
+}
+
+DONATIONS = {
+    "summary": (
+        "Many Worcestershire library branches welcome donations of good-quality "
+        "second-hand books. Donated books are typically sold at low cost in the library "
+        "to raise funds for local library services."
+    ),
+    "what_you_need": (
+        "Books should be clean, undamaged and in readable condition. "
+        "Please contact your local branch before bringing a large donation, "
+        "as acceptance and storage capacity varies by location."
+    ),
+    "how_to": [
+        "Call or visit your nearest library to check they are accepting donations.",
+        "Bring clean, undamaged books — no mould, heavy writing or water damage.",
+        "Staff will assess donations and let you know how they will be used.",
+    ],
+    "url": f"{GOV}/council-services/libraries",
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
@@ -1108,6 +1172,18 @@ def account_and_loans(query: str | None = None) -> dict:
         out["focus"] = "room_hire"
     elif any(w in q for w in ("warm space", "warm welcome", "somewhere warm")):
         out["focus"] = "warm_space"
+    elif any(w in q for w in ("book club", "reading group", "reading circle",
+                              "book group", "readers group", "readers' group")):
+        out["focus"] = "book_clubs_reading"
+        out["book_clubs_reading"] = BOOK_CLUBS
+    elif any(w in q for w in ("adult learn", "learning course", "it course",
+                              "computer course", "upskill", "functional skill",
+                              "learn to read", "learn to write", "learn to type")):
+        out["focus"] = "adult_learning"
+        out["adult_learning"] = ADULT_LEARNING
+    elif any(w in q for w in ("donat", "give books", "drop off book")):
+        out["focus"] = "donations"
+        out["donations"] = DONATIONS
     else:
         out["focus"] = "general"
 

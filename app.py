@@ -116,8 +116,10 @@ TOOLS = {
         "fn": lambda a: graph_rag.graph_search(a.get("query", ""))},
     "account_and_loans": {
         "desc": "Renew loans, check/pay fines, make reservations, access the online "
-                "account, borrowing policies, returning items, lost cards, and the "
-                "Library Service at Home (housebound delivery). "
+                "account, borrowing policies, returning items, lost cards, "
+                "Library Service at Home (housebound delivery), room hire at libraries, "
+                "book a public computer, digital skills/getting online help, "
+                "job clubs/CV help, volunteering, reading groups/book clubs. "
                 "args: {\"query\": \"<optional topic>\"}",
         "fn": lambda a: ls.account_and_loans(a.get("query") or a.get("topic"))},
 }
@@ -214,6 +216,32 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"suggest (me )?a book|what should i read|choose (me )?a book|"
                  r"pick (me )?a book|recommend (me )?a book|reading suggestion)\b", t):
         return "account_and_loans", {"query": "ask for a book recommendation"}
+    # Room hire at council branches — intercept before hive block when "hive" not mentioned
+    if (re.search(r"\b(meeting room|hire a (room|space)|room hire|(room|space) hire|"
+                  r"book a (room|meeting))\b", t)
+            and "hive" not in t and "study" not in t):
+        return "account_and_loans", {"query": "room hire meeting room"}
+    # Public computer booking
+    if re.search(r"\b(book a computer|computer session|public computer|"
+                 r"use (a |the |library )?computer|pc session|computer booking)\b", t):
+        return "account_and_loans", {"query": "book a computer"}
+    # Digital skills / getting online help
+    if re.search(r"\b(digital skills?|digital champion|digital inclusion|"
+                 r"digital confidence|getting online|get online help|"
+                 r"help.{0,12}(computer|online|internet)|"
+                 r"(computer|internet) help|it help|it support)\b", t):
+        return "account_and_loans", {"query": "digital skills"}
+    # Job clubs / employment support (must precede the generic events block)
+    if re.search(r"\b(job clubs?|cv (help|writing|review)|job search(ing)?|"
+                 r"job (application|seeking)|employment support|find( a)? work|"
+                 r"interview (prep|help|practice|preparation))\b", t):
+        return "account_and_loans", {"query": "job club"}
+    # Volunteering
+    if re.search(r"\b(volunteer(ing)?|work experience.{0,15}librar)\b", t):
+        return "account_and_loans", {"query": "volunteering"}
+    # Reading groups / book clubs (must precede the generic events block)
+    if re.search(r"\b(reading groups?|book groups?|book clubs?)\b", t):
+        return "account_and_loans", {"query": "reading group"}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
                  r"worcester city librar|hire (a |the )?(room|space)|"
@@ -627,6 +655,65 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Ask for a Book]({ab['url']})")
         return "\n".join(out)
 
+    if focus == "room_hire" and r.get("room_hire"):
+        rh = r["room_hire"]
+        out += ["🏢 **Hire a library meeting room:**\n", rh["summary"],
+                f"\n✅ **What you need:** {rh['what_you_need']}\n"]
+        for i, step in enumerate(rh["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{rh['also_see']}_")
+        out.append(f"\n🔎 [Hire a library meeting room]({rh['url']})")
+        return "\n".join(out)
+
+    if focus == "computer_booking" and r.get("computer_booking"):
+        cb = r["computer_booking"]
+        out += ["💻 **Public computers at Worcestershire libraries:**\n", cb["summary"],
+                f"\n✅ **What you need:** {cb['what_you_need']}\n"]
+        for i, step in enumerate(cb["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{cb['note']}_")
+        out.append(f"\n🔎 [Book a computer session]({cb['url']})")
+        return "\n".join(out)
+
+    if focus == "digital_skills" and r.get("digital_skills"):
+        ds = r["digital_skills"]
+        out += ["🖥️ **Free digital skills support at your local library:**\n", ds["summary"],
+                f"\n✅ **Who's it for:** {ds['what_you_need']}\n"]
+        for i, step in enumerate(ds["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{ds['also_see']}_")
+        out.append(f"\n🔎 [Digital Inclusion — Helping You Online]({ds['url']})")
+        return "\n".join(out)
+
+    if focus == "job_clubs" and r.get("job_clubs"):
+        jc = r["job_clubs"]
+        out += ["💼 **Library Job Clubs — free employment support:**\n", jc["summary"],
+                f"\n✅ **What you need:** {jc['what_you_need']}\n"]
+        for i, step in enumerate(jc["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{jc['also_see']}_")
+        out.append(f"\n🔎 [Job Clubs]({jc['url']})")
+        return "\n".join(out)
+
+    if focus == "volunteering" and r.get("volunteering"):
+        vol = r["volunteering"]
+        out += ["🤝 **Volunteer with Worcestershire Libraries:**\n", vol["summary"],
+                f"\n✅ **Who can volunteer:** {vol['what_you_need']}\n"]
+        for i, step in enumerate(vol["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{vol['also_see']}_")
+        out.append(f"\n🔎 [Volunteering, training and work experience]({vol['url']})")
+        return "\n".join(out)
+
+    if focus == "reading_groups" and r.get("reading_groups"):
+        rg = r["reading_groups"]
+        out += ["📚 **Reading groups at Worcestershire Libraries:**\n", rg["summary"],
+                f"\n✅ **What you need:** {rg['what_you_need']}\n"]
+        for i, step in enumerate(rg["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n🔎 [Worcestershire Reading Groups Recommend]({rg['url']})")
+        return "\n".join(out)
+
     if focus == "renewals":
         ren = r["renewals"]
         out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
@@ -735,7 +822,7 @@ NUDGES = {
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
     "account_and_loans": (
         "💡 Renewing is quickest online — no queue, no trip to the library.",
-        ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
+        ["How do I renew my books?", "Can I hire a meeting room?", "Can you suggest a book for me?"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
               "What's on this week?", "How do I print from my phone?"]
@@ -793,7 +880,11 @@ HELP = (
     "- 📅 **What's on** this week\n"
     "- 💻 **Free online** — newspapers, magazines, eBooks, family history, films\n"
     "- 🖨️ **Printing** from your phone\n"
-    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n\n"
+    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
+    "- 🖥️ **Digital skills** — free 1-to-1 help getting online\n"
+    "- 💼 **Job Clubs** — free CV and job-application support\n"
+    "- 📚 **Reading groups** — join one or borrow a book set\n"
+    "- 🤝 **Volunteering** — roles for all backgrounds\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
     "names its source._")
@@ -928,7 +1019,13 @@ def build_demo():
              "When does the mobile library visit Abberley?",
              "Can I read newspapers for free?",
              "Can I watch old British TV programmes for free?",
-             "I can't get to the library — can books be delivered?"],
+             "I can't get to the library — can books be delivered?",
+             "Can I hire a meeting room at the library?",
+             "How do I book a computer at the library?",
+             "Is there help for getting online or digital skills?",
+             "Are there job clubs at the library?",
+             "How do I volunteer at the library?",
+             "Are there reading groups I can join?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

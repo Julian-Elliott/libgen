@@ -64,6 +64,11 @@ ASK_FOR_A_BOOK_URL = f"{GOV}/council-services/libraries/read-and-discover/ask-bo
 ROOM_HIRE_URL = f"{GOV}/council-services/libraries/hire-library-meeting-room"
 BOOK_COMPUTER_URL = f"{GOV}/council-services/libraries/your-library-membership/book-computer"
 READ_DISCOVER_URL = f"{GOV}/council-services/libraries/read-and-discover"
+DIGITAL_SKILLS_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work/digital-inclusion-helping-you-online"
+JOB_CLUBS_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work/job-clubs"
+LEARN_UPSKILL_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work"
+VOLUNTEERING_URL = f"{GOV}/council-services/libraries/volunteering-training-and-work-experience"
+READING_GROUPS_URL = f"{GOV}/council-services/libraries/read-and-discover/reading-groups-recommend"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -815,11 +820,112 @@ ROOM_HIRE = {
     "url": ROOM_HIRE_URL,
 }
 
+COMPUTER_BOOKING = {
+    "summary": (
+        "Public computers are available free at most Worcestershire libraries "
+        "for internet access, job searching, printing and general use. "
+        "Sessions can be booked online in advance or just walk in — "
+        "computers are available on demand when not pre-booked."
+    ),
+    "what_you_need": "Free library membership (full or digital).",
+    "how_to": [
+        f"[Book a computer session online]({BOOK_COMPUTER_URL}) — pick your library and preferred time.",
+        "Or walk in during staffed hours — ask at the desk or use the self-booking terminal.",
+        "Sessions are typically 1 hour; ask staff to extend if machines are free.",
+    ],
+    "note": (
+        f"Printing is available at all branches with computers. "
+        f"Want to print from your own phone? Try [Print Your Way]({PRINTING_URL}) — "
+        "send from home and collect at any branch within 24 hours."
+    ),
+    "url": BOOK_COMPUTER_URL,
+}
+
+DIGITAL_SKILLS = {
+    "summary": (
+        "Worcestershire Libraries offer free help building your confidence online — "
+        "from sending emails and video calls to staying safe, online shopping and "
+        "accessing council services. Drop in or book a slot with a volunteer Digital Champion."
+    ),
+    "what_you_need": (
+        "No experience needed — these sessions welcome complete beginners and anyone "
+        "who wants more confidence using a computer, tablet or smartphone."
+    ),
+    "how_to": [
+        "Visit your local library and ask about digital skills sessions or 1-to-1 Digital Champion support.",
+        f"Check the [library events page]({EVENTS_URL}) for upcoming Digital Inclusion drop-ins near you.",
+        "Free devices and library Wi-Fi are available to practise on.",
+    ],
+    "also_see": (
+        f"Once you're online, the [Online Library Hub]({ONLINE_HUB}) gives free access to "
+        "eBooks, newspapers, family history and more — all with your library card."
+    ),
+    "url": DIGITAL_SKILLS_URL,
+}
+
+JOB_CLUBS = {
+    "summary": (
+        "Library Job Clubs are free, friendly sessions where you can get help with "
+        "CV writing, job applications, interview preparation and online job searching. "
+        "Run at various Worcestershire libraries — no appointment usually needed."
+    ),
+    "what_you_need": "Free to attend — library membership is not required for Job Club sessions.",
+    "how_to": [
+        f"Check the [library events page]({EVENTS_URL}) for Job Club dates and locations near you.",
+        "Drop in during the session, or call your local library to confirm times.",
+        "Bring your CV or any job-related documents you'd like help with.",
+    ],
+    "also_see": (
+        f"Also available: free [public computers]({BOOK_COMPUTER_URL}) for job searching and CV printing; "
+        f"[adult learning courses]({LEARN_UPSKILL_URL}) to build new skills; and the free "
+        f"[online job-seeking support]({LEARN_UPSKILL_URL}) resource guide."
+    ),
+    "url": JOB_CLUBS_URL,
+}
+
+VOLUNTEERING = {
+    "summary": (
+        "Worcestershire Libraries welcome volunteers in a range of roles — "
+        "from shelving books and supporting events to acting as a Digital Champion "
+        "helping others get online. Volunteering is free, flexible and a great way "
+        "to give back while developing new skills."
+    ),
+    "what_you_need": (
+        "Open to adults of all backgrounds. Some roles (e.g. Youth Volunteering for ages 13–24) "
+        "have specific age or availability requirements — check the listings."
+    ),
+    "how_to": [
+        f"Browse current volunteer roles at the [Volunteering, training and work experience page]({VOLUNTEERING_URL}).",
+        "Complete the online expression of interest form or speak to staff at your local library.",
+    ],
+    "also_see": (
+        "Volunteering with the library can also count towards work experience or skills development. "
+        f"See also the [Job Clubs]({JOB_CLUBS_URL}) programme if you're looking for employment support."
+    ),
+    "url": VOLUNTEERING_URL,
+}
+
+READING_GROUPS = {
+    "summary": (
+        "Worcestershire Libraries host reading groups at branches across the county — "
+        "a free, sociable way to discover new books and share your thoughts. "
+        "The 'Worcestershire Reading Groups Recommend' service also lets reading groups "
+        "borrow bulk sets of titles from a specially curated collection."
+    ),
+    "what_you_need": "Full library membership to borrow reading group book sets; most group meetings are free to attend.",
+    "how_to": [
+        f"Find a reading group near you via the [library events page]({EVENTS_URL}) or ask staff at your local branch.",
+        f"Reading groups can borrow sets of books via the [Reading Groups Recommend]({READING_GROUPS_URL}) service — contact your library to arrange.",
+    ],
+    "url": READING_GROUPS_URL,
+}
+
 
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
-    lost/damaged items, personalised book recommendations, and Library Service at Home.
+    lost/damaged items, personalised book recommendations, Library Service at Home,
+    room hire, computer booking, digital skills, job clubs, volunteering, reading groups.
     Surfaces the right sub-topic from the query.
     """
     q = (query or "").lower()
@@ -849,6 +955,33 @@ def account_and_loans(query: str | None = None) -> dict:
                               "suggest a book", "suggestion", "what should i read",
                               "choose a book", "pick a book")):
         out["focus"] = "ask_book"
+    elif any(w in q for w in ("room hire", "hire a room", "meeting room", "book a room",
+                              "hire a space", "space for hire", "room booking")):
+        out["focus"] = "room_hire"
+        out["room_hire"] = ROOM_HIRE
+    elif any(w in q for w in ("book a computer", "computer session", "use a computer",
+                              "public computer", "pc session", "computer booking",
+                              "use the computer", "use library computer")):
+        out["focus"] = "computer_booking"
+        out["computer_booking"] = COMPUTER_BOOKING
+    elif any(w in q for w in ("digital skill", "digital champion", "help online",
+                              "help with computer", "get online", "digital inclusion",
+                              "digital confidence", "it help", "computer help",
+                              "getting online")):
+        out["focus"] = "digital_skills"
+        out["digital_skills"] = DIGITAL_SKILLS
+    elif any(w in q for w in ("job club", "cv help", "cv writing", "job search",
+                              "job seeking", "employment support", "find work",
+                              "job application", "interview prep")):
+        out["focus"] = "job_clubs"
+        out["job_clubs"] = JOB_CLUBS
+    elif any(w in q for w in ("volunteer", "volunteering", "work experience",
+                              "digital champion")):
+        out["focus"] = "volunteering"
+        out["volunteering"] = VOLUNTEERING
+    elif any(w in q for w in ("reading group", "book group", "book club")):
+        out["focus"] = "reading_groups"
+        out["reading_groups"] = READING_GROUPS
     else:
         out["focus"] = "general"
 

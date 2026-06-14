@@ -71,6 +71,7 @@ WARM_WELCOME_URL = f"{GOV}/council-services/libraries/warm-welcome"
 LEARN_UPSKILL_URL = f"{GOV}/council-services/libraries/learn-upskill-and-find-work"
 JOB_CLUBS_URL = f"{LEARN_UPSKILL_URL}/job-clubs"
 CHILDREN_URL = f"{GOV}/council-services/libraries/read-and-discover"
+SUMMER_READING_URL = f"{GOV}/council-services/libraries/read-and-discover/summer-reading-challenge"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -617,7 +618,7 @@ CURATED_HUB = {
     "which": {
         "what_you_need": "Library membership; available on library computers in-branch — ask staff for access.",
         "at_home": False,
-        "inside": "Independent product reviews and Best Buy buying advice.",
+        "inside": "Independent product reviews, Best Buy recommendations and consumer advice from Which? — covering technology, appliances, food, finance and more.",
         "access": [
             "Ask a member of staff at any Worcestershire library to access Which? "
             "on a library computer during staffed hours.",
@@ -720,6 +721,11 @@ BORROWING_POLICY = {
         "summary": ("Log in to renew loans, reserve items, cancel reservations, "
                     "update your details and change your PIN."),
         "what_you_need": "Your library card number + PIN.",
+        "pin_reset": (
+            f"Forgotten your PIN? Use the 'Forgot PIN' link on the "
+            f"[account sign-in page]({ACCOUNT_URL}), or visit any library in person "
+            "with your library card."
+        ),
         "how_to": f"Visit [Login to my library account]({ACCOUNT_URL}).",
         "url": ACCOUNT_URL,
     },
@@ -1011,6 +1017,34 @@ CHILDREN_SERVICES = {
     "events_url": EVENTS_URL,
     "borrowbox_url": BORROWBOX,
     "join_url": JOIN_URL,
+}
+
+SUMMER_READING_CHALLENGE = {
+    "summary": (
+        "The Summer Reading Challenge is a free annual programme encouraging "
+        "children to keep reading during the school summer holidays. "
+        "Children aged 4–11 borrow and read any six library books between July "
+        "and September, collecting stickers and rewards along the way — and "
+        "earning a certificate for completing the challenge."
+    ),
+    "what_you_need": (
+        "Free library membership for the child — sign up at any branch or online. "
+        "Children register for the Challenge at the library from July each year."
+    ),
+    "how_to": [
+        "Visit any Worcestershire library from July onwards to register your child "
+        "— registration is free.",
+        "Pick up your reading record booklet and choose your first books.",
+        "Return to the library after every two books to collect stickers and rewards.",
+        "Read six books by mid-September to earn a certificate (and a medal at "
+        "many branches).",
+    ],
+    "also_see": (
+        "Young people aged 13–24 can **volunteer** on the Summer Reading Challenge "
+        "— great for CVs and the Duke of Edinburgh's Award. "
+        f"See [volunteering and work experience]({VOLUNTEERING_URL}) for details."
+    ),
+    "url": SUMMER_READING_URL,
 }
 
 

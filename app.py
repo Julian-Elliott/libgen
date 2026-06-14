@@ -117,19 +117,49 @@ TOOLS = {
                 "fines/fees, lost card, or the Library Service at Home for housebound "
                 "members. args: {\"topic\": \"<renew|return|pin|fines|home library>\"}",
         "fn": lambda a: ls.account_help(a.get("topic") or a.get("query"))},
+    "account_and_loans": {
+        "desc": "Renew loans, check/pay fines, make reservations, access the online "
+                "account, borrowing policies, returning items, lost cards, and the "
+                "Library Service at Home (housebound delivery). "
+                "args: {\"query\": \"<optional topic>\"}",
+        "fn": lambda a: ls.account_and_loans(a.get("query") or a.get("topic"))},
 }
 
 ROUTER_SYSTEM = (
     "You route a Worcestershire Libraries question to exactly one tool.\nTools:\n"
     + "\n".join(f"- {n}: {t['desc']}" for n, t in TOOLS.items())
     + "\n- none: greeting / off-topic / general 'what can you do'.\n\n"
+    "If conversation context is provided, resolve references like 'there', 'it' "
+    "or 'that one' from it (e.g. 'what's on there?' after a Malvern answer -> "
+    "library_events with Malvern).\n"
     "Reply with ONLY JSON: {\"tool\": \"<name>\", \"args\": {...}}. No prose."
 )
+
+
+def _content_text(content):
+    # Gradio 6 Chatbot content can be a list of blocks rather than a string.
+    if isinstance(content, list):
+        return " ".join(b.get("text", "") for b in content
+                        if isinstance(b, dict)).strip()
+    return content or ""
+
+
+def _history_text(history, limit=4):
+    lines = []
+    for m in (history or [])[-limit:]:
+        c = _content_text(m.get("content"))
+        if c:
+            lines.append(f"{m.get('role', 'user')}: {c[:200]}")
+    return "\n".join(lines)
 
 
 # --------------------------------------------------------------------------- #
 # Routing — LLM first, deterministic keyword fallback always available
 # --------------------------------------------------------------------------- #
+
+_QWORDS = {"what", "whats", "when", "where", "which", "who", "how", "is", "are",
+           "do", "does", "can", "tell", "any", "the", "this", "a", "i", "my"}
+
 
 def keyword_route(q: str) -> tuple[str, dict]:
     t = q.lower()
@@ -154,6 +184,29 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(home library|library (service )?at home|housebound|"
                  r"deliver.{0,15}book|book.{0,15}door|can.?t (visit|get to))\b", t):
         return "account_help", {"topic": "home library"}
+    # Account self-service: renewals, fines, reservations, home library
+    if re.search(r"\b(renew|renewal|extend (a |my )?(loan|book)|due date)\b", t):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\b(fine|fines|overdue|late fee|pay (a |my )?(fee|fine)|"
+                 r"fees?[ -]and[ -]charges?|lost (my |a |the )?(library )?card|"
+                 r"(my |a )?(library )?card (is |was |has been )?lost|"
+                 r"replace (a |my |the )?(library )?card|lost (a |my )?book)\b", t):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\b(my (library )?account|online account|(sign|log) ?in(to)?|"
+                 r"my (library )?pin|forgot (my )?(pin|password)|"
+                 r"library card (number|login))\b", t):
+        return "account_and_loans", {"query": q}
+    if (re.search(r"\bhow (do|can) i (reserve|place a hold|request)|"
+                  r"(make|place) a (reserve|reservation|hold)\b", t)
+            and not re.search(r"\b(room|space|study|seat|hive)\b", t)):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\b(home library|library (service )?(at home|at-home|home)|"
+                 r"housebound|books? delivered|deliver (books?|the library)|"
+                 r"can.{0,12}t get to (the |a )?librar)\b", t):
+        return "account_and_loans", {"query": q}
+    if re.search(r"\breturn(ing)? (a |my |the )?(book|item|loan)\b|"
+                 r"how (do|to|can) (i )?return\b", t):
+        return "account_and_loans", {"query": q}
     # The Hive / its extended offer (archives, archaeology, rooms, Worcester city)
     if re.search(r"\b(the )?hive\b|archiv|archaeolog|explore the past|"
                  r"worcester city librar|hire (a |the )?(room|space)|"
@@ -199,7 +252,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "membership_help", {"service": q}
     if re.search(r"\b(event|events|what'?s on|whats on|activit|class|club|session|"
                  r"group|happening|this week)\b", t):
-        return "library_events", {"query": ""}
+        m = [w for w in re.findall(r"\b([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\b", q)
+             if w.lower() not in _QWORDS]
+        return "library_events", {"query": (m[-1] if m else "")}
     if re.search(r"\b(new|newest|latest|recommend|hot take|just in|good read|"
                  r"suggestion)\b", t):
         return "whats_new", {"genre": re.sub(r"\b(new|newest|latest|recommend|any|"
@@ -215,12 +270,16 @@ def keyword_route(q: str) -> tuple[str, dict]:
     return "none", {}
 
 
-def route(q: str) -> tuple[str, dict, str, int]:
+def route(q: str, history=None) -> tuple[str, dict, str, int]:
     t0 = time.time()
     if HF_TOKEN:
         try:
+            user = q
+            ctx = _history_text(history)
+            if ctx:
+                user = f"Conversation so far:\n{ctx}\n\nRoute this latest question: {q}"
             out = llm([{"role": "system", "content": ROUTER_SYSTEM},
-                       {"role": "user", "content": q}],
+                       {"role": "user", "content": user}],
                       max_tokens=120, temperature=0.0)
             m = re.search(r"\{.*\}", out.choices[0].message.content, re.S)
             if m:
@@ -546,6 +605,72 @@ def render_hive(r):
     return "\n".join(out)
 
 
+def render_account_and_loans(r):
+    focus = r.get("focus", "general")
+    out = []
+
+    if focus == "home" and r.get("home_library"):
+        h = r["home_library"]
+        out += [
+            "🏠 **Library Service at Home**\n",
+            h["summary"],
+            f"\n✅ **What you need:** {h['what_you_need']}",
+            f"📞 **Contact:** {h['contact']}",
+            f"\n{h['also_see']}",
+            f"\n🔎 [Library Service at Home]({h['url']})",
+        ]
+        return "\n".join(out)
+
+    if focus == "renewals":
+        ren = r["renewals"]
+        out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
+        for m in ren["methods"]:
+            out.append(f"- {m}")
+        out += [f"\n⚠️ _{ren['note']}_",
+                f"\n🔎 [Renew a loan online]({ren['url']})"]
+
+    elif focus == "fines":
+        f_data = r["fines"]
+        out += ["💷 **Fees and charges:**\n", f_data["summary"],
+                f"\n- {f_data['how_to_pay']}",
+                f"- {f_data['card_replacement']}",
+                f"\n🔎 [Fees and charges]({f_data['url']})"]
+
+    elif focus == "reservations":
+        res = r["reservations"]
+        out += ["🔖 **Reserving items:**\n",
+                f"_{res['summary']}_ **{res['cost']}**\n"]
+        for i, step in enumerate(res["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n🔎 [Reserve library books]({res['url']})")
+
+    elif focus == "account":
+        acc = r["account"]
+        out += ["🔑 **Your library account:**\n", acc["summary"],
+                f"\n✅ **What you need:** {acc['what_you_need']}",
+                f"\n🔎 {acc['how_to']}"]
+
+    else:  # general
+        acc, ren = r["account"], r["renewals"]
+        f_data, res = r["fines"], r["reservations"]
+        out += [
+            "🪪 **Your library account — manage it online:**\n",
+            f"🔑 **[Sign in to your account]({acc['url']})** — {acc['summary']} "
+            f"_{acc['what_you_need']}_",
+            f"🔄 **[Renew loans]({ren['url']})** — {ren['summary']}",
+            f"🔖 **[Reserve items]({res['url']})** — {res['summary']} {res['cost']}",
+            f"💷 **[Fees & charges]({f_data['url']})** — {f_data['summary']}",
+            f"\n🔎 [Your library membership]({r['page_url']})",
+        ]
+
+    if r.get("home_library") and focus != "home":
+        h = r["home_library"]
+        out.append(f"\n🏠 _Can't get to a library?_ **[Library Service at Home]"
+                   f"({h['url']})** — volunteer-run home delivery of books.")
+
+    return "\n".join(out)
+
+
 RENDER = {
     "search_catalogue": render_catalogue, "whats_new": render_whats_new,
     "where_to_get": render_where_to_get, "hive_info": render_hive,
@@ -554,6 +679,7 @@ RENDER = {
     "libraries_unlocked": render_unlocked, "membership_help": render_membership,
     "printing_help": render_printing, "graph_search": render_graph,
     "account_help": render_account_help,
+    "account_and_loans": render_account_and_loans,
 }
 
 
@@ -577,13 +703,13 @@ def value_receipt(tool, raw):
 # (EAST: Easy=chips, Attractive=value, Social/Timely=nudge)
 NUDGES = {
     "search_catalogue": ("💡 No time to visit? Many titles are free on **BorrowBox** tonight.",
-                         ["Is it on BorrowBox?", "Reserve & collect — how?", "Hot takes on new books"]),
+                         ["Is {title} on BorrowBox?", "Reserve & collect — how?", "Hot takes on new books"]),
     "whats_new": ("💡 Reserve it free and collect at your branch.",
-                  ["More like this", "Is it an eBook?", "What's on this week?"]),
+                  ["More like this", "Is {title} an eBook?", "What's on this week?"]),
     "find_library": ("💡 Want in before/after staffed hours? **Libraries Unlocked** = 8am–8pm.",
-                     ["Tell me about Libraries Unlocked", "What's on there?", "How do I join?"]),
+                     ["Tell me about Libraries Unlocked", "What's on at {place}?", "How do I join?"]),
     "mobile_library": ("💡 Housebound? The **Home Library Service** brings books to your door.",
-                       ["How do I join?", "What's on this week?", "Find my nearest library"]),
+                       ["Home Library Service", "How do I join?", "Find my nearest library"]),
     "library_events": ("💡 Most events are free — just turn up.",
                        ["Children's events", "Do I need to book?", "Find my nearest library"]),
     "online_hub": ("💡 It's free with your card — set up tonight from your sofa.",
@@ -602,6 +728,9 @@ NUDGES = {
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
     "account_help": ("💡 Renew online anytime — or by phone on 01905 822866, 24 hours a day.",
                      ["How do I return a book?", "What if I have a fine?", "How do I join?"]),
+    "account_and_loans": (
+        "💡 Renewing is quickest online — no queue, no trip to the library.",
+        ["How do I renew my books?", "How do I make a reservation?", "Pay a fine online"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "How do I renew my books?",
               "What's on this week?", "How do I print from my phone?"]
@@ -651,12 +780,17 @@ HELP = (
     "- ♻️ **Renew or return items** — online, by phone (24h), in any branch\n"
     "- 🔑 **Account help** — forgotten PIN, lost card, fines & how to pay\n"
     "- 📍 **Branch hours, 'open now?', toilets, parking**\n"
+    "- 🔄 **Account & loans** — renew books online, reserve items, pay fines, "
+    "lost card, borrowing policy\n"
+    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
     "hire, open 8:30am–10pm daily\n"
     "- 🚐 **Mobile library** times for your village\n"
+    "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
     "- 📅 **What's on** this week\n"
     "- 💻 **Free online** — newspapers, magazines, family history\n"
     "- 🏠 **Library at Home** — free book delivery for housebound members\n"
+    "- 💻 **Free online** — newspapers, magazines, eBooks, family history\n"
     "- 🖨️ **Printing** from your phone\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
@@ -674,7 +808,7 @@ def respond(message, history):
         return
 
     tr = Trace(message, MODEL_ID)
-    tool, args, how, rms = route(message)
+    tool, args, how, rms = route(message, history)
     tr.set_route(tool, args, how, rms)
 
     if tool == "none":
@@ -704,6 +838,22 @@ def respond(message, history):
     # behaviour-change extras + provenance + open trace
     value = value_receipt(tool, raw)
     nudge, chips = NUDGES.get(tool, ("", []))
+    # Chips carry concrete names, not pronouns, so the follow-up routes
+    # correctly even in no-LLM mode. A chip whose slot we can't fill is dropped.
+    slots = {}
+    if raw.get("name"):
+        slots["place"] = re.sub(r"\s+Library$", "", raw["name"])
+    if raw.get("items"):
+        t = (raw["items"][0].get("title") or "").strip()
+        if t:
+            slots["title"] = t if len(t) <= 30 else t[:29] + "…"
+
+    def _fill(c):
+        try:
+            return c.format(**slots)
+        except (KeyError, IndexError):
+            return None
+    chips = [c for c in map(_fill, chips) if c]
     checked = raw.get("checked", "")
     label = ("page-level KB" if tool == "hive_info" and raw.get("as_of")
              else "**live**")
@@ -765,13 +915,15 @@ def build_demo():
 
         gr.Examples(
             ["How do I get Wolf Hall by Hilary Mantel?",
+             "How do I renew my library books?",
+             "How do I reserve a book?",
              "Do you have Harry Potter audiobooks?",
              "What can I do at The Hive?",
-             "Tell me about the archives at the Hive",
              "Is Malvern library open now?",
              "A late-opening library with a café and meeting rooms",
              "When does the mobile library visit Abberley?",
-             "Can I read newspapers for free?"],
+             "Can I read newspapers for free?",
+             "I can't get to the library — can books be delivered?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:
@@ -795,19 +947,11 @@ def build_demo():
         def chip_turn(label, hist):
             return "", (hist or []) + [{"role": "user", "content": label}], *hide3()
 
-        def msg_text(content):
-            # Gradio 6 Chatbot returns content as a list of blocks
-            # ([{"text": ..., "type": "text"}]) rather than a plain string.
-            if isinstance(content, list):
-                return " ".join(b.get("text", "") for b in content
-                                if isinstance(b, dict)).strip()
-            return content or ""
-
         def bot_turn(hist):
             if not hist or hist[-1]["role"] != "user":
                 yield hist, *hide3()
                 return
-            msg = msg_text(hist[-1]["content"])
+            msg = _content_text(hist[-1]["content"])
             hist = hist + [{"role": "assistant", "content": ""}]
             final_chips = []
             for text, ch in respond(msg, hist[:-1]):

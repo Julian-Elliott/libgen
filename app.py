@@ -241,6 +241,22 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\bjob club\b|job[- ]?seeking|job search|cv (help|writing|advice)|"
                  r"employment support|find work|looking for work|interview (prep|help)\b", t):
         return "account_and_loans", {"query": "job club cv employment"}
+    # Book clubs / reading groups
+    if re.search(r"\bbook (club|group)\b|reading (group|club|circle)\b|"
+                 r"\breaders'? (group|circle|club)\b", t):
+        return "account_and_loans", {"query": "book club reading group"}
+    # Adult learning / skills courses
+    if re.search(r"\badult (learn|class|course|train|skill)|"
+                 r"\blearn\w* (course|class|skill|program)|\bit (course|class)|"
+                 r"\bcomputer (course|class|lesson)|\bupskill|\bfunctional skills?\b|"
+                 r"\blearn to (read|write|type)\b", t):
+        return "account_and_loans", {"query": "adult learning course"}
+    # Book donations
+    if re.search(r"\bdonate (books?|items?) (to|at|for) (\w+ )?librar|"
+                 r"\bbook donation\b|give (books?|items?) (to|in to) (\w+ )?librar|"
+                 r"\bdrop off books?\b|second[- ]?hand books? (to|for|at) (\w+ )?librar|"
+                 r"\bbring books? (in|to) (the |a )?librar", t):
+        return "account_and_loans", {"query": "donate books"}
     # Children's services — Storytime, Rhymetime, Summer Reading Challenge (not Hive-specific)
     if (re.search(r"\b(storytime|story time|rhymetime|rhyme time|bounce and rhyme|"
                   r"summer reading|reading challenge|summer challenge|"
@@ -261,11 +277,10 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "graph_search", {"query": q}
     # Accessibility — match an accessible branch via the graph
     if (re.search(r"\b(wheelchair|accessible|accessibility|disabled|disability|"
-                  r"step[- ]free)\b", t) and re.search(r"\blibrar", t)):
+                  r"step[- ]free|hearing loop|induction loop|dyslexia|"
+                  r"visual impair|sight impair|partially sighted)\b", t)
+            and re.search(r"\blibrar", t)):
         return "graph_search", {"query": q}
-    # Cancel / remove a reservation or hold
-    if "cancel" in t and any(w in t for w in ("reserv", "hold")):
-        return "account_and_loans", {"query": "cancel reservation"}
     # Non-Hive meeting room hire — Hive-specific queries fall through to hive_info below
     if (re.search(r"\bhire (a |the )?(meeting )?room\b|(meeting )?room (for )?hire\b|"
                   r"book a (meeting )?room\b|meeting room hire\b", t)
@@ -302,6 +317,17 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
                  r"evening access|open late|get in (early|late))\b", t):
         return "libraries_unlocked", {}
+    # Talking books / accessible audio — route to BorrowBox via online_hub
+    if re.search(r"\b(talking books?|daisy (format|books?|reader)\b|rnib\b|"
+                 r"listening books? (service|online)?\b|"
+                 r"audiobooks?.{0,25}(visual|blind|sight|impair))", t):
+        return "online_hub", {"topic": "audiobooks borrowbox accessible reading"}
+    # Large print — route straight to catalogue with format hint
+    if re.search(r"\blarge[- ]?print\b|big[- ]?print books?\b", t):
+        title = re.sub(r"\b(large[- ]?print|big[- ]?print|books?|do you have|"
+                       r"are there|have you got|any|available|at (the |a )?librar\w*)\b",
+                       " ", t).strip(" ?.")
+        return "search_catalogue", {"query": f"large print {title}".strip()}
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|oed|"
                          r"theory test|bfi|cobra|digital library|online (library )?hub|"
                          r"encyclopaedia|encyclopedia|family (history|tree)|"
@@ -708,6 +734,36 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Warm Welcome]({ws['url']})")
         return "\n".join(out)
 
+    if focus == "adult_learning" and r.get("adult_learning"):
+        al = r["adult_learning"]
+        out = ["📚 **Adult learning & skills — free at Worcestershire Libraries:**\n",
+               al["summary"], f"\n✅ **What you need:** {al['what_you_need']}\n"]
+        for i, step in enumerate(al["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n💡 _{al['also_see']}_")
+        out.append(f"\n🔎 [Learn, Upskill and Find Work]({al['url']})")
+        return "\n".join(out)
+
+    if focus == "book_clubs_reading" and r.get("book_clubs_reading"):
+        bc = r["book_clubs_reading"]
+        out = ["📖 **Book clubs & reading groups:**\n", bc["summary"],
+               f"\n✅ **What you need:** {bc['what_you_need']}\n"]
+        for i, step in enumerate(bc["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if bc.get("also_see"):
+            out.append(f"\n💡 _{bc['also_see']}_")
+        out.append(f"\n🔎 [Library events & activities]({bc['url']})")
+        return "\n".join(out)
+
+    if focus == "donations" and r.get("donations"):
+        d = r["donations"]
+        out = ["📦 **Donating books to the library:**\n", d["summary"],
+               f"\n✅ **Please note:** {d['what_you_need']}\n"]
+        for i, step in enumerate(d["how_to"], 1):
+            out.append(f"{i}. {step}")
+        out.append(f"\n🔎 [Worcestershire Libraries]({d['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -974,7 +1030,9 @@ HELP = (
     "- 🖨️ **Printing** from your phone (Print Your Way)\n"
     "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
     "- 📖 **Reading Well** — free curated books for mental health and wellbeing\n"
-    "- 🙋 **Volunteering & job clubs** — opportunities and free employment support\n"
+    "- 📖 **Book clubs & reading groups** — at various branches, free to join\n"
+    "- 🙋 **Volunteering, job clubs & adult learning** — free employment support "
+    "and skills courses\n"
     "- 👧 **Children's services** — Storytime, Rhymetime, the Summer Reading Challenge\n"
     "- ☕ **Warm spaces** — free, no membership needed\n\n"
     "_Answers come from official sources — the council site and catalogue "
@@ -1121,7 +1179,11 @@ def build_demo():
              "Can I hire a meeting room at my local library?",
              "Can I volunteer at the library?",
              "I need help getting online — can the library help?",
-             "I forgot my library PIN — what do I do?"],
+             "I forgot my library PIN — what do I do?",
+             "Are there adult learning courses at the library?",
+             "Is there a book club at my local library?",
+             "Can I donate books to the library?",
+             "Do you have large print books?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

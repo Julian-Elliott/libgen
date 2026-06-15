@@ -9,6 +9,19 @@ app_file: app.py
 pinned: true
 license: mit
 short_description: Live, source-cited answers about your local library
+tags:
+  - track:backyard
+  - track:wood
+  - sponsor:openbmb
+  - sponsor:openai
+  - sponsor:nvidia
+  - sponsor:modal
+  - achievement:offgrid
+  - achievement:welltuned
+  - achievement:offbrand
+  - achievement:llama
+  - achievement:sharing
+  - achievement:fieldnotes
 ---
 
 # 📚 Worcestershire Libraries — Live Assistant
@@ -42,6 +55,13 @@ link back to the official page.
 
 Each answer is designed around a customer journey — what the person is trying
 to do and the next action the reply must hand them. See **[JOURNEYS.md](JOURNEYS.md)**.
+
+Because this low‑cost tool can be built to run as a website, add-on or app, it
+becomes an easy, always‑available point of contact. Each response can be tailored
+to automatically highlight related services using analytics‑driven prompts, helping
+surface both well‑used resources and lesser‑known parts of the library offer. The
+result: a lightweight, affordable upgrade that improves access, boosts discovery,
+and supports libraries without requiring major system changes.
 
 ## The honest small-model fit
 

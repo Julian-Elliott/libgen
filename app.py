@@ -260,7 +260,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"get online\b|learn to use (a )?computer\b", t):
         return "account_and_loans", {"query": "digital skills"}
     if re.search(r"\breading well\b|mental health books?|wellbeing books?|"
-                 r"books? (for|about) (mental health|wellbeing)\b|"
+                 r"books? (for|about|on) (mental health|wellbeing|anxiety|depression|stress|"
+                 r"grief|bereavement|worry|insomnia|sleep|chronic pain|eating disorder|"
+                 r"adhd|autism|ocd|ptsd|long[- ]term conditions?)\b|"
+                 r"\b(anxiety|depression|grief|bereavement|stress).{0,25}books?\b|"
+                 r"books?.{0,25}(anxiety|depression|grief|bereavement|stress)\b|"
                  r"(library|have|borrow).{0,20}(mental health|wellbeing)\b", t):
         return "account_and_loans", {"query": "reading well"}
     if re.search(r"\bwarm (space|welcome|place)\b|somewhere warm\b", t):
@@ -284,6 +288,17 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bdrop off books?\b|second[- ]?hand books? (to|for|at) (\w+ )?librar|"
                  r"\bbring books? (in|to) (the |a )?librar", t):
         return "account_and_loans", {"query": "donate books"}
+    # Teen / young adult library services — before children_services to avoid misrouting
+    if re.search(r"\bteen(s|age|agers?)?\b|young adult\b|ya (books?|fiction|section|reading)\b|"
+                 r"\byoung (people|person)\b.{0,30}librar|librar.{0,30}\b(teen|young adult)\b|"
+                 r"what.{0,30}\b(teens?|teenager|young adult|young people)\b.{0,30}librar|"
+                 r"librar.{0,30}\b(teens?|teenager|young (adult|people))\b", t):
+        return "account_and_loans", {"query": "teen young adult services library"}
+    # Library app — before catalogue catch-all
+    if re.search(r"\blibrary app\b|app for (the )?librar|librar.{0,20}\bapp\b|"
+                 r"\bmobile app.{0,20}librar|librar.{0,20}(on my phone|on (a |my )?phone)\b|"
+                 r"\bdownload.{0,20}librar|librar.{0,20}download\b", t):
+        return "account_and_loans", {"query": "library app mobile borrowbox"}
     # Early years / pre-school — check BEFORE school-visits to avoid misrouting
     if re.search(r"\bearly years?\b|get school ready\b|"
                  r"\bpre[- ]?school (library|books?|session|activit)\b|"
@@ -385,7 +400,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"bank holiday|public holiday|christmas|easter|good friday|new year'?s)\b", t):
         return "find_library", {"name": _place_from(q), "when": q}
     if re.search(r"\b(unlocked|8pm|after hours|after work|out of hours|"
-                 r"evening access|open late|get in (early|late))\b", t):
+                 r"evening access|open late|get in (early|late)|"
+                 r"24[- ]?hour (access|library)|extended (access|hours?)|"
+                 r"access (the )?librar.{0,20}(outside|beyond|after|before) (hours?|closing|opening)|"
+                 r"librar.{0,20}(outside|beyond|after) (hours?|opening|closing)|"
+                 r"librar.{0,25}(when|while).{0,15}(closed|unstaffed|no staff))\b", t):
         return "libraries_unlocked", {}
     # Accessible reading formats — general (Braille, print disability, accessible editions)
     if re.search(r"\baccessible? (read(?:s|ing)?|books?|formats?|edition)\b|"
@@ -1042,6 +1061,23 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Find a library]({ba['url']})")
         return "\n".join(out)
 
+    if focus == "teen_services" and r.get("teen_services"):
+        ts = r["teen_services"]
+        out = ["📚 **Library services for teenagers & young adults:**\n", ts["summary"], "\n"]
+        for item in ts["highlights"]:
+            out.append(f"- {item}")
+        out.append(f"\n✅ **What you need:** {ts['what_you_need']}")
+        out.append(f"\n🔎 [Library events & activities]({ts['events_url']})")
+        return "\n".join(out)
+
+    if focus == "library_app" and r.get("library_app"):
+        la = r["library_app"]
+        out = ["📱 **Library apps & mobile access:**\n", la["summary"], "\n"]
+        for app in la["apps"]:
+            out.append(f"- {app}")
+        out.append(f"\n🔎 [Online Library Hub]({la['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -1321,10 +1357,13 @@ HELP = (
     "- 📖 **Book clubs & reading groups** — at various branches, free to join\n"
     "- 🙋 **Volunteering, job clubs & adult learning** — free employment support "
     "and skills courses\n"
-    "- 👧 **Children's services** — Storytime, Rhymetime, the Summer Reading Challenge\n"
+    "- 👧 **Children's services** — Storytime, Bounce and Rhyme, the Summer Reading Challenge\n"
+    "- 🎧 **Teens & young adults** — YA fiction, free eBooks/audiobooks via BorrowBox, "
+    "teen volunteering, Libraries Unlocked for 15+\n"
     "- 🏫 **School & group visits** — arrange a class visit or library tour\n"
     "- ♿ **Accessible formats** — large print, eAudiobooks, talking newspapers, "
     "Braille and specialist services\n"
+    "- 📱 **Library apps** — BorrowBox, PressReader, and your account on mobile\n"
     "- ☕ **Warm spaces** — free, no membership needed\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
@@ -1492,7 +1531,11 @@ def build_demo():
              "How do I contact the library service?",
              "Can I photocopy at the library?",
              "Are Worcestershire libraries closed on bank holidays?",
-             "Do the libraries have wheelchair access?"],
+             "Do the libraries have wheelchair access?",
+             "Are there books for anxiety or depression?",
+             "What's at the library for teenagers?",
+             "Is there a library app I can use on my phone?",
+             "Can I access the library outside opening hours?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

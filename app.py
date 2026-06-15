@@ -211,8 +211,10 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bmy card.{0,15}(stolen|stolen|missing)\b|"
                  r"replace (a |my |the )?(library )?card\b", t):
         return "account_and_loans", {"query": "lost stolen library card replacement"}
-    if re.search(r"\b(fine|fines|overdue|late fee|pay (a |my )?(fee|fine)|"
-                 r"fees?[ -]and[ -]charges?|lost (a |my )?book)\b", t):
+    if re.search(r"\b(fine|fines|overdue|late fees?|pay (a |my )?(fee|fine)|"
+                 r"fees?[ -]and[ -]charges?|lost (a |my )?book|"
+                 r"(charge|cost|cost).{0,20}(late|overdue|return)|"
+                 r"do you charge|how much.{0,20}(fine|fee|late)|replacement charge)\b", t):
         return "account_and_loans", {"query": q}
     if re.search(r"\b(my (library )?account|online account|(sign|log) ?in(to)?|"
                  r"my (library )?pin|forgot (my )?(pin|password)|"
@@ -221,7 +223,14 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if "cancel" in t and re.search(r"reserv|\bhold\b", t):
         return "account_and_loans", {"query": "cancel reservation"}
     if (re.search(r"\bhow (do|can) i (reserve|place a hold|request)|"
-                  r"(make|place) a (reserve|reservation|hold)\b", t)
+                  r"(make|place) a (reserve|reservation|hold)\b|"
+                  r"how long.{0,30}(reserv|hold|collect|pick up)|"
+                  r"(reserv|hold).{0,30}(how long|expire|expir|time|collect|pick up|7 day|week)\b|"
+                  r"\breservation.{0,35}(expired?|missed?|not collect|if i (don'?t|can'?t|miss|forget))|"
+                  r"(if|when).{0,20}(don'?t|can'?t|miss|forget|unable).{0,20}(collect|pick up).{0,20}reservat|"
+                  r"what happens?.{0,40}reservat|"
+                  r"\b(reservation|hold) (expired?|lapsed?|gone|released)\b|"
+                  r"\bmissed (my |the )?reservation\b|\breservation.{0,15}expir", t)
             and not re.search(r"\b(room|space|study|seat|hive)\b", t)):
         return "account_and_loans", {"query": q}
     if re.search(r"\b(home library|library (service )?(at home|at-home|home)|"
@@ -299,6 +308,23 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bmobile app.{0,20}librar|librar.{0,20}(on my phone|on (a |my )?phone)\b|"
                  r"\bdownload.{0,20}librar|librar.{0,20}download\b", t):
         return "account_and_loans", {"query": "library app mobile borrowbox"}
+    # Community noticeboards and local signposting
+    if re.search(r"\bnoticeboard\b|notice board\b|community (notice|information|hub|board)\b|"
+                 r"\blocal groups?\b.{0,30}librar|librar.{0,30}\blocal (group|service|charity)\b|"
+                 r"\badvertise.{0,20}librar|librar.{0,20}\badvertise\b|"
+                 r"\bdisplay (a )?leaflet\b|food bank.{0,25}librar|librar.{0,25}food bank\b|"
+                 r"\bsignpost\b", t):
+        return "account_and_loans", {"query": "community noticeboard local services"}
+    # Multilingual resources — books and content in other languages
+    if re.search(r"\b(books?|resources?|content|material).{0,20}(in |language|foreign|"
+                 r"arabic|polish|urdu|hindi|punjabi|spanish|french|portuguese|chinese|"
+                 r"somali|romanian|bulgarian|russian|turkish|farsi|persian)\b|"
+                 r"\b(arabic|polish|urdu|hindi|punjabi|spanish|french|portuguese|"
+                 r"chinese|somali|romanian|russian).{0,20}books?\b|"
+                 r"\bmultilingual\b|\bnon[- ]english\b|"
+                 r"\bcommunity language\b|\besol\b|english as a second language\b|"
+                 r"books?.{0,15}other language|other language.{0,15}books?", t):
+        return "account_and_loans", {"query": "multilingual books other languages"}
     # Early years / pre-school — check BEFORE school-visits to avoid misrouting
     if re.search(r"\bearly years?\b|get school ready\b|"
                  r"\bpre[- ]?school (library|books?|session|activit)\b|"
@@ -1070,6 +1096,25 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Library events & activities]({ts['events_url']})")
         return "\n".join(out)
 
+    if focus == "community_information" and r.get("community_information"):
+        ci = r["community_information"]
+        out = ["🏘️ **Libraries as community hubs:**\n", ci["summary"], "\n"]
+        for item in ci["what_we_offer"]:
+            out.append(f"- {item}")
+        out.append(f"\n📋 **For organisations:** {ci['for_organisations']}")
+        out.append(f"\n💡 _{ci['note']}_")
+        out.append(f"\n🔎 [Worcestershire Libraries]({ci['url']})")
+        return "\n".join(out)
+
+    if focus == "multilingual" and r.get("multilingual"):
+        ml = r["multilingual"]
+        out = ["🌐 **Multilingual & community language resources:**\n", ml["summary"], "\n"]
+        for item in ml["what_we_offer"]:
+            out.append(f"- {item}")
+        out.append(f"\n🪪 {ml['joining']}")
+        out.append(f"\n🔎 [Online Library Hub]({ml['url']})")
+        return "\n".join(out)
+
     if focus == "library_app" and r.get("library_app"):
         la = r["library_app"]
         out = ["📱 **Library apps & mobile access:**\n", la["summary"], "\n"]
@@ -1079,11 +1124,11 @@ def render_account_and_loans(r):
         return "\n".join(out)
 
     if focus == "loan_limits":
-        ll, ren = r["loan_limits"], r["renewals"]
+        ll = r["loan_limits"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
-               f"\n- **Loan period:** {ll['loan_period']}",
+               f"\n- **Physical items:** {ll['loan_period']}",
                f"- **Digital (BorrowBox):** {ll['digital']}",
-               f"- **Renewing:** {ren['summary']}",
+               f"- **Renewals:** {ll.get('renewals', r['renewals']['summary'])}",
                f"\n🔎 [Membership & borrowing]({ll['url']})"]
         return "\n".join(out)
 
@@ -1154,9 +1199,12 @@ def render_account_and_loans(r):
 
     elif focus == "fines":
         f_data = r["fines"]
-        out += ["💷 **Fees and charges:**\n", f_data["summary"],
-                f"\n- {f_data['how_to_pay']}",
-                f"- {f_data['card_replacement']}",
+        out += ["💷 **Library fees and charges:**\n", f_data["summary"], "\n",
+                "**Types of charge:**"]
+        for charge in f_data.get("charges_breakdown", []):
+            out.append(f"- {charge}")
+        out += [f"\n💳 **How to pay:** {f_data['how_to_pay']}",
+                f"\n💡 _{f_data['note']}_",
                 f"\n🔎 [Fees and charges]({f_data['url']})"]
 
     elif focus == "reservations":
@@ -1165,6 +1213,10 @@ def render_account_and_loans(r):
                 f"_{res['summary']}_ **{res['cost']}**\n"]
         for i, step in enumerate(res["how_to"], 1):
             out.append(f"{i}. {step}")
+        if res.get("hold_duration"):
+            out.append(f"\n⏱️ **Hold period:** {res['hold_duration']}")
+        if res.get("if_missed"):
+            out.append(f"\n⚠️ _{res['if_missed']}_")
         if res.get("how_to_cancel"):
             out.append(f"\n↩️ **To cancel a reservation:** {res['how_to_cancel']}")
         out.append(f"\n🔎 [Reserve library books]({res['url']})")
@@ -1364,7 +1416,9 @@ HELP = (
     "- ♿ **Accessible formats** — large print, eAudiobooks, talking newspapers, "
     "Braille and specialist services\n"
     "- 📱 **Library apps** — BorrowBox, PressReader, and your account on mobile\n"
-    "- ☕ **Warm spaces** — free, no membership needed\n\n"
+    "- ☕ **Warm spaces** — free, no membership needed\n"
+    "- 🌐 **Multilingual resources** — books and digital content in 60+ languages\n"
+    "- 🏘️ **Community noticeboards** — local groups, signposting and community info\n\n"
     "_Answers come from official sources — the council site and catalogue "
     "checked live, plus every page of the Hive's own site — and each answer "
     "names its source._")
@@ -1535,7 +1589,11 @@ def build_demo():
              "Are there books for anxiety or depression?",
              "What's at the library for teenagers?",
              "Is there a library app I can use on my phone?",
-             "Can I access the library outside opening hours?"],
+             "Can I access the library outside opening hours?",
+             "What are the library fines for overdue books?",
+             "How long is a reservation held before it expires?",
+             "Do you have books in Polish or Urdu?",
+             "Can local groups display notices at the library?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

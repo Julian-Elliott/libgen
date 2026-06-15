@@ -793,12 +793,25 @@ BORROWING_POLICY = {
     },
     "fines": {
         "summary": ("Borrowing books is free. If items are not returned or renewed by the due "
-                    "date, late fees will apply. A full list of fees and charges is available online."),
-        "how_to_pay": (f"[Pay fees and charges]({FEES_URL}) online, or settle them in person "
-                       "at any library."),
-        "card_replacement": (f"Lost your library card? Visit any library and speak to staff — "
-                             f"they can issue a replacement. Replacement charges are listed at "
-                             f"[fees and charges]({FEES_URL})."),
+                    "date, late fees will apply. A full list of current fees and charges "
+                    f"is at [fees and charges]({FEES_URL})."),
+        "charges_breakdown": [
+            "**Overdue items** — a daily late fee per item applies until the item is returned "
+            f"or renewed. Current rates at [fees and charges]({FEES_URL}).",
+            "**Lost items** — a replacement charge applies, based on the cost of replacing "
+            "the item. Let staff know as soon as possible.",
+            "**Damaged items** — minor wear is usually accepted; significant damage may "
+            "attract a partial or full replacement charge.",
+            f"**Replacement library card** — a charge applies for a lost/stolen card; "
+            f"see [fees and charges]({FEES_URL}) for the current amount.",
+        ],
+        "how_to_pay": (f"[Pay fees and charges online]({FEES_URL}) via your library account, "
+                       "or pay in person at any Worcestershire library branch."),
+        "note": (
+            "Outstanding fees will not prevent you from borrowing, but they must be cleared "
+            "before your membership can be renewed. BorrowBox eBooks and eAudiobooks never "
+            "incur late fees — they auto-return on the due date."
+        ),
         "url": FEES_URL,
     },
     "reservations": {
@@ -810,8 +823,17 @@ BORROWING_POLICY = {
             "Open the item page and sign in with your card number + PIN.",
             ("Choose 'Place Hold' and select your collection branch — "
              "any Worcestershire library or the mobile van."),
-            "You'll get an email when it's ready to collect.",
+            "You'll get an email (or SMS if registered) when it's ready to collect.",
         ],
+        "hold_duration": (
+            "Items are typically held for **7 days** after your notification — "
+            "collect within that window. If you can't make it, cancel and re-reserve "
+            "so the item stays available to you."
+        ),
+        "if_missed": (
+            "If a held item isn't collected within the hold period, it goes back into "
+            "general circulation. Simply re-reserve it — no penalty applies."
+        ),
         "how_to_cancel": (
             f"[Sign in to your account]({ACCOUNT_URL}), go to 'Reservations', "
             "select the item and choose 'Cancel Hold'. Or ask staff at any branch "
@@ -856,8 +878,13 @@ BORROWING_POLICY = {
             "items you can borrow at once, see the membership page."
         ),
         "loan_period": "3 weeks (books, DVDs, CDs and other physical items).",
+        "renewals": (
+            "Renew online, by phone or in person — as many times as you need, "
+            "unless another member has placed a reservation on the item."
+        ),
         "digital": (
-            "eBooks and eAudiobooks via BorrowBox auto-return — no due dates, no fines. "
+            "eBooks and eAudiobooks via BorrowBox have a **21-day loan period** — "
+            "they auto-return on the due date (no fines, no action needed). "
             f"Borrow up to 4 eBooks and 4 eAudiobooks simultaneously. "
             f"[Get BorrowBox]({BORROWBOX})"
         ),
@@ -1573,6 +1600,73 @@ BUILDING_ACCESSIBILITY = {
 }
 
 
+COMMUNITY_INFORMATION = {
+    "summary": (
+        "Worcestershire Libraries are community hubs — most branches have "
+        "noticeboards where local groups and organisations can display leaflets "
+        "and notices, and staff can signpost visitors to local support services."
+    ),
+    "what_we_offer": [
+        "**Community noticeboards** — free for local groups, charities and "
+        "community organisations to display information at most branches. "
+        "Ask staff at your local library to find out how to post a notice.",
+        "**Leaflet displays** — many branches carry leaflets from local "
+        "public services, health providers, housing support and charities.",
+        "**Signposting** — library staff are trained to help connect you with "
+        "local support (food banks, advice services, mental health, housing). "
+        "If the library can't help directly, they'll point you to someone who can.",
+        "**Warm spaces** — all Worcestershire libraries are warm welcome spaces: "
+        "free, no need to buy anything or be a member.",
+        "**Free Wi-Fi and computers** — use our free public Wi-Fi or book a "
+        "library computer to access online services and community information.",
+    ],
+    "for_organisations": (
+        "Want your group's information displayed in a library? Ask at your nearest "
+        f"branch, or call **{LIBRARY_PHONE}** to discuss how to share information "
+        "with library visitors."
+    ),
+    "note": (
+        "Libraries do not run or endorse external services — signposting is "
+        "provided as a public information resource."
+    ),
+    "url": f"{GOV}/council-services/libraries",
+}
+
+MULTILINGUAL_RESOURCES = {
+    "summary": (
+        "Worcestershire Libraries offer resources in many languages — "
+        "through multilingual digital content, community-language books, "
+        "and digital skills support for English language learners."
+    ),
+    "what_we_offer": [
+        f"**Newspapers & magazines in 60+ languages** via [PressReader]({ONLINE_HUB}) — "
+        "free with your library card. Includes Arabic, Chinese (Simplified & Traditional), "
+        "French, German, Hindi, Polish, Portuguese, Spanish, Urdu and many more. "
+        "Access at home or on library Wi-Fi.",
+        "**Books in community languages** — Worcestershire Libraries stock books in a "
+        "range of community languages at selected branches. Search the "
+        f"[online catalogue]({CATALOGUE_SEARCH}) by language, or ask staff "
+        "who can check what's available and request items from other branches.",
+        "**eBooks in other languages** — [BorrowBox]({BORROWBOX}) includes eBooks and "
+        "eAudiobooks in multiple languages. Search by language in the app.",
+        "**Times Digital Archive & Oxford resources** — available in English only, "
+        "but [Access to Research]({ONLINE_HUB}) covers international academic journals "
+        "in many languages.",
+        f"**Digital skills and ESOL support** — our [Digital Inclusion]"
+        f"({DIGITAL_INCLUSION_URL}) team can help with English language learning apps "
+        "and online resources. Free sessions at many branches.",
+    ],
+    "joining": (
+        f"Library membership is free and open to all Worcestershire residents — "
+        f"[join online]({JOIN_URL}) or in any branch. "
+        "Under-16s need a parent or guardian."
+    ),
+    "url": ONLINE_HUB,
+    "pressreader_url": ONLINE_HUB,
+    "catalogue_url": CATALOGUE_SEARCH,
+}
+
+
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
@@ -1587,6 +1681,10 @@ def account_and_loans(query: str | None = None) -> dict:
     if (("pin" in q or "password" in q)
             and any(w in q for w in ("forgot", "forgotten", "reset", "change", "new", "lost"))):
         out["focus"] = "pin_reset"
+    elif (any(w in q for w in ("reservation", "reserve", "hold", "collect"))
+          and any(w in q for w in ("how long", "expire", "expir", "when", "time",
+                                   "how many days", "7 day", "collect", "missed"))):
+        out["focus"] = "reservations"
     elif any(w in q for w in ("loan limit", "loan period", "borrowing limit",
                               "how long", "how many", "how many books", "how many items")):
         out["focus"] = "loan_limits"
@@ -1731,6 +1829,19 @@ def account_and_loans(query: str | None = None) -> dict:
                                "library on phone", "download library")):
         out["focus"] = "library_app"
         out["library_app"] = LIBRARY_APP
+    elif any(w in q for w in ("noticeboard", "notice board", "community notice",
+                               "community information", "local group", "advertise",
+                               "display leaflet", "signpost", "local service",
+                               "food bank", "community hub")):
+        out["focus"] = "community_information"
+        out["community_information"] = COMMUNITY_INFORMATION
+    elif any(w in q for w in ("other language", "non-english", "multilingual",
+                               "books in", "language book", "foreign language",
+                               "arabic book", "polish book", "urdu book", "hindi book",
+                               "spanish book", "french book", "chinese book",
+                               "community language", "esol", "english as a second")):
+        out["focus"] = "multilingual"
+        out["multilingual"] = MULTILINGUAL_RESOURCES
     else:
         out["focus"] = "general"
 
@@ -1782,6 +1893,10 @@ def account_and_loans(query: str | None = None) -> dict:
         out.setdefault("teen_services", TEEN_SERVICES)
     if out["focus"] == "library_app":
         out.setdefault("library_app", LIBRARY_APP)
+    if out["focus"] == "community_information":
+        out.setdefault("community_information", COMMUNITY_INFORMATION)
+    if out["focus"] == "multilingual":
+        out.setdefault("multilingual", MULTILINGUAL_RESOURCES)
 
     return out
 

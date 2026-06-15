@@ -103,9 +103,9 @@ TOOLS = {
                 "args: {\"branch\": \"<optional>\"}",
         "fn": lambda a: ls.libraries_unlocked(a.get("branch") or a.get("query"))},
     "printing_help": {
-        "desc": "How to print/photocopy incl. Print Your Way from a phone, + prices. "
-                "args: {}",
-        "fn": lambda a: ls.printing_help()},
+        "desc": "How to print, photocopy or scan at the library, incl. Print Your Way "
+                "from a phone + in-library walk-up pricing. args: {\"query\": \"<optional>\"}",
+        "fn": lambda a: ls.printing_help(query=a.get("query"))},
     "membership_help": {
         "desc": "What you need to sign up — digital vs full vs Libraries Unlocked. "
                 "args: {\"service\": \"<optional>\"}",
@@ -186,9 +186,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
     feat_hits = sum(1 for w in ("parking", "café", "cafe", "wifi", "wi-fi", "study",
                                 "toilet", "computer", "meeting room", "baby")
                     if w in t)
-    if (re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t)
+    if (re.search(r"\b(print(?:ing)?|photocop(?:y|ies|ying)|scan(?:ning|ner)?|copier)\b", t)
             and not re.search(r"\blarge.?print\b|\bbig.?print\b", t)):
-        return "printing_help", {}
+        return "printing_help", {"query": q}
     # Expired card / membership renewal — before generic renew check
     if (re.search(r"\b(library )?card (has |is |)(expired|lapsed|out of date)\b|"
                   r"\bexpired (library )?card\b|"
@@ -307,13 +307,27 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\bbipc\b|business (advice|support|centre|center)|"
                  r"intellectual property|start (a |my )?business\b", t):
         return "hive_info", {"topic": "business"}
+    # Library closures, bank holidays, planned refurbishments — before find_library
+    if re.search(r"\b(bank holidays?|public holidays?|"
+                 r"library closing dates?|closing dates? \d{4}|\d{4} closing dates?|"
+                 r"library clos(?:ed|ure|ures)|2026 clos(?:ing|ure|ed)|"
+                 r"when (is|are) (the |a |worcestershire )?librar.{0,25}clos|"
+                 r"closed (on|over|for|at) (christmas|easter|bank holidays?|good friday)|"
+                 r"planned (?:clos|refurb)|temporary (?:clos|shut)|refurb(?:ishment)?)\b", t):
+        return "account_and_loans", {"query": "library closures bank holidays closing dates"}
+    # General building accessibility — not asking "which library" but "are they accessible"
+    if (re.search(r"\b(wheelchair|step[- ]free|hearing loop|induction loop|"
+                  r"accessible (toilet|entrance|parking|building)|disabled (access|parking)|"
+                  r"disability access|accessible (librar|facilit))\b", t)
+            and not re.search(r"\bwhich\b|\bwhere\b|\bnear\b|\bfind\b|\blocal\b", t)):
+        return "account_and_loans", {"query": "building accessibility wheelchair hearing loop"}
     # Study / quiet space — match a branch by facility via the graph
     if (re.search(r"\b(where can i study|somewhere to study|a (quiet|study) "
                   r"(space|spot|area|room)|need (a )?(quiet|study) (space|spot|room|area)|"
                   r"quiet (place|spot|space) to (study|work|read))\b", t)
             and not re.search(r"\bhive\b", t)):
         return "graph_search", {"query": q}
-    # Accessibility — match an accessible branch via the graph
+    # Accessibility — find branches by facility via the graph
     if (re.search(r"\b(wheelchair|accessible|accessibility|disabled|disability|"
                   r"step[- ]free|hearing loop|induction loop|dyslexia|"
                   r"visual impair|sight impair|partially sighted)\b", t)
@@ -627,11 +641,34 @@ def render_membership(r):
 
 
 def render_printing(r):
+    focus = r.get("focus", "print")
+    page = r["page_url"]
+
+    if focus == "photocopy" and r.get("in_library_photocopy"):
+        pc = r["in_library_photocopy"]
+        steps = "\n".join(f"{i}. {s}" for i, s in enumerate(pc["how_to"], 1))
+        price = "\n".join(f"- {k}: {v}" for k, v in pc["pricing"].items())
+        return (f"📄 **In-library photocopying**\n\n{pc['summary']}\n\n"
+                f"**How to photocopy:**\n{steps}\n\n**Prices:**\n{price}\n\n"
+                f"⚠️ _{pc['note']}_\n\n🔎 [Printing & photocopying]({page})")
+
+    if focus == "scanning" and r.get("scanning"):
+        sc = r["scanning"]
+        steps = "\n".join(f"{i}. {s}" for i, s in enumerate(sc["how_to"], 1))
+        return (f"🔍 **Document scanning at the library**\n\n{sc['summary']}\n\n"
+                f"**How to scan:**\n{steps}\n\n⚠️ _{sc['note']}_\n\n"
+                f"🔎 [Printing & photocopying]({page})")
+
+    # Default: Print Your Way (remote/mobile printing)
     steps = "\n".join(f"{i}. {s}" for i, s in enumerate(r["steps"], 1))
     price = "\n".join(f"- {k}: {v}" for k, v in r["pricing"].items())
+    pc_note = ""
+    if r.get("in_library_photocopy"):
+        pc_note = ("\n\n💡 _Need to photocopy? Walk-up photocopying is also available at "
+                   "most branches — no account needed, same prices._")
     return (f"🖨️ **Print Your Way**\n\n{r['summary']}\n\n**Devices:** "
             f"{r['device_requirements']}\n\n**How to print:**\n{steps}\n\n"
-            f"**Prices:**\n{price}\n\n🔎 [Printing page]({r['page_url']})")
+            f"**Prices:**\n{price}{pc_note}\n\n🔎 [Printing page]({page})")
 
 
 def render_graph(r):
@@ -984,6 +1021,27 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Worcestershire Libraries]({lc['url']})")
         return "\n".join(out)
 
+    if focus == "library_closures" and r.get("library_closures"):
+        cl = r["library_closures"]
+        out = ["🗓️ **Library closures & bank holidays:**\n", cl["summary"], "\n",
+               f"_{cl['bank_holiday_note']}_\n",
+               "**How to check for closures:**"]
+        for step in cl["how_to_check"]:
+            out.append(f"- {step}")
+        out.append(f"\n🔎 [2026 library closing dates]({cl['url']})")
+        return "\n".join(out)
+
+    if focus == "building_accessibility" and r.get("building_accessibility"):
+        ba = r["building_accessibility"]
+        out = ["♿ **Accessibility at Worcestershire Libraries:**\n", ba["summary"], "\n",
+               "**Features available at most branches:**"]
+        for feat in ba["common_features"]:
+            out.append(f"- {feat}")
+        out.append(f"\n⚠️ _{ba['note']}_")
+        out.append(f"\n💡 _{ba['accessible_formats_tip']}_")
+        out.append(f"\n🔎 [Find a library]({ba['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -1254,7 +1312,10 @@ HELP = (
     "- 💻 **Free online** — newspapers (PressReader), eBooks (BorrowBox), family history (Ancestry), "
     "the OED, Oxford Reference, BFI films and more\n"
     "- 🖥️ **Computers & digital skills** — free public computers, Wi-Fi, and digital skills support\n"
-    "- 🖨️ **Printing** from your phone (Print Your Way)\n"
+    "- 🖨️ **Printing, photocopying & scanning** — Print Your Way from your phone, "
+    "or walk-up copying/scanning in-branch\n"
+    "- 🗓️ **Library closures & bank holidays** — 2026 closing dates and planned closures\n"
+    "- ♿ **Building accessibility** — step-free, hearing loops, accessible toilets\n"
     "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
     "- 📖 **Reading Well** — free curated books for mental health and wellbeing\n"
     "- 📖 **Book clubs & reading groups** — at various branches, free to join\n"
@@ -1428,7 +1489,10 @@ def build_demo():
              "How do I use the self-service machine to borrow books?",
              "Can my baby join the library?",
              "How do I suggest the library buys a specific book?",
-             "How do I contact the library service?"],
+             "How do I contact the library service?",
+             "Can I photocopy at the library?",
+             "Are Worcestershire libraries closed on bank holidays?",
+             "Do the libraries have wheelchair access?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

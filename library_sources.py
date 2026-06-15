@@ -387,13 +387,62 @@ PRINT_YOUR_WAY = {
         "A3 black & white": "25p per side",
         "A3 colour": "85p per side",
     },
+    "in_library_photocopy": {
+        "summary": (
+            "Walk-up photocopying is available at most Worcestershire libraries — "
+            "no library card or phone needed, just bring your document and pay at "
+            "the counter."
+        ),
+        "how_to": [
+            "Take your original document to any Worcestershire library branch.",
+            "Ask a member of staff to make copies, or use the self-service copier "
+            "where available.",
+            "Pay at the counter — cash and card are usually accepted.",
+        ],
+        "pricing": {
+            "A4 black & white": "15p per side",
+            "A4 colour": "50p per side",
+            "A3 black & white": "25p per side",
+            "A3 colour": "85p per side",
+        },
+        "note": (
+            "Not every branch has a self-service copier; some rely on staff-assisted "
+            f"copying. Call ahead on **{LIBRARY_PHONE}** or check with your local "
+            "branch to confirm availability."
+        ),
+    },
+    "scanning": {
+        "summary": (
+            "Document scanning (to USB stick or email) is available at some "
+            "Worcestershire library branches — availability varies, so it's worth "
+            "calling ahead before you travel."
+        ),
+        "how_to": [
+            "Contact your local branch to confirm a scanner is available.",
+            "Bring a USB stick for scan-to-USB, or be ready to provide your email "
+            "address for scan-to-email.",
+            "Ask staff about the charge — scanning is usually priced similarly to "
+            "photocopying.",
+        ],
+        "note": (
+            f"Call ahead on **{LIBRARY_PHONE}** to check scanner availability at "
+            "your nearest branch — not all sites have this facility."
+        ),
+    },
     "page_url": PRINTING_URL,
 }
 
 
-def printing_help() -> dict:
+def printing_help(query: str | None = None) -> dict:
     out = dict(PRINT_YOUR_WAY)
     out["checked"] = _now()
+    q = (query or "").lower()
+    if re.search(r"\bscan", q):
+        out["focus"] = "scanning"
+    elif re.search(r"\bphotocop", q):
+        out["focus"] = "photocopy"
+    else:
+        out["focus"] = "print"
     return out
 
 
@@ -1414,6 +1463,55 @@ LIBRARY_CONTACT = {
 }
 
 
+LIBRARY_CLOSURES = {
+    "summary": (
+        "Worcestershire Libraries publish all planned closures for the year online. "
+        "Most closures fall on UK bank holidays; individual branches may also close "
+        "temporarily for refurbishment or local events."
+    ),
+    "bank_holiday_note": (
+        "Libraries generally close on all UK bank holidays — New Year's Day, Good Friday, "
+        "Easter Monday, Early May bank holiday, Spring bank holiday, Summer bank holiday, "
+        "Christmas Day and Boxing Day. Opening hours may be reduced on adjacent days."
+    ),
+    "how_to_check": [
+        f"View the full **[2026 library closing dates]({CLOSING_DATES_URL})** page — "
+        "updated whenever new closures are confirmed.",
+        "Ask me _\"Is [branch name] library open?\"_ or _\"Is [branch] open today?\"_ "
+        "for a live status check.",
+        f"Call the library enquiry line: **{LIBRARY_PHONE}**.",
+    ],
+    "url": CLOSING_DATES_URL,
+}
+
+BUILDING_ACCESSIBILITY = {
+    "summary": (
+        "Worcestershire Libraries aim to make all branches as accessible as possible. "
+        "Most libraries have step-free entrance, accessible toilets, hearing induction "
+        "loops, and enlarged-text self-service terminals."
+    ),
+    "common_features": [
+        "**Step-free access** — ground-floor entrance or lift at the majority of branches.",
+        "**Hearing induction loop** — fitted in most library service areas.",
+        "**Accessible toilet** — available at most branches.",
+        "**Accessible parking** — disabled badge spaces close to the entrance at most sites.",
+        "**Large-print signage** and adjustable-font catalogue terminals.",
+        "**Self-service kiosks** — usable from a seated position at most branches.",
+    ],
+    "note": (
+        "Specific facilities vary by branch. Ask me _\"which libraries have wheelchair "
+        "access?\"_ or _\"libraries with a hearing loop\"_ to find branches that match "
+        "your needs, or call ahead to confirm before travelling."
+    ),
+    "accessible_formats_tip": (
+        "For accessible reading formats — large print, DAISY audiobooks, Talking Books "
+        "or eAudiobooks — ask me about **'accessible formats'**."
+    ),
+    "url": f"{GOV}/council-services/libraries/find-library",
+    "contact": LIBRARY_PHONE,
+}
+
+
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
@@ -1549,6 +1647,19 @@ def account_and_loans(query: str | None = None) -> dict:
                                "library number", "main number", "enquiry line")):
         out["focus"] = "library_contact"
         out["library_contact"] = LIBRARY_CONTACT
+    elif any(w in q for w in ("library closures", "closing dates", "bank holiday",
+                               "closed christmas", "closed easter", "closed bank",
+                               "when are libraries closed", "when is the library closed",
+                               "library closed", "2026 closing", "planned closure",
+                               "refurbishment", "temporary closure")):
+        out["focus"] = "library_closures"
+        out["library_closures"] = LIBRARY_CLOSURES
+    elif any(w in q for w in ("wheelchair", "step-free", "step free", "hearing loop",
+                               "induction loop", "building access", "accessible building",
+                               "accessible entrance", "disabled access", "disability access",
+                               "accessible toilet", "accessible parking", "disabled parking")):
+        out["focus"] = "building_accessibility"
+        out["building_accessibility"] = BUILDING_ACCESSIBILITY
     else:
         out["focus"] = "general"
 
@@ -1592,6 +1703,10 @@ def account_and_loans(query: str | None = None) -> dict:
         out.setdefault("suggest_purchase", SUGGEST_PURCHASE)
     if out["focus"] == "library_contact":
         out.setdefault("library_contact", LIBRARY_CONTACT)
+    if out["focus"] == "library_closures":
+        out.setdefault("library_closures", LIBRARY_CLOSURES)
+    if out["focus"] == "building_accessibility":
+        out.setdefault("building_accessibility", BUILDING_ACCESSIBILITY)
 
     return out
 

@@ -170,7 +170,7 @@ _PLACE_STOP = _QWORDS | {
     "for", "of", "me", "you", "it", "near", "address", "parking", "toilet",
     "toilets", "facilities", "facility", "monday", "tuesday", "wednesday",
     "thursday", "friday", "saturday", "sunday", "weekend", "week", "day", "next",
-    "mobile", "van", "visit", "visits", "comes", "service", "opened",
+    "mobile", "van", "visit", "visits", "come", "comes", "service", "opened",
     "wi-fi", "wifi", "wi", "fi", "wireless", "internet", "broadband",
 }
 
@@ -407,7 +407,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
         return "graph_search", {"query": q}
     if re.search(r"\b(mobile library|mobile van|the van|comes to|visit)\b", t):
         place = _place_from(q)
-        return "mobile_library", {"place": place or q.split()[-1]}
+        return "mobile_library", {"place": place}
     # Wi-Fi connection instructions — "how to connect" queries; "is there wifi at X" still → find_library
     if re.search(r"\bwi-?fi\b|\bwireless internet\b", t) and \
        re.search(r"\b(connect(ing)?|connection|password|log ?in|sign ?in|"
@@ -610,10 +610,24 @@ def render_find_library(r):
 
 
 def render_mobile(r):
+    if r.get("no_village"):
+        villages = ", ".join(x.title() for x in (r.get("example_villages") or [])[:6])
+        return (
+            f"🚐 **Mobile library — which village?**\n\n"
+            f"{r['guidance']}\n\n"
+            f"_Example stops:_ {villages}…\n\n"
+            f"Try: _\"When does the mobile library visit Abberley?\"_\n"
+            f"📧 {r['email']}\n"
+            f"🔎 [Full timetable — all villages]({r['page_url']})"
+        )
     if r.get("error"):
-        s = ", ".join(x.title() for x in (r.get("suggestions") or [])[:8])
-        extra = f" Did you mean: {s}?" if s else ""
-        return f"{r['error']}{extra}\n\n🔎 [All stops]({r.get('page_url', ls.MOBILE_INDEX)})"
+        s = ", ".join(x.title() for x in (r.get("suggestions") or [])[:6])
+        extra = f"\n\n_Similar stops:_ {s}" if s else ""
+        return (
+            f"🚐 {r['error']}{extra}\n\n"
+            f"Try asking: _\"When does the mobile library visit [your village]?\"_\n"
+            f"🔎 [All stops]({r.get('page_url', ls.MOBILE_INDEX)})"
+        )
     out = [f"🚐 **Mobile library — {r['village']}**", f"Runs: **{r['date_of_operation']}**\n"]
     for s in r["stops"]:
         out.append(f"- `{s['time']}` — {s['location']}")

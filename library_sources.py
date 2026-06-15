@@ -236,7 +236,17 @@ def mobile_library(place: str) -> dict:
     place = (place or "").strip().lower()
     index = _village_index()
     if not place:
-        return {"error": "no place given", "suggestions": sorted(index)[:12]}
+        return {
+            "no_village": True,
+            "guidance": (
+                "The mobile library timetable is organised by village stop, not by date. "
+                "Tell me your village or nearby area and I'll show you when the van visits."
+            ),
+            "example_villages": sorted(index)[:8],
+            "page_url": MOBILE_INDEX,
+            "email": "mobilelibraries@worcestershire.gov.uk",
+            "checked": _now(),
+        }
 
     # exact -> substring -> fuzzy
     name = None

@@ -10,16 +10,10 @@ license: mit
 short_description: Live, source-cited answers about your local library
 tags:
   - track:backyard
-  - track:wood
   - sponsor:openbmb
-  - sponsor:openai
-  - sponsor:nvidia
-  - sponsor:modal
   - achievement:offgrid
-  - achievement:welltuned
   - achievement:offbrand
   - achievement:llama
-  - achievement:sharing
   - achievement:fieldnotes
 ---
 
@@ -55,22 +49,22 @@ link back to the official page.
 Each answer is designed around a customer journey - what the person is trying
 to do and the next action the reply must hand them. See **[JOURNEYS.md](JOURNEYS.md)**.
 
-Because this low‑cost tool can be built to run as a website, add-on or app, it
-becomes an easy, always‑available point of contact. Each response can be tailored
-to automatically highlight related services using analytics‑driven prompts, helping
-surface both well‑used resources and lesser‑known parts of the library offer. The
-result: a lightweight, affordable upgrade that improves access, boosts discovery,
-and supports libraries without requiring major system changes.
+As a trusted hub within the local community, libraries often act as the public face for many wider council functions. They work with tight budgets and a mix of old systems, all while offering a huge range of services; everything from baby activity sessions to business support.
+
+This simple library chatbot helps cut through this complexity by giving people one clear, modern way to get information. Instead of fighting through outdated interfaces, residents can ask questions in plain language and receive quick, accurate answers that reflect everything the library provides.
+
+Because this low-cost tool can be built to run as a website, add-on or app, it becomes an easy, always-available point of contact. Each response can be tailored to automatically highlight related services using analytics-driven prompts, helping surface both well-used resources and lesser-known parts of the library offer. The result, a lightweight, affordable upgrade that improves access, boosts discovery, and supports libraries without requiring major system changes.
 
 ## The honest small-model fit
 
 The model never invents library facts. The intelligence lives in the **live
-retrieval**; a 7B model is more than enough to *route* the question and *phrase*
+retrieval**; a 7-8B model is more than enough to *route* the question and *phrase*
 the answer. That's a genuine fit with the brief - not a 32B model pretending to
 know a catalogue it was never trained on.
 
-- **Model:** `Qwen/Qwen2.5-7B-Instruct` by default (set `MODEL_ID` to swap up to
-  any ≤32B model, e.g. `Qwen/Qwen2.5-32B-Instruct`).
+- **Model:** `meta-llama/Llama-3.1-8B-Instruct` by default, with an in-app
+  selector for OpenBMB MiniCPM 3 4B and Qwen 2.5 7B (set `MODEL_ID` to swap up
+  to any ≤32B model).
 - **Graceful degradation:** with no `HF_TOKEN`, the app still works in *no-LLM
   mode* - deterministic keyword routing + the raw live data. The demo never
   breaks.

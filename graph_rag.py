@@ -1,14 +1,14 @@
 """
-graph_rag.py — query the knowledge graph built by graph_build.py.
+graph_rag.py - query the knowledge graph built by graph_build.py.
 
 This is the runtime half of our GraphRAG: it answers the MULTI-HOP questions
 flat retrieval can't, by traversing typed edges
 (Branch-HAS_FACILITY-Facility, Branch-OFFERS-Libraries Unlocked, Service-REQUIRES-tier…).
 
-    local_search  — entity-anchored: "which late library has a café + meeting rooms?"
-    global_search — community-level: "what does my library offer overall?"
+    local_search - entity-anchored: "which late library has a café + meeting rooms?"
+    global_search - community-level: "what does my library offer overall?"
 
-No LLM here — it returns structured context that app.py's small model phrases.
+No LLM here - it returns structured context that app.py's small model phrases.
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ def graph() -> dict:
 
 def _area_in_query(q: str) -> str:
     areas = [n["label"] for n in graph()["by_type"].get("Area", [])]
-    for a in sorted(areas, key=len, reverse=True):  # longest match first
+    for a in sorted(areas, key=len, reverse=True): # longest match first
         if re.search(r"\b" + re.escape(a.lower()) + r"\b", q):
             return a
     return ""
@@ -164,7 +164,7 @@ if __name__ == "__main__":
               "tell me about borrowbox",
               "what does my library offer overall"]:
         r = graph_search(q)
-        print(f"\nQ: {q}\n  kind={r['kind']}", end="")
+        print(f"\nQ: {q}\n kind={r['kind']}", end="")
         if r["kind"] == "branch_filter":
             print(f" wanted={r['wanted_facilities']} late={r['late']} -> "
                   f"{[b['name'] for b in r['branches']]}")

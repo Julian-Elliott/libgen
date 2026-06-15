@@ -24,7 +24,7 @@
       "id": "tier::Digital membership",
       "type": "Membership",
       "label": "Digital membership",
-      "what_you_need": "Just a Worcestershire postcode — sign up online in minutes, no card needed.",
+      "what_you_need": "Just a Worcestershire postcode - sign up online in minutes, no card needed.",
       "unlocks": "Free eBooks, eAudiobooks, eMagazines & eNewspapers (BorrowBox, PressReader), Times Digital Archive, Oxford University Press.",
       "url": "https://www.worcestershire.gov.uk/council-services/libraries/online-library-hub/digital-library-membership"
     },
@@ -32,7 +32,7 @@
       "id": "tier::Full membership",
       "type": "Membership",
       "label": "Full membership",
-      "what_you_need": "Free for everyone — join online then collect, or join in person at any library. Gives you a library card number + PIN.",
+      "what_you_need": "Free for everyone - join online then collect, or join in person at any library. Gives you a library card number + PIN.",
       "unlocks": "Borrow physical books, reserve/renew, use public computers, Print Your Way, the mobile library, and the full online hub.",
       "url": "https://www.worcestershire.gov.uk/council-services/libraries/your-library-membership/join-library"
     },
@@ -895,7 +895,7 @@
       "hive_hours": "The Hive is open from 8:30am - 10pm, Monday to Sunday (opening-hours.html; plan-your-visit.html states 'Monday to Sunday 8.30am - 10.00 pm')",
       "source": "thehiveworcester.org",
       "partnership": "Joint venture of the University of Worcester and Worcestershire County Council - 'The Hive is the first joint public and university library in Europe' (services.html, using-the-library.html). Built wi",
-      "summary": "Worcester city's library — Europe's first joint university + public library, open 8:30am–10pm every day."
+      "summary": "Worcester city's library - Europe's first joint university + public library, open 8:30am–10pm every day."
     },
     {
       "id": "branch::Upton-Upon-Severn Library",
@@ -1383,7 +1383,7 @@
         "To continue enjoying full access to library services, including use of the building during extended hours, customers will need to upgrade their membership by completing a short induction.",
         "“Providing greater access to libraries gives residents more freedom to use them in ways that suit their lives, and the initiative has already had a fantastic impact in other parts of the county.",
         "”To arrange an induction, please visit Redditch Library and speak to a member of staff, or call 01905 822722 to make an appointment.",
-        "Customers have described Libraries Unlocked as: “A brilliant idea — it’s enabled us as a family to access the library more,” and “The best thing Worcestershire Libraries have done since the introduction of self-service."
+        "Customers have described Libraries Unlocked as: “A brilliant idea - it’s enabled us as a family to access the library more,” and “The best thing Worcestershire Libraries have done since the introduction of self-service."
       ],
       "how_to": [],
       "url": "https://www.worcestershire.gov.uk/news/libraries-unlocked-launches-next-week-redditch-library"
@@ -1398,7 +1398,7 @@
         "To continue enjoying full access to library services, including use of the building during extended hours, customers will need to upgrade their membership by completing a short induction.",
         "“This upgrade gives residents more freedom to use the library in a way that suits their lives, and it’s already had a fantastic impact in other parts of the county.",
         "” To arrange an induction, please visit Tenbury Library and speak to a member of staff, or call 01905 822722 to make an appointment.",
-        "Customers have described Libraries Unlocked as: “A brilliant idea — it’s enabled us as a family to access the library more,” and “The best thing Worcestershire Libraries have done since the introduction of self-service."
+        "Customers have described Libraries Unlocked as: “A brilliant idea - it’s enabled us as a family to access the library more,” and “The best thing Worcestershire Libraries have done since the introduction of self-service."
       ],
       "how_to": [],
       "url": "https://www.worcestershire.gov.uk/news/libraries-unlocked-launches-next-week-tenbury-library"
@@ -2145,7 +2145,7 @@
       "id": "resource::Access to Research",
       "type": "Resource",
       "label": "Access to Research",
-      "summary": "Millions of academic journal articles across many disciplines — for students and independent researchers.",
+      "summary": "Millions of academic journal articles across many disciplines - for students and independent researchers.",
       "what_you_need": "Free walk-in use on a library computer (in-branch).",
       "access": [],
       "at_home": false,
@@ -2156,8 +2156,8 @@
       "id": "resource::Ancestry",
       "type": "Resource",
       "label": "Ancestry",
-      "summary": "Billions of historical records — census, births/marriages/deaths, military, immigration and more, spanning the 1500s–2000s.",
-      "what_you_need": "Library membership. Ancestry Library Edition is normally used in the library / on library Wi-Fi — check the hub page for current at-home access.",
+      "summary": "Billions of historical records - census, births/marriages/deaths, military, immigration and more, spanning the 1500s–2000s.",
+      "what_you_need": "Library membership. Ancestry Library Edition is normally used in the library / on library Wi-Fi - check the hub page for current at-home access.",
       "access": [],
       "at_home": false,
       "titles": [],
@@ -2167,10 +2167,10 @@
       "id": "resource::Borrowbox",
       "type": "Resource",
       "label": "Borrowbox",
-      "summary": "Free eBooks & eAudiobooks — latest titles, award winners, non-fiction, classics and children's, plus the curated 'Worcestershire Reads' picks.",
+      "summary": "Free eBooks & eAudiobooks - latest titles, award winners, non-fiction, classics and children's, plus the curated 'Worcestershire Reads' picks.",
       "what_you_need": "Library card number + PIN; choose 'Worcestershire' in the app.",
       "access": [
-        "Download the BorrowBox app — [iPhone/iPad](https://apps.apple.com/app/borrowbox-library/id562843562) or [Android](https://play.google.com/store/apps/details?id=com.bolindadigital.BorrowBoxLibrary).",
+        "Download the BorrowBox app - [iPhone/iPad](https://apps.apple.com/app/borrowbox-library/id562843562) or [Android](https://play.google.com/store/apps/details?id=com.bolindadigital.BorrowBoxLibrary).",
         "Select 'Worcestershire' as your library service.",
         "Sign in with your card number + PIN."
       ],
@@ -2205,7 +2205,7 @@
       "type": "Resource",
       "label": "Digital library membership",
       "summary": "Instant free access to eBooks, eAudiobooks, eMagazines & eNewspapers and more.",
-      "what_you_need": "Any Worcestershire resident — sign up online in minutes with your postcode. No card needed.",
+      "what_you_need": "Any Worcestershire resident - sign up online in minutes with your postcode. No card needed.",
       "access": [],
       "at_home": true,
       "titles": [],
@@ -2215,7 +2215,7 @@
       "id": "resource::EBSCO",
       "type": "Resource",
       "label": "EBSCO",
-      "summary": "Academic and reference databases — magazines, journals and research articles.",
+      "summary": "Academic and reference databases - magazines, journals and research articles.",
       "what_you_need": "Library card + PIN; available at home.",
       "access": [],
       "at_home": true,
@@ -2238,7 +2238,7 @@
       "type": "Resource",
       "label": "Online events",
       "summary": "Live digital talks and workshops you can join from home.",
-      "what_you_need": "Free — book a place via the events listing.",
+      "what_you_need": "Free - book a place via the events listing.",
       "access": [],
       "at_home": true,
       "titles": [],
@@ -2259,7 +2259,7 @@
       "id": "resource::Oxford English Dictionary",
       "type": "Resource",
       "label": "Oxford English Dictionary",
-      "summary": "The complete Oxford English Dictionary — meanings, history and pronunciation.",
+      "summary": "The complete Oxford English Dictionary - meanings, history and pronunciation.",
       "what_you_need": "Free digital membership.",
       "access": [],
       "at_home": true,
@@ -2295,7 +2295,7 @@
       "summary": "7,000+ full-page newspapers & magazines, 60+ languages, 120+ countries.",
       "what_you_need": "Worcestershire library card number + PIN (free full membership, residents). No separate PressReader account needed.",
       "access": [
-        "Get the PressReader app — [iPhone/iPad](https://apps.apple.com/app/pressreader/id313904711) or [Android](https://play.google.com/store/apps/details?id=com.newspaperdirect.pressreader.android) — or read in your browser at [pressreader.com](https://www.pressreader.com).",
+        "Get the PressReader app - [iPhone/iPad](https://apps.apple.com/app/pressreader/id313904711) or [Android](https://play.google.com/store/apps/details?id=com.newspaperdirect.pressreader.android) - or read in your browser at [pressreader.com](https://www.pressreader.com).",
         "Tap 'Libraries & Groups' and search/select 'Worcestershire'.",
         "Sign in with your library card number + PIN.",
         "At home you get a 30-day pass (re-confirm monthly); on library Wi-Fi it's 7 days."
@@ -2341,7 +2341,7 @@
       "type": "Resource",
       "label": "Which?",
       "summary": "Independent product reviews and Best Buy buying advice.",
-      "what_you_need": "Library membership (often used in-branch — check the page).",
+      "what_you_need": "Library membership (often used in-branch - check the page).",
       "access": [],
       "at_home": null,
       "titles": [],

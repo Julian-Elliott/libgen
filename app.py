@@ -1,22 +1,22 @@
 """
-Worcestershire Libraries — Live Assistant  (Build Small Hackathon)
+Worcestershire Libraries - Live Assistant (Build Small Hackathon)
 
 A small-model (<=32B) civic agent that answers real questions about
 Worcestershire Libraries from official data at EVERY granularity:
 service pages -> every page of the Hive site -> catalogue items -> the
 individual copies on a branch's shelf.
 
-  • Live tools  — catalogue, mobile library, events, branch hours/facilities
-  • where_to_get — the full "how do I actually get this title" journey:
+  • Live tools - catalogue, mobile library, events, branch hours/facilities
+  • where_to_get - the full "how do I actually get this title" journey:
     on-shelf copy at a named branch / free reservation / BorrowBox tonight
-  • hive_info   — The Hive (Worcester) page-by-page: archives & archaeology,
+  • hive_info - The Hive (Worcester) page-by-page: archives & archaeology,
     800+ study spaces, room hire, BIPC, Youth Hub, 8:30am–10pm every day
-  • Knowledge graph (GraphRAG-style) — multi-hop "which late library has a café?"
-  • Curated detail — exactly what you need to sign up for each service
-  • Behaviour-change layer — EAST nudges + £-saved "value receipt" (DCMS-evidenced)
-  • Open agent traces — every answer logs its reasoning to traces.jsonl
+  • Knowledge graph (GraphRAG-style) - multi-hop "which late library has a café?"
+  • Curated detail - exactly what you need to sign up for each service
+  • Behaviour-change layer - EAST nudges + £-saved "value receipt" (DCMS-evidenced)
+  • Open agent traces - every answer logs its reasoning to traces.jsonl
 
-Run:  HF_TOKEN=...  python app.py      (works with no token in "no-LLM" mode too)
+Run: HF_TOKEN=... python app.py (works with no token in "no-LLM" mode too)
 Model: set MODEL_ID (default Qwen/Qwen2.5-7B-Instruct, <=32B).
 """
 
@@ -39,20 +39,20 @@ from trace import Trace
 
 HF_TOKEN = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 
-# Sponsor & achievement models — all reachable via HF Inference API with HF_TOKEN.
-# achievement:llama  → Llama 3.1 8B (default)
-# sponsor:openbmb    → MiniCPM 3 4B
-# sponsor:nvidia     → NVIDIA accelerates Llama; Llama 3.2 3B shows the small-model thesis
+# Sponsor & achievement models - all reachable via HF Inference API with HF_TOKEN.
+# achievement:llama → Llama 3.1 8B (default)
+# sponsor:openbmb → MiniCPM 3 4B
+# sponsor:nvidia → NVIDIA accelerates Llama; Llama 3.2 3B shows the small-model thesis
 MODELS = [
-    ("🦙 Llama 3.1 8B · Meta",           "meta-llama/Llama-3.1-8B-Instruct"),
-    ("🌱 MiniCPM 3 4B · OpenBMB",         "openbmb/MiniCPM3-4B"),
-    ("⚡ Qwen 2.5 7B · Alibaba",           "Qwen/Qwen2.5-7B-Instruct"),
-    ("🔬 Llama 3.2 3B · Meta (smallest)", "meta-llama/Llama-3.2-3B-Instruct"),
+    ("Llama 3.1 8B · Meta", "meta-llama/Llama-3.1-8B-Instruct"),
+    ("MiniCPM 3 4B · OpenBMB", "openbmb/MiniCPM3-4B"),
+    ("Qwen 2.5 7B · Alibaba", "Qwen/Qwen2.5-7B-Instruct"),
+    ("Llama 3.2 3B · Meta (smallest)", "meta-llama/Llama-3.2-3B-Instruct"),
 ]
-MODEL_LABELS  = [label for label, _ in MODELS]
-MODEL_IDS     = {label: mid for label, mid in MODELS}
-DEFAULT_LABEL = MODEL_LABELS[0]                           # Llama 3.1 8B
-MODEL_ID      = os.environ.get("MODEL_ID", MODEL_IDS[DEFAULT_LABEL])  # env override
+MODEL_LABELS = [label for label, _ in MODELS]
+MODEL_IDS = {label: mid for label, mid in MODELS}
+DEFAULT_LABEL = MODEL_LABELS[0] # Llama 3.1 8B
+MODEL_ID = os.environ.get("MODEL_ID", MODEL_IDS[DEFAULT_LABEL]) # env override
 
 _clients: dict = {}
 
@@ -78,13 +78,13 @@ TOOLS = {
                 "args: {\"query\": \"<title / author / subject>\"}",
         "fn": lambda a: ls.search_catalogue(a.get("query", ""), limit=6)},
     "where_to_get": {
-        "desc": "User wants to actually GET/borrow/obtain a specific title — gives "
+        "desc": "User wants to actually GET/borrow/obtain a specific title - gives "
                 "the exact route: which branch has it on the shelf NOW (copy-level), "
                 "free reservation steps, or borrow tonight on BorrowBox. "
                 "args: {\"query\": \"<title / author>\"}",
         "fn": lambda a: ls.where_to_get(a.get("query") or a.get("title", ""))},
     "hive_info": {
-        "desc": "The Hive — Worcester's library (joint university+public): hours "
+        "desc": "The Hive - Worcester's library (joint university+public): hours "
                 "(8:30am-10pm daily), Explore the Past archives & archaeology, study "
                 "spaces, room hire, café, getting there, children's library, business "
                 "support. Page-level detail. args: {\"topic\": \"<optional topic>\"}",
@@ -109,7 +109,7 @@ TOOLS = {
                 "args: {\"query\": \"<optional keyword/place>\"}",
         "fn": lambda a: ls.library_events(a.get("query") or None, limit=8)},
     "online_hub": {
-        "desc": "Free-from-home digital resources — eBooks (BorrowBox), newspapers/"
+        "desc": "Free-from-home digital resources - eBooks (BorrowBox), newspapers/"
                 "magazines (PressReader), family history (Ancestry). args: {\"topic\": \"\"}",
         "fn": lambda a: ls.online_hub(a.get("topic") or a.get("query"))},
     "libraries_unlocked": {
@@ -121,7 +121,7 @@ TOOLS = {
                 "from a phone + in-library walk-up pricing. args: {\"query\": \"<optional>\"}",
         "fn": lambda a: ls.printing_help(query=a.get("query"))},
     "membership_help": {
-        "desc": "What you need to sign up — digital vs full vs Libraries Unlocked. "
+        "desc": "What you need to sign up - digital vs full vs Libraries Unlocked. "
                 "args: {\"service\": \"<optional>\"}",
         "fn": lambda a: ls.membership_help(a.get("service") or a.get("query"))},
     "graph_search": {
@@ -135,7 +135,7 @@ TOOLS = {
                 "args: {\"query\": \"<optional topic>\"}",
         "fn": lambda a: ls.account_and_loans(a.get("query") or a.get("topic"))},
     "children_services": {
-        "desc": "Children's library activities — Storytime, Rhymetime, the Summer "
+        "desc": "Children's library activities - Storytime, Rhymetime, the Summer "
                 "Reading Challenge, holiday events and children's books. args: {}",
         "fn": lambda a: ls.children_services()},
 }
@@ -150,17 +150,17 @@ ROUTER_SYSTEM = (
     "- graph_search = multi-feature branch queries ('café AND late AND parking')\n"
     "- find_library = single-branch hours/facilities/open-now queries\n\n"
     "Examples:\n"
-    "{\"tool\":\"where_to_get\",\"args\":{\"query\":\"Wolf Hall\"}}  "
+    "{\"tool\":\"where_to_get\",\"args\":{\"query\":\"Wolf Hall\"}} "
     "← 'Can I get Wolf Hall?' / 'How do I borrow Wolf Hall?'\n"
-    "{\"tool\":\"search_catalogue\",\"args\":{\"query\":\"Jodi Picoult\"}}  "
+    "{\"tool\":\"search_catalogue\",\"args\":{\"query\":\"Jodi Picoult\"}} "
     "← 'Do you have books by Jodi Picoult?'\n"
-    "{\"tool\":\"find_library\",\"args\":{\"name\":\"Bromsgrove\",\"when\":\"today\"}}  "
+    "{\"tool\":\"find_library\",\"args\":{\"name\":\"Bromsgrove\",\"when\":\"today\"}} "
     "← 'Is Bromsgrove library open today?'\n"
-    "{\"tool\":\"graph_search\",\"args\":{\"query\":\"café late opening parking\"}}  "
+    "{\"tool\":\"graph_search\",\"args\":{\"query\":\"café late opening parking\"}} "
     "← 'A late library with a café and parking'\n"
-    "{\"tool\":\"online_hub\",\"args\":{\"topic\":\"ebooks borrowbox\"}}  "
+    "{\"tool\":\"online_hub\",\"args\":{\"topic\":\"ebooks borrowbox\"}} "
     "← 'How do I borrow eBooks?' / 'What free apps are there?'\n"
-    "{\"tool\":\"mobile_library\",\"args\":{\"place\":\"Pershore\"}}  "
+    "{\"tool\":\"mobile_library\",\"args\":{\"place\":\"Pershore\"}} "
     "← 'When does the mobile van visit Pershore?'\n\n"
     "If conversation context is provided, resolve references like 'there', 'it' "
     "or 'that one' from it (e.g. 'what's on there?' after a Malvern answer -> "
@@ -187,7 +187,7 @@ def _history_text(history, limit=4):
 
 
 # --------------------------------------------------------------------------- #
-# Routing — LLM first, deterministic keyword fallback always available
+# Routing - LLM first, deterministic keyword fallback always available
 # --------------------------------------------------------------------------- #
 
 _QWORDS = {"what", "whats", "when", "where", "which", "who", "how", "is", "are",
@@ -208,7 +208,7 @@ _PLACE_STOP = _QWORDS | {
 
 
 def _place_from(q: str) -> str:
-    """Branch/village name from a question — case-insensitive, stopword-filtered."""
+    """Branch/village name from a question - case-insensitive, stopword-filtered."""
     toks = re.findall(r"[A-Za-z][A-Za-z'\-]*", q)
     return " ".join(w for w in toks if w.lower() not in _PLACE_STOP).strip()
 
@@ -221,7 +221,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if (re.search(r"\b(print(?:ing)?|photocop(?:y|ies|ying)|scan(?:ning|ner)?|copier)\b", t)
             and not re.search(r"\blarge.?print\b|\bbig.?print\b", t)):
         return "printing_help", {"query": q}
-    # Expired card / membership renewal — before generic renew check
+    # Expired card / membership renewal - before generic renew check
     if (re.search(r"\b(library )?card (has |is |)(expired|lapsed|out of date)\b|"
                   r"\bexpired (library )?card\b|"
                   r"\b(my |the )?(library )?(membership|member) (has |is |)(expired|lapsed)\b", t)
@@ -236,7 +236,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(how (long|many)\b[^?]{0,40}\b(borrow|loan|keep|renew|take out|"
                  r"out at once)|loan period|borrowing limit|how many (books|items) can i)\b", t):
         return "account_and_loans", {"query": "loan limits how long how many"}
-    # Lost / stolen library card — dedicated focus (before fines catch-all)
+    # Lost / stolen library card - dedicated focus (before fines catch-all)
     if re.search(r"\blost (my |a |the )?(library )?card\b|"
                  r"(my |a )?(library )?card (is |was |has been )?(lost|stolen)\b|"
                  r"(stolen|stole).{0,20}(library )?card\b|"
@@ -248,7 +248,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"(charge|cost|cost).{0,20}(late|overdue|return)|"
                  r"do you charge|how much.{0,20}(fine|fee|late)|replacement charge)\b", t):
         return "account_and_loans", {"query": q}
-    if re.search(r"\b(my (library )?account|online account|(sign|log) ?in(to)?|"
+    if re.search(r"\b(my (library )?account|online account|(sign|log)?in(to)?|"
                  r"my (library )?pin|forgot (my )?(pin|password)|"
                  r"library card (number|login))\b", t):
         return "account_and_loans", {"query": q}
@@ -289,7 +289,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"computer session|book a pc\b|"
                  r"computers?.{0,30}librar|(library|libraries).{0,15}computers?\b", t):
         return "account_and_loans", {"query": "book a computer"}
-    # Self-service kiosk — how to check out / return without staff
+    # Self-service kiosk - how to check out / return without staff
     if re.search(r"\bself[- ]?service (kiosk|machine|terminal)?\b|"
                  r"\bself[- ]?checkout\b|\bkiosk\b|"
                  r"\b(check (out|in)).{0,20}(myself|machine|kiosk|without staff)\b|"
@@ -329,13 +329,13 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bdrop off books?\b|second[- ]?hand books? (to|for|at) (\w+ )?librar|"
                  r"\bbring books? (in|to) (the |a )?librar", t):
         return "account_and_loans", {"query": "donate books"}
-    # Teen / young adult library services — before children_services to avoid misrouting
+    # Teen / young adult library services - before children_services to avoid misrouting
     if re.search(r"\bteen(s|age|agers?)?\b|young adult\b|ya (books?|fiction|section|reading)\b|"
                  r"\byoung (people|person)\b.{0,30}librar|librar.{0,30}\b(teen|young adult)\b|"
                  r"what.{0,30}\b(teens?|teenager|young adult|young people)\b.{0,30}librar|"
                  r"librar.{0,30}\b(teens?|teenager|young (adult|people))\b", t):
         return "account_and_loans", {"query": "teen young adult services library"}
-    # Library app — before catalogue catch-all
+    # Library app - before catalogue catch-all
     if re.search(r"\blibrary app\b|app for (the )?librar|librar.{0,20}\bapp\b|"
                  r"\bmobile app.{0,20}librar|librar.{0,20}(on my phone|on (a |my )?phone)\b|"
                  r"\bdownload.{0,20}librar|librar.{0,20}download\b", t):
@@ -347,7 +347,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bdisplay (a )?leaflet\b|food bank.{0,25}librar|librar.{0,25}food bank\b|"
                  r"\bsignpost\b", t):
         return "account_and_loans", {"query": "community noticeboard local services"}
-    # Multilingual resources — books and content in other languages
+    # Multilingual resources - books and content in other languages
     if re.search(r"\b(books?|resources?|content|material).{0,20}(in |language|foreign|"
                  r"arabic|polish|urdu|hindi|punjabi|spanish|french|portuguese|chinese|"
                  r"somali|romanian|bulgarian|russian|turkish|farsi|persian)\b|"
@@ -357,18 +357,18 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bcommunity language\b|\besol\b|english as a second language\b|"
                  r"books?.{0,15}other language|other language.{0,15}books?", t):
         return "account_and_loans", {"query": "multilingual books other languages"}
-    # Early years / pre-school — check BEFORE school-visits to avoid misrouting
+    # Early years / pre-school - check BEFORE school-visits to avoid misrouting
     if re.search(r"\bearly years?\b|get school ready\b|"
                  r"\bpre[- ]?school (library|books?|session|activit)\b|"
                  r"\bschool ready\b", t):
         return "children_services", {}
     # School and group visits to libraries
     if re.search(r"\bschool (visit|trip|group|class|tour)\b|"
-                 r"\b(teachers?|class(es)?) .{0,45}librar|"
-                 r"\bgroup (visit|booking) .{0,40}librar|"
-                 r"\barrange .{0,20}(school|class|group).{0,25}librar", t):
+                 r"\b(teachers?|class(es)?).{0,45}librar|"
+                 r"\bgroup (visit|booking).{0,40}librar|"
+                 r"\barrange.{0,20}(school|class|group).{0,25}librar", t):
         return "account_and_loans", {"query": "school visit group visit"}
-    # Children's services — Storytime, Rhymetime, Summer Reading Challenge, early years (not Hive-specific)
+    # Children's services - Storytime, Rhymetime, Summer Reading Challenge, early years (not Hive-specific)
     if (re.search(r"\b(storytime|story time|rhymetime|rhyme time|bounce and rhyme|"
                   r"summer reading|reading challenge|summer challenge|"
                   r"children'?s? (librar|service|activit|"
@@ -376,11 +376,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
                   r"under[- ]?5s?|baby (rhyme|group)|for (kids|children|toddlers))", t)
             and not re.search(r"\bhive\b", t)):
         return "children_services", {}
-    # Business support / BIPC — based at The Hive
+    # Business support / BIPC - based at The Hive
     if re.search(r"\bbipc\b|business (advice|support|centre|center)|"
                  r"intellectual property|start (a |my )?business\b", t):
         return "hive_info", {"topic": "business"}
-    # Library closures, bank holidays, planned refurbishments — before find_library
+    # Library closures, bank holidays, planned refurbishments - before find_library
     if re.search(r"\b(bank holidays?|public holidays?|"
                  r"library closing dates?|closing dates? \d{4}|\d{4} closing dates?|"
                  r"library clos(?:ed|ure|ures)|2026 clos(?:ing|ure|ed)|"
@@ -388,30 +388,30 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"closed (on|over|for|at) (christmas|easter|bank holidays?|good friday)|"
                  r"planned (?:clos|refurb)|temporary (?:clos|shut)|refurb(?:ishment)?)\b", t):
         return "account_and_loans", {"query": "library closures bank holidays closing dates"}
-    # General building accessibility — not asking "which library" but "are they accessible"
+    # General building accessibility - not asking "which library" but "are they accessible"
     if (re.search(r"\b(wheelchair|step[- ]free|hearing loop|induction loop|"
                   r"accessible (toilet|entrance|parking|building)|disabled (access|parking)|"
                   r"disability access|accessible (librar|facilit))\b", t)
             and not re.search(r"\bwhich\b|\bwhere\b|\bnear\b|\bfind\b|\blocal\b", t)):
         return "account_and_loans", {"query": "building accessibility wheelchair hearing loop"}
-    # Study / quiet space — match a branch by facility via the graph
+    # Study / quiet space - match a branch by facility via the graph
     if (re.search(r"\b(where can i study|somewhere to study|a (quiet|study) "
                   r"(space|spot|area|room)|need (a )?(quiet|study) (space|spot|room|area)|"
                   r"quiet (place|spot|space) to (study|work|read))\b", t)
             and not re.search(r"\bhive\b", t)):
         return "graph_search", {"query": q}
-    # Accessibility — find branches by facility via the graph
+    # Accessibility - find branches by facility via the graph
     if (re.search(r"\b(wheelchair|accessible|accessibility|disabled|disability|"
                   r"step[- ]free|hearing loop|induction loop|dyslexia|"
                   r"visual impair|sight impair|partially sighted)\b", t)
             and re.search(r"\blibrar", t)):
         return "graph_search", {"query": q}
-    # Youth Hub / Careers Hub at The Hive — route even without 'hive' keyword
+    # Youth Hub / Careers Hub at The Hive - route even without 'hive' keyword
     if re.search(r"\b(youth hub|careers hub|career hub|careers centre|careers center)\b|"
                  r"\bhive.{0,25}(career|youth|young people)\b|"
                  r"\b(career|youth).{0,25}\bhive\b", t):
         return "hive_info", {"topic": "youth hub careers"}
-    # Non-Hive meeting room hire — Hive-specific queries fall through to hive_info below
+    # Non-Hive meeting room hire - Hive-specific queries fall through to hive_info below
     if (re.search(r"\bhire (a |the )?(meeting )?room\b|(meeting )?room (for )?hire\b|"
                   r"book a (meeting )?room\b|meeting room hire\b", t)
             and not re.search(r"\bhive\b", t)):
@@ -421,17 +421,17 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"worcester city librar|book a (space|study)\b", t):
         topic = re.sub(r"\b(the|hive|at|in|about|tell|me|what|can|i|do|you|"
                        r"know|is|are|there)\b", " ", t)
-        return "hive_info", {"topic": topic.strip(" ?.") or None}
-    # "how do I actually GET it" — the full per-copy journey
+        return "hive_info", {"topic": topic.strip("?.") or None}
+    # "how do I actually GET it" - the full per-copy journey
     if (re.search(r"\b(where|how) (can|do|could|would) i (get|borrow|find|read|"
                   r"listen to)\b|\bget hold of\b|\bi want to (read|borrow)\b|"
-                  r"\bis .{3,60} (available|in stock|on the shelf)\b|"
+                  r"\bis.{3,60} (available|in stock|on the shelf)\b|"
                   r"\b(nearest|closest) copy\b", t)
-            and not re.search(r"\bcard|member|join|sign ?up\b", t)):
+            and not re.search(r"\bcard|member|join|sign?up\b", t)):
         q2 = re.sub(r"\b(where|how|can|do|could|would|i|get|borrow|find|read|"
                     r"listen|to|hold|of|want|is|available|in stock|on the shelf|"
                     r"a copy of|the book|nearest|closest|copy)\b", " ", t)
-        q2 = q2.strip(" ?.")
+        q2 = q2.strip("?.")
         if q2:
             return "where_to_get", {"query": q2}
     if (re.search(r"\b(which|what) librar|librar(y|ies) (with|that has)\b", t)
@@ -440,12 +440,12 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(mobile library|mobile van|the van|comes to|visit)\b", t):
         place = _place_from(q)
         return "mobile_library", {"place": place}
-    # Wi-Fi connection instructions — "how to connect" queries; "is there wifi at X" still → find_library
+    # Wi-Fi connection instructions - "how to connect" queries; "is there wifi at X" still → find_library
     if re.search(r"\bwi-?fi\b|\bwireless internet\b", t) and \
-       re.search(r"\b(connect(ing)?|connection|password|log ?in|sign ?in|"
+       re.search(r"\b(connect(ing)?|connection|password|log?in|sign?in|"
                  r"how (do|can|to)|guest|setup|set up|access)\b", t):
         return "account_and_loans", {"query": "wifi how to connect password access"}
-    # General library contact — direct enquiry about how to reach the service
+    # General library contact - direct enquiry about how to reach the service
     if re.search(r"\bhow (do|can) i (contact|reach|call|speak to|get in touch with|"
                  r"ring|get through to) (the |a |my |worcestershire )?librar|"
                  r"\bwhat.{0,10}(library|libraries).{0,15}(phone|telephone|contact) number\b|"
@@ -464,28 +464,28 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"librar.{0,20}(outside|beyond|after) (hours?|opening|closing)|"
                  r"librar.{0,25}(when|while).{0,15}(closed|unstaffed|no staff))\b", t):
         return "libraries_unlocked", {}
-    # Accessible reading formats — general (Braille, print disability, accessible editions)
+    # Accessible reading formats - general (Braille, print disability, accessible editions)
     if re.search(r"\baccessible? (read(?:s|ing)?|books?|formats?|edition)\b|"
                  r"\baccessible reading\b|"
                  r"\bbraille\b|\bprint.?disabilit\b|"
                  r"\b(visual|sight).{0,12}impair.{0,25}\b(books?|reading|formats?)\b", t):
         return "account_and_loans", {"query": "accessible formats reading"}
-    # Inter-library loans — items not held in the Worcestershire network
+    # Inter-library loans - items not held in the Worcestershire network
     if re.search(r"\binter[- ]?library (loan|borrow|request|service)?\b|"
                  r"\bill (request|loan|service)?\b|"
                  r"\b(borrow|get|obtain|request|order).{0,35}(another|different|other) librar|"
                  r"\bfrom (another|a different|other) librar", t):
         return "account_and_loans", {"query": "inter-library loan another library service"}
-    # Talking books / accessible audio — route to BorrowBox via online_hub
+    # Talking books / accessible audio - route to BorrowBox via online_hub
     if re.search(r"\b(talking books?|daisy (format|books?|reader)\b|rnib\b|"
                  r"listening books? (service|online)?\b|"
                  r"audiobooks?.{0,25}(visual|blind|sight|impair))", t):
         return "online_hub", {"topic": "audiobooks borrowbox accessible reading"}
-    # Large print — route straight to catalogue with format hint
+    # Large print - route straight to catalogue with format hint
     if re.search(r"\blarge[- ]?print\b|big[- ]?print books?\b", t):
         title = re.sub(r"\b(large[- ]?print|big[- ]?print|books?|do you have|"
                        r"are there|have you got|any|available|at (the |a )?librar\w*)\b",
-                       " ", t).strip(" ?.")
+                       " ", t).strip("?.")
         return "search_catalogue", {"query": f"large print {title}".strip()}
     platform = re.search(r"\b(borrowbox|pressreader|ancestry|espacenet|ebsco|oxford|oed|"
                          r"theory test|bfi|cobra|digital library|online (library )?hub|"
@@ -498,7 +498,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if (platform or re.search(r"\bnewspapers?|magazines?\b", t)
             or (media and online_ctx) or re.search(r"read\b.*\bfree", t)):
         return "online_hub", {"topic": q}
-    # Children / family joining — specific routing before generic membership catch-all
+    # Children / family joining - specific routing before generic membership catch-all
     if re.search(r"\b(baby|infant|child|children|kid|kids|toddler|junior|teen|"
                  r"teenager|youth|family)\b.{0,40}"
                  r"\b(join|member|membership|card|sign.?up|register)\b|"
@@ -510,7 +510,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\b(children'?s?|family|baby|junior|under.?16|under.?18).{0,20}"
                  r"(library card|membership|member)\b", t):
         return "account_and_loans", {"query": "child family join library membership card"}
-    # Suggest a book purchase — before catalogue catch-all
+    # Suggest a book purchase - before catalogue catch-all
     if re.search(r"\b(suggest|request|ask).{0,25}(library|you|council|them).{0,20}"
                  r"(buys?|stocks?|orders?|purchases?|gets?)\b|"
                  r"\bask (the |a )?library to (buys?|gets?|stocks?|orders?|purchases?)\b|"
@@ -519,9 +519,9 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bcould (the|a) library (buys?|gets?|orders?|stocks?)\b|"
                  r"\bwish.?list.{0,20}librar\b", t):
         return "account_and_loans", {"query": "suggest purchase buy book library stock"}
-    if re.search(r"\b(member|membership|join|library card|sign ?up|what do i need)\b", t):
+    if re.search(r"\b(member|membership|join|library card|sign?up|what do i need)\b", t):
         return "membership_help", {"service": q}
-    # Dementia-friendly / memory activities — route to events with a focused query
+    # Dementia-friendly / memory activities - route to events with a focused query
     if re.search(r"\bdementia\b|dementia[- ]?friendly\b|memory (cafe|group|session|club|"
                  r"activities?|support)\b|alzheimer\b|forget(ting|fulness)\b.{0,30}activit", t):
         return "library_events", {"query": "dementia memory"}
@@ -538,7 +538,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"have you got|do you have)\b", t):
         q2 = re.sub(r"\b(do you have|have you got|any|the book|a copy of|books?|"
                     r"by|in stock|available)\b", " ", t)
-        return "search_catalogue", {"query": q2.strip(" ?.") or q}
+        return "search_catalogue", {"query": q2.strip("?.") or q}
     # last resort: a bare title or "<Title> by <Author>" -> catalogue
     if re.search(r"\bby [A-Z]", q) or len(re.findall(r"\b[A-Z][a-z]+", q)) >= 2:
         return "search_catalogue", {"query": q}
@@ -579,65 +579,65 @@ def render_catalogue(r):
     if r.get("error"):
         return f"_Couldn't reach the catalogue: {r['error']}_"
     if not r["items"]:
-        return (f"I searched for **{r['query']}** but found nothing — try fewer or "
-                f"different words.\n\n💡 Not in stock? [Ask us to buy it]"
-                f"({ls.ASK_FOR_A_BOOK_URL}) — staff review suggestions.\n\n"
-                f"🔎 [Search the catalogue]({r['search_url']})")
+        return (f"I searched for **{r['query']}** but found nothing - try fewer or "
+                f"different words.\n\nNot in stock? [Ask us to buy it]"
+                f"({ls.ASK_FOR_A_BOOK_URL}) - staff review suggestions.\n\n"
+                f"[Search the catalogue]({r['search_url']})")
     out = [f"Found ~**{r.get('total_hint', r['count'])}** matches for **{r['query']}** "
-           f"— top {r['count']}:\n"]
+           f"- top {r['count']}:\n"]
     for it in r["items"]:
         meta = " · ".join(b for b in (it["author"], it["format"], it["year"]) if b)
         tag = " _(borrow online)_" if it["digital"] else ""
-        link = f" — [details]({it['detail_url']})" if it["detail_url"] else ""
-        out.append(f"- {it['icon']} **{it['title']}** — {meta}{tag}{link}")
-    out.append(f"\n✅ **To borrow:** {ls.ELIGIBILITY['borrow_physical']} "
+        link = f" - [details]({it['detail_url']})" if it["detail_url"] else ""
+        out.append(f"- {it['icon']} **{it['title']}** - {meta}{tag}{link}")
+    out.append(f"\n**To borrow:** {ls.ELIGIBILITY['borrow_physical']} "
                f"eBooks/audio need free [digital membership]({ls.JOIN_URL}).")
-    out.append(f"🔎 [Full results]({r['search_url']})")
+    out.append(f"[Full results]({r['search_url']})")
     return "\n".join(out)
 
 
 def render_whats_new(r):
     if not r["items"]:
-        return "I couldn't pull new titles just now — try a specific genre."
-    out = [f"📚 **Newest '{r['genre']}' in the catalogue:**\n"]
+        return "I couldn't pull new titles just now - try a specific genre."
+    out = [f"**Newest '{r['genre']}' in the catalogue:**\n"]
     for it in r["items"]:
         meta = " · ".join(b for b in (it["author"], it["year"]) if b)
-        out.append(f"- {it['icon']} **{it['title']}** — {meta}")
-    out.append(f"\n✅ **To borrow:** {ls.ELIGIBILITY['borrow_physical']}")
-    out.append(f"🔎 [See more]({r['search_url']})")
+        out.append(f"- {it['icon']} **{it['title']}** - {meta}")
+    out.append(f"\n**To borrow:** {ls.ELIGIBILITY['borrow_physical']}")
+    out.append(f"[See more]({r['search_url']})")
     return "\n".join(out)
 
 
 def render_find_library(r):
     if r.get("error"):
         s = ", ".join(r.get("suggestions", [])[:6])
-        return f"{r['error']} Did you mean: {s}?\n\n🔎 [All libraries]({r['page_url']})"
-    if "branches" in r:  # list mode
-        out = ["📍 **Worcestershire libraries:**\n"]
+        return f"{r['error']} Did you mean: {s}?\n\n[All libraries]({r['page_url']})"
+    if "branches" in r: # list mode
+        out = ["**Worcestershire libraries:**\n"]
         for b in r["branches"][:25]:
             name = f"[{b['name']}]({b['url']})" if b.get("url") else b["name"]
-            out.append(f"- **{name}** — {b['address']}")
+            out.append(f"- **{name}** - {b['address']}")
         return "\n".join(out)
     day_label = r.get("day_label", f"today ({r.get('today','')})")
     heading = day_label[0].upper() + day_label[1:]
     if r.get("is_today", True):
-        badge = "🟢 **Open now**" if r["open_now"] else "🔴 **Closed now**"
-        head = f"📍 **{r['name']}** — {badge} ({r['status']})"
+        badge = "**Open now**" if r["open_now"] else "**Closed now**"
+        head = f"**{r['name']}** - {badge} ({r['status']})"
     else:
-        head = f"📍 **{r['name']}** — **{heading}:** {r['status']}"
-    closed_txt = ("closed (staffed) — but open for self-service below"
+        head = f"**{r['name']}** - **{heading}:** {r['status']}"
+    closed_txt = ("closed (staffed) - but open for self-service below"
                   if r.get("unlocked") else "closed")
     out = [head, f"{r['address']}\n",
            f"**{heading}:** {r.get('staffed') or closed_txt}"]
     if r.get("unlocked"):
-        out.append(f"**Libraries Unlocked self-service:** {r['unlocked']} — "
+        out.append(f"**Libraries Unlocked self-service:** {r['unlocked']} - "
                    f"{ls.ELIGIBILITY['unlocked']} "
                    f"[How to get access]({ls.UNLOCKED_URL})")
     if r.get("facilities"):
         out.append(f"\n**Facilities:** {', '.join(r['facilities'])}")
-    out.append(f"\n✅ {ls.ELIGIBILITY['visit']}")
-    out.append(f"📅 _Bank holidays & special closures: [2026 closing dates]({ls.CLOSING_DATES_URL})_")
-    out.append(f"🔎 [Branch page]({r['page_url']})")
+    out.append(f"\n{ls.ELIGIBILITY['visit']}")
+    out.append(f"_Bank holidays & special closures: [2026 closing dates]({ls.CLOSING_DATES_URL})_")
+    out.append(f"[Branch page]({r['page_url']})")
     return "\n".join(out)
 
 
@@ -645,89 +645,89 @@ def render_mobile(r):
     if r.get("no_village"):
         villages = ", ".join(x.title() for x in (r.get("example_villages") or [])[:6])
         return (
-            f"🚐 **Mobile library — which village?**\n\n"
+            f"**Mobile library - which village?**\n\n"
             f"{r['guidance']}\n\n"
             f"_Example stops:_ {villages}…\n\n"
             f"Try: _\"When does the mobile library visit Abberley?\"_\n"
-            f"📧 {r['email']}\n"
-            f"🔎 [Full timetable — all villages]({r['page_url']})"
+            f"{r['email']}\n"
+            f"[Full timetable - all villages]({r['page_url']})"
         )
     if r.get("error"):
         s = ", ".join(x.title() for x in (r.get("suggestions") or [])[:6])
         extra = f"\n\n_Similar stops:_ {s}" if s else ""
         return (
-            f"🚐 {r['error']}{extra}\n\n"
+            f"{r['error']}{extra}\n\n"
             f"Try asking: _\"When does the mobile library visit [your village]?\"_\n"
-            f"🔎 [All stops]({r.get('page_url', ls.MOBILE_INDEX)})"
+            f"[All stops]({r.get('page_url', ls.MOBILE_INDEX)})"
         )
-    out = [f"🚐 **Mobile library — {r['village']}**", f"Runs: **{r['date_of_operation']}**\n"]
+    out = [f"**Mobile library - {r['village']}**", f"Runs: **{r['date_of_operation']}**\n"]
     for s in r["stops"]:
-        out.append(f"- `{s['time']}` — {s['location']}")
-    out.append(f"\n✅ {ls.ELIGIBILITY['mobile']}")
-    out.append(f"Enquiries: {r['email']} · 🔎 [Timetable]({r['page_url']})")
+        out.append(f"- `{s['time']}` - {s['location']}")
+    out.append(f"\n{ls.ELIGIBILITY['mobile']}")
+    out.append(f"Enquiries: {r['email']} · [Timetable]({r['page_url']})")
     return "\n".join(out)
 
 
 def render_events(r):
     if not r["events"]:
-        return f"No matching events found.\n\n🔎 [All events]({r['page_url']})"
-    out = [f"📅 **{r['count']} upcoming events:**\n"]
+        return f"No matching events found.\n\n[All events]({r['page_url']})"
+    out = [f"**{r['count']} upcoming events:**\n"]
     for e in r["events"]:
         when = " · ".join(b for b in (e.get("next_date"), e["when"], e["time"]) if b)
         loc = f" @ {e['location']}" if e["location"] else ""
-        out.append(f"- **[{e['name']}]({e['url']})** — {when}{loc}")
-    out.append(f"\n✅ {ls.ELIGIBILITY['events']}\n🔎 [Full listing]({r['page_url']})")
+        out.append(f"- **[{e['name']}]({e['url']})** - {when}{loc}")
+    out.append(f"\n{ls.ELIGIBILITY['events']}\n[Full listing]({r['page_url']})")
     return "\n".join(out)
 
 
 def render_online_hub(r):
-    out = ["💻 **Free online — with your library card:**\n"]
+    out = ["**Free online - with your library card:**\n"]
     for it in r["items"][:5]:
         name = f"[{it['name']}]({it['url']})" if it.get("url") else it["name"]
-        out.append(f"**{name}** — {it['summary']}")
+        out.append(f"**{name}** - {it['summary']}")
         if it.get("what_you_need"):
-            out.append(f"  - ✅ **What you need:** {it['what_you_need']}")
+            out.append(f" - **What you need:** {it['what_you_need']}")
         if it.get("access"):
-            out.append("  - **How:** " + " → ".join(it["access"]))
+            out.append(" - **How:** " + " → ".join(it["access"]))
         if it.get("limits"):
-            out.append(f"  - {it['limits']}")
+            out.append(f" - {it['limits']}")
         if it.get("titles"):
-            out.append(f"  - _Includes:_ {', '.join(it['titles'][:6])}…")
+            out.append(f" - _Includes:_ {', '.join(it['titles'][:6])}…")
         out.append("")
-    out.append(f"🔎 [Online library hub]({r['page_url']})")
+    out.append(f"[Online library hub]({r['page_url']})")
     return "\n".join(out)
 
 
 def render_unlocked(r):
-    out = ["🔓 **Libraries Unlocked** — use the library 8am–8pm, Mon–Sat, even "
+    out = ["**Libraries Unlocked** - use the library 8am–8pm, Mon–Sat, even "
            "when it's unstaffed.",
-           f"\n✅ **What you need:** {r['what_you_need']} "
+           f"\n**What you need:** {r['what_you_need']} "
            f"Not a member yet? [Join online]({ls.JOIN_URL}) first."]
     if r.get("unlocks"):
         out.append(f"\n{r['unlocks']}")
     else:
         out.append(f"\n**Branches:** {', '.join(r['branches'])}.")
     if r.get("branch_match"):
-        out.append(f"\n✓ Yes — **{r['branch_match']}** has Libraries Unlocked.")
+        out.append(f"\nYes - **{r['branch_match']}** has Libraries Unlocked.")
     elif r.get("branch_match") is None and "branch_match" in r:
         out.append("\nThat branch isn't on the Libraries Unlocked list yet.")
     if r.get("get_started"):
-        out.append("\n**🚀 How to get started:**")
+        out.append("\n**How to get started:**")
         out += [f"{i}. {s}" for i, s in enumerate(r["get_started"], 1)]
-    out.append(f"\n🔎 [Libraries Unlocked]({r['page_url']})")
+    out.append(f"\n[Libraries Unlocked]({r['page_url']})")
     return "\n".join(out)
 
 
 def render_membership(r):
-    out = ["🪪 **What you need to sign up:**\n"]
+    out = ["**What you need to sign up:**\n"]
     for tier in r["tiers"]:
         name = (f"[{tier['tier']}]({tier['url']})" if tier.get("url")
                 else tier["tier"])
-        out.append(f"**{name}** — {tier['what_you_need']}")
-        out.append(f"  - _Unlocks:_ {tier['unlocks']}\n")
+        out.append(f"**{name}** - {tier['what_you_need']}")
+        out.append(f" - _Unlocks:_ {tier['unlocks']}\n")
     if r.get("need"):
-        out.append(f"➡️ For your question: **{r['need']}**")
-    out.append(f"\n🔎 [Join the library]({r['page_url']})")
+        out.append(f"For your question: **{r['need']}**")
+    out.append(f"\n[Join the library]({r['page_url']})")
     return "\n".join(out)
 
 
@@ -739,27 +739,27 @@ def render_printing(r):
         pc = r["in_library_photocopy"]
         steps = "\n".join(f"{i}. {s}" for i, s in enumerate(pc["how_to"], 1))
         price = "\n".join(f"- {k}: {v}" for k, v in pc["pricing"].items())
-        return (f"📄 **In-library photocopying**\n\n{pc['summary']}\n\n"
+        return (f"**In-library photocopying**\n\n{pc['summary']}\n\n"
                 f"**How to photocopy:**\n{steps}\n\n**Prices:**\n{price}\n\n"
-                f"⚠️ _{pc['note']}_\n\n🔎 [Printing & photocopying]({page})")
+                f"_{pc['note']}_\n\n[Printing & photocopying]({page})")
 
     if focus == "scanning" and r.get("scanning"):
         sc = r["scanning"]
         steps = "\n".join(f"{i}. {s}" for i, s in enumerate(sc["how_to"], 1))
-        return (f"🔍 **Document scanning at the library**\n\n{sc['summary']}\n\n"
-                f"**How to scan:**\n{steps}\n\n⚠️ _{sc['note']}_\n\n"
-                f"🔎 [Printing & photocopying]({page})")
+        return (f"**Document scanning at the library**\n\n{sc['summary']}\n\n"
+                f"**How to scan:**\n{steps}\n\n_{sc['note']}_\n\n"
+                f"[Printing & photocopying]({page})")
 
     # Default: Print Your Way (remote/mobile printing)
     steps = "\n".join(f"{i}. {s}" for i, s in enumerate(r["steps"], 1))
     price = "\n".join(f"- {k}: {v}" for k, v in r["pricing"].items())
     pc_note = ""
     if r.get("in_library_photocopy"):
-        pc_note = ("\n\n💡 _Need to photocopy? Walk-up photocopying is also available at "
-                   "most branches — no account needed, same prices._")
-    return (f"🖨️ **Print Your Way**\n\n{r['summary']}\n\n**Devices:** "
+        pc_note = ("\n\n_Need to photocopy? Walk-up photocopying is also available at "
+                   "most branches - no account needed, same prices._")
+    return (f"**Print Your Way**\n\n{r['summary']}\n\n**Devices:** "
             f"{r['device_requirements']}\n\n**How to print:**\n{steps}\n\n"
-            f"**Prices:**\n{price}{pc_note}\n\n🔎 [Printing page]({page})")
+            f"**Prices:**\n{price}{pc_note}\n\n[Printing page]({page})")
 
 
 def render_graph(r):
@@ -777,35 +777,35 @@ def render_graph(r):
         crit = ", ".join(feats) or "your criteria"
         if not r["branches"]:
             return (f"No library currently matches **{crit}** in our data. "
-                    "Try fewer features.\n\n🔎 [All libraries](" + r["page_url"] + ")")
-        out = [f"🧭 Libraries matching **{crit}**:\n"]
+                    "Try fewer features.\n\n[All libraries](" + r["page_url"] + ")")
+        out = [f"Libraries matching **{crit}**:\n"]
         for b in r["branches"]:
             lu = " · open to 8pm" if b["libraries_unlocked"] else ""
             name = f"[{b['name']}]({b['url']})" if b.get("url") else b["name"]
-            addr = f" — {b['address']}" if b.get("address") else ""
-            out.append(f"- **{name}**{lu}{addr} — {', '.join(b['facilities'])}")
-        out.append("\n💬 Ask me _\"is it open now?\"_ about any of these for "
+            addr = f" - {b['address']}" if b.get("address") else ""
+            out.append(f"- **{name}**{lu}{addr} - {', '.join(b['facilities'])}")
+        out.append("\nAsk me _\"is it open now?\"_ about any of these for "
                    "live hours.")
         return "\n".join(out)
     if r["kind"] == "entity":
         if not r["entities"]:
-            return "I couldn't find that in the knowledge graph — try rephrasing."
+            return "I couldn't find that in the knowledge graph - try rephrasing."
         out = []
         for e in r["entities"][:3]:
-            out.append(f"**{e['label']}** ({e['type']}) — {e.get('summary','')[:160]}")
+            out.append(f"**{e['label']}** ({e['type']}) - {e.get('summary','')[:160]}")
             if e.get("what_you_need"):
-                out.append(f"  - ✅ {e['what_you_need']}")
+                out.append(f" - {e['what_you_need']}")
             rel = ", ".join(f"{x['rel'].lower().replace('_',' ')} {x['label']}"
                             for x in e["related"][:4])
             if rel:
-                out.append(f"  - _linked to:_ {rel}")
+                out.append(f" - _linked to:_ {rel}")
             if e.get("url"):
-                out.append(f"  - 🔎 [more]({e['url']})")
+                out.append(f" - [more]({e['url']})")
         return "\n".join(out)
     # global
-    out = ["🗺️ **Across the whole service:**\n"]
+    out = ["**Across the whole service:**\n"]
     for c in r["communities"]:
-        out.append(f"- **{c['title']}** — {c['report'][:200]}")
+        out.append(f"- **{c['title']}** - {c['report'][:200]}")
     return "\n".join(out)
 
 
@@ -813,86 +813,86 @@ def render_where_to_get(r):
     if not r.get("found"):
         rt = r["routes"][0]
         return (f"I couldn't find **{r['query']}** in the catalogue. {rt['advice']}\n\n"
-                f"🔎 [Try the catalogue yourself]({r['search_url']})")
-    out = [f"**{r['best_title']}**" + (f" — {r['author']}" if r["author"] else "")
+                f"[Try the catalogue yourself]({r['search_url']})")
+    out = [f"**{r['best_title']}**" + (f" - {r['author']}" if r["author"] else "")
            + f" · held as: {', '.join(r['formats_held'])}\n"]
     for rt in r["routes"]:
         if rt["route"] == "digital":
             link = ("[Open it in BorrowBox]" if rt["direct_link"]
                     else "[Open BorrowBox (Worcestershire)]")
-            out.append(f"💻 **Borrow the {rt['format']} free tonight** — "
+            out.append(f"**Borrow the {rt['format']} free tonight** - "
                        f"{link}({rt['url']})")
-            out += [f"  {i}. {s}" for i, s in enumerate(rt["steps"], 1)]
-            out.append(f"  - ✅ {rt['need']}")
+            out += [f" {i}. {s}" for i, s in enumerate(rt["steps"], 1)]
+            out.append(f" - {rt['need']}")
         elif rt["route"] == "shelf":
-            out.append(f"📚 **{rt['format']} — on the shelf right now at:**")
+            out.append(f"**{rt['format']} - on the shelf right now at:**")
             for c in rt["copies"]:
                 call = f" · shelf mark `{c['call_number']}`" if c["call_number"] else ""
-                out.append(f"  - **{c['branch']}**{call} — _{c['status']}_")
-            out.append(f"  - ✅ {rt['need']}")
-            out.append(f"  - 🔎 [Item page / all copies]({rt['url']})")
+                out.append(f" - **{c['branch']}**{call} - _{c['status']}_")
+            out.append(f" - {rt['need']}")
+            out.append(f" - [Item page / all copies]({rt['url']})")
         elif rt["route"] == "reserve":
-            out.append(f"🔖 **{rt['format']} — no copy on a shelf just now: "
+            out.append(f"**{rt['format']} - no copy on a shelf just now: "
                        f"reserve it free.**")
             if rt.get("copies"):
                 spots = "; ".join(f"{c['branch']}: {c['status']}"
                                   for c in rt["copies"][:5])
-                out.append(f"  - Current copies — {spots}")
+                out.append(f" - Current copies - {spots}")
             elif not rt.get("availability_parsed"):
-                out.append("  - _(I couldn't read live copy status this time — "
+                out.append(" - _(I couldn't read live copy status this time - "
                            "the item page below shows it.)_")
-            out += [f"  {i}. {s}" for i, s in enumerate(rt["steps"], 1)]
-            out.append(f"  - ✅ {rt['need']}")
-            out.append(f"  - 🔎 [Reserve here]({rt['url']})")
+            out += [f" {i}. {s}" for i, s in enumerate(rt["steps"], 1)]
+            out.append(f" - {rt['need']}")
+            out.append(f" - [Reserve here]({rt['url']})")
         else:
-            out.append(f"✋ {rt.get('advice', '')}")
+            out.append(f"{rt.get('advice', '')}")
     if r.get("other_matches"):
         out.append(f"\n_Similar in the catalogue:_ {' · '.join(r['other_matches'])}")
-    out.append(f"\n🔎 [Full search results]({r['search_url']})")
+    out.append(f"\n[Full search results]({r['search_url']})")
     return "\n".join(out)
 
 
 def render_hive(r):
     hours = r.get("opening_hours", "")
-    out = [f"🐝 **{r['name']}** — Worcester's library, run jointly by the "
+    out = [f"**{r['name']}** - Worcester's library, run jointly by the "
            f"University of Worcester and Worcestershire County Council."]
     if hours:
-        out.append(f"🕗 **{hours}**")
+        out.append(f"**{hours}**")
     if r.get("kind") == "overview":
         out.append(f"{r.get('address', '')}\n")
         out.append("**More than a branch:**")
         for c in r.get("capabilities", [])[:9]:
             if isinstance(c, dict):
-                src = f" — [source]({c['source']})" if c.get("source") else ""
-                out.append(f"- **{c.get('capability', '')}** — "
+                src = f" - [source]({c['source']})" if c.get("source") else ""
+                out.append(f"- **{c.get('capability', '')}** - "
                            f"{c.get('detail', '')[:160]}{src}")
-        out.append(f"\n✅ {ls.ELIGIBILITY['hive_visit']}")
+        out.append(f"\n{ls.ELIGIBILITY['hive_visit']}")
     else:
         for p in r.get("pages", []):
-            out.append(f"\n**[{p['title']}]({p['url']})** — {p['summary'][:180]}")
+            out.append(f"\n**[{p['title']}]({p['url']})** - {p['summary'][:180]}")
             for o in p.get("offerings", [])[:6]:
-                out.append(f"  - {o}")
+                out.append(f" - {o}")
             for n in p.get("what_you_need", [])[:2]:
-                out.append(f"  - ✅ {n}")
+                out.append(f" - {n}")
             d = p.get("details", {})
-            for k, label in (("hours", "🕗"), ("prices", "💷"),
-                             ("location_in_building", "📍"), ("contact", "☎️")):
+            for k, label in (("hours", ""), ("prices", ""),
+                             ("location_in_building", ""), ("contact", "")):
                 if d.get(k):
-                    out.append(f"  - {label} {d[k][:140]}")
+                    out.append(f" - {label} {d[k][:140]}")
             if p.get("notes"):
-                out.append(f"  - ⚠️ _{p['notes']}_")
+                out.append(f" - _{p['notes']}_")
         for c in r.get("capabilities", [])[:3]:
             if isinstance(c, dict):
-                out.append(f"\n💎 **{c.get('capability', '')}** — "
+                out.append(f"\n**{c.get('capability', '')}** - "
                            f"{c.get('detail', '')[:160]}")
         if not r.get("pages") and not r.get("capabilities"):
-            out.append("\nI don't have a Hive page on that — try the council "
+            out.append("\nI don't have a Hive page on that - try the council "
                        f"pages, or browse [thehiveworcester.org]({r['page_url']}).")
     as_of = (r.get("as_of") or "")[:10]
-    out.append(f"\n<sub>ℹ️ From the Hive's own pages (crawled {as_of}). For live "
+    out.append(f"\n<sub>From the Hive's own pages (crawled {as_of}). For live "
                "events, membership and prices the council site is the "
-               "authority — ask me and I'll check it live.</sub>")
-    out.append(f"🔎 [thehiveworcester.org]({r['page_url']})")
+               "authority - ask me and I'll check it live.</sub>")
+    out.append(f"[thehiveworcester.org]({r['page_url']})")
     return "\n".join(out)
 
 
@@ -902,161 +902,161 @@ def render_account_and_loans(r):
 
     if focus == "computer" and r.get("computer_booking"):
         cb = r["computer_booking"]
-        out = ["💻 **Public computers at Worcestershire libraries:**\n", cb["summary"],
-               f"\n✅ **What you need:** {cb['what_you_need']}"]
+        out = ["**Public computers at Worcestershire libraries:**\n", cb["summary"],
+               f"\n**What you need:** {cb['what_you_need']}"]
         for step in cb.get("how_to", []):
             out.append(f"- {step}")
-        out.append(f"\n🔎 [Book a computer session]({cb['url']})")
+        out.append(f"\n[Book a computer session]({cb['url']})")
         return "\n".join(out)
 
     if focus == "volunteer" and r.get("volunteering"):
         vol = r["volunteering"]
-        out = ["🙋 **Volunteering at Worcestershire Libraries:**\n", vol["summary"],
-               f"\n✅ **How to get involved:** {vol['what_you_need']}"]
+        out = ["**Volunteering at Worcestershire Libraries:**\n", vol["summary"],
+               f"\n**How to get involved:** {vol['what_you_need']}"]
         if vol.get("also_see"):
-            out.append(f"\n💡 {vol['also_see']}")
-        out.append(f"\n🔎 [Discover volunteering opportunities]({vol['url']})")
+            out.append(f"\n{vol['also_see']}")
+        out.append(f"\n[Discover volunteering opportunities]({vol['url']})")
         return "\n".join(out)
 
     if focus == "digital_skills" and r.get("digital_skills"):
         ds = r["digital_skills"]
-        out = ["🖥️ **Free digital skills support at your library:**\n", ds["summary"],
-               f"\n✅ **Entry:** {ds['what_you_need']}"]
+        out = ["**Free digital skills support at your library:**\n", ds["summary"],
+               f"\n**Entry:** {ds['what_you_need']}"]
         for svc in ds.get("services", []):
             out.append(f"- {svc}")
-        out.append(f"\n🔎 [Digital Inclusion — Helping You Online]({ds['url']})")
+        out.append(f"\n[Digital Inclusion - Helping You Online]({ds['url']})")
         return "\n".join(out)
 
     if focus == "reading_well" and r.get("reading_well"):
         rw = r["reading_well"]
-        out = ["📖 **Reading Well — free wellbeing books at your library:**\n",
-               rw["summary"], f"\n✅ **What you need:** {rw['what_you_need']}"]
+        out = ["**Reading Well - free wellbeing books at your library:**\n",
+               rw["summary"], f"\n**What you need:** {rw['what_you_need']}"]
         for col in rw.get("collections", []):
             out.append(f"- {col}")
-        out.append(f"\n🔎 [Reading Well collections]({rw['url']})")
+        out.append(f"\n[Reading Well collections]({rw['url']})")
         return "\n".join(out)
 
     if focus == "room_hire" and r.get("room_hire_data"):
         rh = r["room_hire_data"]
-        out = ["🏢 **Meeting rooms for hire at Worcestershire libraries:**\n",
-               rh["summary"], f"\n✅ **What you need:** {rh['what_you_need']}"]
+        out = ["**Meeting rooms for hire at Worcestershire libraries:**\n",
+               rh["summary"], f"\n**What you need:** {rh['what_you_need']}"]
         for step in rh.get("how_to", []):
             out.append(f"- {step}")
         if rh.get("also_see"):
-            out.append(f"\n💡 {rh['also_see']}")
-        out.append(f"\n🔎 [Hire a library meeting room]({rh['url']})")
+            out.append(f"\n{rh['also_see']}")
+        out.append(f"\n[Hire a library meeting room]({rh['url']})")
         return "\n".join(out)
 
     if focus == "warm_space" and r.get("warm_space"):
         ws = r["warm_space"]
-        out = ["☕ **Warm, welcoming spaces — free at every library:**\n", ws["summary"],
-               f"\n✅ **Entry:** {ws['what_you_need']}"]
+        out = ["**Warm, welcoming spaces - free at every library:**\n", ws["summary"],
+               f"\n**Entry:** {ws['what_you_need']}"]
         if ws.get("also_see"):
-            out.append(f"\n💡 {ws['also_see']}")
-        out.append(f"\n🔎 [Warm Welcome]({ws['url']})")
+            out.append(f"\n{ws['also_see']}")
+        out.append(f"\n[Warm Welcome]({ws['url']})")
         return "\n".join(out)
 
     if focus == "adult_learning" and r.get("adult_learning"):
         al = r["adult_learning"]
-        out = ["📚 **Adult learning & skills — free at Worcestershire Libraries:**\n",
-               al["summary"], f"\n✅ **What you need:** {al['what_you_need']}\n"]
+        out = ["**Adult learning & skills - free at Worcestershire Libraries:**\n",
+               al["summary"], f"\n**What you need:** {al['what_you_need']}\n"]
         for i, step in enumerate(al["how_to"], 1):
             out.append(f"{i}. {step}")
-        out.append(f"\n💡 _{al['also_see']}_")
-        out.append(f"\n🔎 [Learn, Upskill and Find Work]({al['url']})")
+        out.append(f"\n_{al['also_see']}_")
+        out.append(f"\n[Learn, Upskill and Find Work]({al['url']})")
         return "\n".join(out)
 
     if focus == "book_clubs_reading" and r.get("book_clubs_reading"):
         bc = r["book_clubs_reading"]
-        out = ["📖 **Book clubs & reading groups:**\n", bc["summary"],
-               f"\n✅ **What you need:** {bc['what_you_need']}\n"]
+        out = ["**Book clubs & reading groups:**\n", bc["summary"],
+               f"\n**What you need:** {bc['what_you_need']}\n"]
         for i, step in enumerate(bc["how_to"], 1):
             out.append(f"{i}. {step}")
         if bc.get("also_see"):
-            out.append(f"\n💡 _{bc['also_see']}_")
-        out.append(f"\n🔎 [Library events & activities]({bc['url']})")
+            out.append(f"\n_{bc['also_see']}_")
+        out.append(f"\n[Library events & activities]({bc['url']})")
         return "\n".join(out)
 
     if focus == "donations" and r.get("donations"):
         d = r["donations"]
-        out = ["📦 **Donating books to the library:**\n", d["summary"],
-               f"\n✅ **Please note:** {d['what_you_need']}\n"]
+        out = ["**Donating books to the library:**\n", d["summary"],
+               f"\n**Please note:** {d['what_you_need']}\n"]
         for i, step in enumerate(d["how_to"], 1):
             out.append(f"{i}. {step}")
-        out.append(f"\n🔎 [Worcestershire Libraries]({d['url']})")
+        out.append(f"\n[Worcestershire Libraries]({d['url']})")
         return "\n".join(out)
 
     if focus == "school_visits" and r.get("school_visits"):
         sv = r["school_visits"]
-        out = ["🏫 **School & group visits to Worcestershire Libraries:**\n", sv["summary"],
-               f"\n✅ **What to do:** {sv['what_you_need']}\n"]
+        out = ["**School & group visits to Worcestershire Libraries:**\n", sv["summary"],
+               f"\n**What to do:** {sv['what_you_need']}\n"]
         for i, step in enumerate(sv["how_to"], 1):
             out.append(f"{i}. {step}")
         if sv.get("also_see"):
-            out.append(f"\n💡 _{sv['also_see']}_")
-        out.append(f"\n🔎 [Children's library services]({sv['url']})")
+            out.append(f"\n_{sv['also_see']}_")
+        out.append(f"\n[Children's library services]({sv['url']})")
         return "\n".join(out)
 
     if focus == "accessible_formats" and r.get("accessible_formats"):
         af = r["accessible_formats"]
-        out = ["♿ **Accessible reading at Worcestershire Libraries:**\n", af["summary"],
-               f"\n✅ **What you need:** {af['what_you_need']}\n"]
+        out = ["**Accessible reading at Worcestershire Libraries:**\n", af["summary"],
+               f"\n**What you need:** {af['what_you_need']}\n"]
         for opt in af.get("options", []):
             out.append(f"- {opt}")
         if af.get("also_see"):
-            out.append(f"\n💡 _{af['also_see']}_")
+            out.append(f"\n_{af['also_see']}_")
         if af.get("catalogue_tip"):
-            out.append(f"\n🔍 _{af['catalogue_tip']}_")
-        out.append(f"\n🔎 [Read & Discover]({af['url']})")
+            out.append(f"\n_{af['catalogue_tip']}_")
+        out.append(f"\n[Read & Discover]({af['url']})")
         return "\n".join(out)
 
     if focus == "update_details" and r.get("update_details"):
         ud = r["update_details"]
-        out = ["✏️ **Update your library account details:**\n", ud["summary"], "\n"]
+        out = ["**Update your library account details:**\n", ud["summary"], "\n"]
         for step in ud.get("how_to", []):
             out.append(f"- {step}")
         if ud.get("also_see"):
-            out.append(f"\n💡 _{ud['also_see']}_")
-        out.append(f"\n🔎 [Library account login]({ud['url']})")
+            out.append(f"\n_{ud['also_see']}_")
+        out.append(f"\n[Library account login]({ud['url']})")
         return "\n".join(out)
 
     if focus == "lost_card" and r.get("lost_card"):
         lc = r["lost_card"]
-        out = ["🃏 **Lost or stolen library card:**\n", lc["summary"], "\n"]
+        out = ["**Lost or stolen library card:**\n", lc["summary"], "\n"]
         for i, step in enumerate(lc["what_to_do"], 1):
             out.append(f"{i}. {step}")
         if lc.get("also_see"):
-            out.append(f"\n💡 _{lc['also_see']}_")
-        out.append(f"\n🔎 [Fees and charges]({lc['url']})")
+            out.append(f"\n_{lc['also_see']}_")
+        out.append(f"\n[Fees and charges]({lc['url']})")
         return "\n".join(out)
 
     if focus == "card_expired" and r.get("card_expired"):
         ce = r["card_expired"]
-        out = ["🪪 **Library card or membership expired:**\n", ce["summary"], "\n"]
-        out.append(f"✅ **What you need:** {ce['what_you_need']}\n")
+        out = ["**Library card or membership expired:**\n", ce["summary"], "\n"]
+        out.append(f"**What you need:** {ce['what_you_need']}\n")
         for i, step in enumerate(ce["how_to"], 1):
             out.append(f"{i}. {step}")
         if ce.get("also_see"):
-            out.append(f"\n💡 _{ce['also_see']}_")
-        out.append(f"\n🔎 [Join or renew membership]({ce['url']})")
+            out.append(f"\n_{ce['also_see']}_")
+        out.append(f"\n[Join or renew membership]({ce['url']})")
         return "\n".join(out)
 
     if focus == "wifi" and r.get("wifi_access"):
         wa = r["wifi_access"]
-        out = ["📶 **Free Wi-Fi at Worcestershire Libraries:**\n", wa["summary"], "\n"]
-        out.append(f"✅ **What you need:** {wa['what_you_need']}\n")
+        out = ["**Free Wi-Fi at Worcestershire Libraries:**\n", wa["summary"], "\n"]
+        out.append(f"**What you need:** {wa['what_you_need']}\n")
         out.append("**How to connect:**")
         for step in wa["how_to"]:
             out.append(f"- {step}")
         if wa.get("also_see"):
-            out.append(f"\n💡 _{wa['also_see']}_")
-        out.append(f"\n🔎 [Worcestershire Libraries]({wa['url']})")
+            out.append(f"\n_{wa['also_see']}_")
+        out.append(f"\n[Worcestershire Libraries]({wa['url']})")
         return "\n".join(out)
 
     if focus == "self_service" and r.get("self_service"):
         ss = r["self_service"]
-        out = ["🤖 **Self-service kiosks at Worcestershire Libraries:**\n", ss["summary"], "\n"]
-        out.append(f"✅ **What you need:** {ss['what_you_need']}\n")
+        out = ["**Self-service kiosks at Worcestershire Libraries:**\n", ss["summary"], "\n"]
+        out.append(f"**What you need:** {ss['what_you_need']}\n")
         out.append("**To borrow (check out):**")
         for step in ss["how_to_borrow"]:
             out.append(f"- {step}")
@@ -1064,246 +1064,246 @@ def render_account_and_loans(r):
         for step in ss["how_to_return"]:
             out.append(f"- {step}")
         if ss.get("also_see"):
-            out.append(f"\n💡 _{ss['also_see']}_")
-        out.append(f"\n🔎 [Your library account]({ss['url']})")
+            out.append(f"\n_{ss['also_see']}_")
+        out.append(f"\n[Your library account]({ss['url']})")
         return "\n".join(out)
 
     if focus == "ill" and r.get("ill_service"):
         ill = r["ill_service"]
-        out = ["📦 **Inter-library loans — getting a book from another library service:**\n",
-               ill["summary"], f"\n✅ **What you need:** {ill['what_you_need']}\n"]
+        out = ["**Inter-library loans - getting a book from another library service:**\n",
+               ill["summary"], f"\n**What you need:** {ill['what_you_need']}\n"]
         for i, step in enumerate(ill["how_to"], 1):
             out.append(f"{i}. {step}")
         if ill.get("also_see"):
-            out.append(f"\n💡 _{ill['also_see']}_")
-        out.append(f"\n🔎 [Worcestershire Libraries]({ill['url']})")
+            out.append(f"\n_{ill['also_see']}_")
+        out.append(f"\n[Worcestershire Libraries]({ill['url']})")
         return "\n".join(out)
 
     if focus == "child_membership" and r.get("child_membership"):
         cm = r["child_membership"]
-        out = ["🧒 **Children's library membership — free at any age:**\n", cm["summary"], "\n"]
-        out.append(f"✅ **What you need:** {cm['what_you_need']}\n")
+        out = ["**Children's library membership - free at any age:**\n", cm["summary"], "\n"]
+        out.append(f"**What you need:** {cm['what_you_need']}\n")
         out.append("**How to join:**")
         for i, step in enumerate(cm["how_to"], 1):
             out.append(f"{i}. {step}")
         if cm.get("also_see"):
-            out.append(f"\n💡 _{cm['also_see']}_")
-        out.append(f"\n🔎 [Join the library — free]({cm['url']})")
+            out.append(f"\n_{cm['also_see']}_")
+        out.append(f"\n[Join the library - free]({cm['url']})")
         return "\n".join(out)
 
     if focus == "suggest_purchase" and r.get("suggest_purchase"):
         sp = r["suggest_purchase"]
-        out = ["📬 **Suggest a book for the library to buy:**\n", sp["summary"], "\n"]
-        out.append(f"✅ **What you need:** {sp['what_you_need']}\n")
+        out = ["**Suggest a book for the library to buy:**\n", sp["summary"], "\n"]
+        out.append(f"**What you need:** {sp['what_you_need']}\n")
         for i, step in enumerate(sp["how_to"], 1):
             out.append(f"{i}. {step}")
         if sp.get("also_see"):
-            out.append(f"\n💡 _{sp['also_see']}_")
-        out.append(f"\n🔎 [Ask for a Book / suggest a purchase]({sp['url']})")
+            out.append(f"\n_{sp['also_see']}_")
+        out.append(f"\n[Ask for a Book / suggest a purchase]({sp['url']})")
         return "\n".join(out)
 
     if focus == "library_contact" and r.get("library_contact"):
         lc = r["library_contact"]
-        out = ["📞 **Contacting Worcestershire Libraries:**\n", lc["summary"], "\n"]
+        out = ["**Contacting Worcestershire Libraries:**\n", lc["summary"], "\n"]
         for step in lc["how_to"]:
             out.append(f"- {step}")
         if lc.get("also_see"):
-            out.append(f"\n💡 _{lc['also_see']}_")
-        out.append(f"\n🔎 [Worcestershire Libraries]({lc['url']})")
+            out.append(f"\n_{lc['also_see']}_")
+        out.append(f"\n[Worcestershire Libraries]({lc['url']})")
         return "\n".join(out)
 
     if focus == "library_closures" and r.get("library_closures"):
         cl = r["library_closures"]
-        out = ["🗓️ **Library closures & bank holidays:**\n", cl["summary"], "\n",
+        out = ["**Library closures & bank holidays:**\n", cl["summary"], "\n",
                f"_{cl['bank_holiday_note']}_\n",
                "**How to check for closures:**"]
         for step in cl["how_to_check"]:
             out.append(f"- {step}")
-        out.append(f"\n🔎 [2026 library closing dates]({cl['url']})")
+        out.append(f"\n[2026 library closing dates]({cl['url']})")
         return "\n".join(out)
 
     if focus == "building_accessibility" and r.get("building_accessibility"):
         ba = r["building_accessibility"]
-        out = ["♿ **Accessibility at Worcestershire Libraries:**\n", ba["summary"], "\n",
+        out = ["**Accessibility at Worcestershire Libraries:**\n", ba["summary"], "\n",
                "**Features available at most branches:**"]
         for feat in ba["common_features"]:
             out.append(f"- {feat}")
-        out.append(f"\n⚠️ _{ba['note']}_")
-        out.append(f"\n💡 _{ba['accessible_formats_tip']}_")
-        out.append(f"\n🔎 [Find a library]({ba['url']})")
+        out.append(f"\n_{ba['note']}_")
+        out.append(f"\n_{ba['accessible_formats_tip']}_")
+        out.append(f"\n[Find a library]({ba['url']})")
         return "\n".join(out)
 
     if focus == "teen_services" and r.get("teen_services"):
         ts = r["teen_services"]
-        out = ["📚 **Library services for teenagers & young adults:**\n", ts["summary"], "\n"]
+        out = ["**Library services for teenagers & young adults:**\n", ts["summary"], "\n"]
         for item in ts["highlights"]:
             out.append(f"- {item}")
-        out.append(f"\n✅ **What you need:** {ts['what_you_need']}")
-        out.append(f"\n🔎 [Library events & activities]({ts['events_url']})")
+        out.append(f"\n**What you need:** {ts['what_you_need']}")
+        out.append(f"\n[Library events & activities]({ts['events_url']})")
         return "\n".join(out)
 
     if focus == "community_information" and r.get("community_information"):
         ci = r["community_information"]
-        out = ["🏘️ **Libraries as community hubs:**\n", ci["summary"], "\n"]
+        out = ["**Libraries as community hubs:**\n", ci["summary"], "\n"]
         for item in ci["what_we_offer"]:
             out.append(f"- {item}")
-        out.append(f"\n📋 **For organisations:** {ci['for_organisations']}")
-        out.append(f"\n💡 _{ci['note']}_")
-        out.append(f"\n🔎 [Worcestershire Libraries]({ci['url']})")
+        out.append(f"\n**For organisations:** {ci['for_organisations']}")
+        out.append(f"\n_{ci['note']}_")
+        out.append(f"\n[Worcestershire Libraries]({ci['url']})")
         return "\n".join(out)
 
     if focus == "multilingual" and r.get("multilingual"):
         ml = r["multilingual"]
-        out = ["🌐 **Multilingual & community language resources:**\n", ml["summary"], "\n"]
+        out = ["**Multilingual & community language resources:**\n", ml["summary"], "\n"]
         for item in ml["what_we_offer"]:
             out.append(f"- {item}")
-        out.append(f"\n🪪 {ml['joining']}")
-        out.append(f"\n🔎 [Online Library Hub]({ml['url']})")
+        out.append(f"\n{ml['joining']}")
+        out.append(f"\n[Online Library Hub]({ml['url']})")
         return "\n".join(out)
 
     if focus == "library_app" and r.get("library_app"):
         la = r["library_app"]
-        out = ["📱 **Library apps & mobile access:**\n", la["summary"], "\n"]
+        out = ["**Library apps & mobile access:**\n", la["summary"], "\n"]
         for app in la["apps"]:
             out.append(f"- {app}")
-        out.append(f"\n🔎 [Online Library Hub]({la['url']})")
+        out.append(f"\n[Online Library Hub]({la['url']})")
         return "\n".join(out)
 
     if focus == "loan_limits":
         ll = r["loan_limits"]
-        out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
+        out = ["**Borrowing periods & limits:**\n", ll["summary"],
                f"\n- **Physical items:** {ll['loan_period']}",
                f"- **Digital (BorrowBox):** {ll['digital']}",
                f"- **Renewals:** {ll.get('renewals', r['renewals']['summary'])}",
-               f"\n🔎 [Membership & borrowing]({ll['url']})"]
+               f"\n[Membership & borrowing]({ll['url']})"]
         return "\n".join(out)
 
     if focus == "pin_reset":
         pr = r["pin_reset"]
-        out = ["🔑 **Forgotten your PIN?**\n", f"_{pr['summary']}_\n"]
+        out = ["**Forgotten your PIN?**\n", f"_{pr['summary']}_\n"]
         for step in pr["how_to"]:
             out.append(f"- {step}")
-        out += [f"\n⚠️ _{pr['note']}_",
-                f"\n🔎 [Login to your library account]({pr['url']})"]
+        out += [f"\n_{pr['note']}_",
+                f"\n[Login to your library account]({pr['url']})"]
         return "\n".join(out)
 
     if focus == "job_clubs" and r.get("job_clubs"):
         jc = r["job_clubs"]
-        out = ["💼 **Library Job Clubs — free employment support:**\n", jc["summary"],
-               f"\n✅ **What you need:** {jc['what_you_need']}\n"]
+        out = ["**Library Job Clubs - free employment support:**\n", jc["summary"],
+               f"\n**What you need:** {jc['what_you_need']}\n"]
         for i, step in enumerate(jc["how_to"], 1):
             out.append(f"{i}. {step}")
-        out.append(f"\n💡 _{jc['also_see']}_")
-        out.append(f"\n🔎 [Job Clubs]({jc['url']})")
+        out.append(f"\n_{jc['also_see']}_")
+        out.append(f"\n[Job Clubs]({jc['url']})")
         return "\n".join(out)
 
     if focus == "home" and r.get("home_library"):
         h = r["home_library"]
         out += [
-            "🏠 **Library Service at Home**\n",
+            "**Library Service at Home**\n",
             h["summary"],
-            f"\n✅ **What you need:** {h['what_you_need']}",
-            f"📞 **Contact:** {h['contact']}",
+            f"\n**What you need:** {h['what_you_need']}",
+            f"**Contact:** {h['contact']}",
             f"\n{h['also_see']}",
-            f"\n🔎 [Library Service at Home]({h['url']})",
+            f"\n[Library Service at Home]({h['url']})",
         ]
         return "\n".join(out)
 
     if focus == "returning":
         ret = r["returning"]
-        out += ["↩️ **Returning library items:**\n", f"_{ret['summary']}_\n"]
+        out += ["**Returning library items:**\n", f"_{ret['summary']}_\n"]
         for m in ret["methods"]:
             out.append(f"- {m}")
-        out += [f"\n💡 _{ret['note']}_",
-                f"\n🔎 [Your library account]({ret['url']})"]
+        out += [f"\n_{ret['note']}_",
+                f"\n[Your library account]({ret['url']})"]
         return "\n".join(out)
 
     if focus == "lost_item":
         li = r["lost_item"]
-        out += ["⚠️ **Lost or damaged library item:**\n", f"_{li['summary']}_\n"]
+        out += ["**Lost or damaged library item:**\n", f"_{li['summary']}_\n"]
         for step in li["what_to_do"]:
             out.append(f"- {step}")
-        out.append(f"\n🔎 [Fees and charges]({li['url']})")
+        out.append(f"\n[Fees and charges]({li['url']})")
         return "\n".join(out)
 
     if focus == "ask_book" and r.get("ask_book"):
         ab = r["ask_book"]
-        out += ["📖 **Ask for a Book — free personalised recommendations:**\n",
-                ab["summary"], f"\n✅ **What you need:** {ab['what_you_need']}\n"]
+        out += ["**Ask for a Book - free personalised recommendations:**\n",
+                ab["summary"], f"\n**What you need:** {ab['what_you_need']}\n"]
         for i, step in enumerate(ab["how_to"], 1):
             out.append(f"{i}. {step}")
-        out.append(f"\n🔎 [Ask for a Book]({ab['url']})")
+        out.append(f"\n[Ask for a Book]({ab['url']})")
         return "\n".join(out)
 
     if focus == "renewals":
         ren = r["renewals"]
-        out += ["🔄 **Renewing your loans:**\n", f"_{ren['summary']}_\n"]
+        out += ["**Renewing your loans:**\n", f"_{ren['summary']}_\n"]
         for m in ren["methods"]:
             out.append(f"- {m}")
-        out += [f"\n⚠️ _{ren['note']}_",
-                f"\n🔎 [Renew a loan online]({ren['url']})"]
+        out += [f"\n_{ren['note']}_",
+                f"\n[Renew a loan online]({ren['url']})"]
 
     elif focus == "fines":
         f_data = r["fines"]
-        out += ["💷 **Library fees and charges:**\n", f_data["summary"], "\n",
+        out += ["**Library fees and charges:**\n", f_data["summary"], "\n",
                 "**Types of charge:**"]
         for charge in f_data.get("charges_breakdown", []):
             out.append(f"- {charge}")
-        out += [f"\n💳 **How to pay:** {f_data['how_to_pay']}",
-                f"\n💡 _{f_data['note']}_",
-                f"\n🔎 [Fees and charges]({f_data['url']})"]
+        out += [f"\n**How to pay:** {f_data['how_to_pay']}",
+                f"\n_{f_data['note']}_",
+                f"\n[Fees and charges]({f_data['url']})"]
 
     elif focus == "reservations":
         res = r["reservations"]
-        out += ["🔖 **Reserving items:**\n",
+        out += ["**Reserving items:**\n",
                 f"_{res['summary']}_ **{res['cost']}**\n"]
         for i, step in enumerate(res["how_to"], 1):
             out.append(f"{i}. {step}")
         if res.get("hold_duration"):
-            out.append(f"\n⏱️ **Hold period:** {res['hold_duration']}")
+            out.append(f"\n**Hold period:** {res['hold_duration']}")
         if res.get("if_missed"):
-            out.append(f"\n⚠️ _{res['if_missed']}_")
+            out.append(f"\n_{res['if_missed']}_")
         if res.get("how_to_cancel"):
-            out.append(f"\n↩️ **To cancel a reservation:** {res['how_to_cancel']}")
-        out.append(f"\n🔎 [Reserve library books]({res['url']})")
+            out.append(f"\n**To cancel a reservation:** {res['how_to_cancel']}")
+        out.append(f"\n[Reserve library books]({res['url']})")
 
     elif focus == "account":
         acc = r["account"]
-        out += ["🔑 **Your library account:**\n", acc["summary"],
-                f"\n✅ **What you need:** {acc['what_you_need']}"]
+        out += ["**Your library account:**\n", acc["summary"],
+                f"\n**What you need:** {acc['what_you_need']}"]
         if acc.get("pin_reset"):
-            out.append(f"\n🔐 **Forgotten your PIN?** {acc['pin_reset']}")
-        out.append(f"\n🔎 {acc['how_to']}")
+            out.append(f"\n**Forgotten your PIN?** {acc['pin_reset']}")
+        out.append(f"\n{acc['how_to']}")
 
-    else:  # general
+    else: # general
         acc, ren = r["account"], r["renewals"]
         f_data, res = r["fines"], r["reservations"]
         out += [
-            "🪪 **Your library account — manage it online:**\n",
-            f"🔑 **[Sign in to your account]({acc['url']})** — {acc['summary']} "
+            "**Your library account - manage it online:**\n",
+            f"**[Sign in to your account]({acc['url']})** - {acc['summary']} "
             f"_{acc['what_you_need']}_",
-            f"🔄 **[Renew loans]({ren['url']})** — {ren['summary']}",
-            f"🔖 **[Reserve items]({res['url']})** — {res['summary']} {res['cost']}",
-            f"💷 **[Fees & charges]({f_data['url']})** — {f_data['summary']}",
-            f"\n🔎 [Your library membership]({r['page_url']})",
+            f"**[Renew loans]({ren['url']})** - {ren['summary']}",
+            f"**[Reserve items]({res['url']})** - {res['summary']} {res['cost']}",
+            f"**[Fees & charges]({f_data['url']})** - {f_data['summary']}",
+            f"\n[Your library membership]({r['page_url']})",
         ]
 
-    if r.get("home_library") and focus != "home":
+    if r.get("home_library") and focus!= "home":
         h = r["home_library"]
-        out.append(f"\n🏠 _Can't get to a library?_ **[Library Service at Home]"
-                   f"({h['url']})** — volunteer-run home delivery of books.")
+        out.append(f"\n_Can't get to a library?_ **[Library Service at Home]"
+                   f"({h['url']})** - volunteer-run home delivery of books.")
 
     return "\n".join(out)
 
 
 def render_children(r):
-    out = ["👧 **Children's library services in Worcestershire**\n", r["summary"],
-           f"\n✅ **What you need:** {r['what_you_need']}\n", "**What's available:**"]
+    out = ["**Children's library services in Worcestershire**\n", r["summary"],
+           f"\n**What you need:** {r['what_you_need']}\n", "**What's available:**"]
     for item in r["highlights"]:
         out.append(f"- {item}")
-    out += [f"\n🔎 [Events & activities — what's on near you]({r['events_url']})",
-            f"📚 [Children's eBooks & audiobooks on BorrowBox]({r['borrowbox_url']})",
-            f"🪪 [Join the library free]({r['join_url']})"]
+    out += [f"\n[Events & activities - what's on near you]({r['events_url']})",
+            f"[Children's eBooks & audiobooks on BorrowBox]({r['borrowbox_url']})",
+            f"[Join the library free]({r['join_url']})"]
     return "\n".join(out)
 
 
@@ -1320,66 +1320,66 @@ RENDER = {
 
 
 # --------------------------------------------------------------------------- #
-# Behaviour-change layer — £-saved value receipt + EAST nudges + chips
+# Behaviour-change layer - £-saved value receipt + EAST nudges + chips
 # --------------------------------------------------------------------------- #
 
 def value_receipt(tool, raw):
     if tool in ("search_catalogue", "whats_new") and raw.get("items"):
-        return "💷 _Borrowing instead of buying ≈ **£9–£20 saved** per title._"
+        return "_Borrowing instead of buying ≈ **£9–£20 saved** per title._"
     if tool == "where_to_get" and raw.get("found"):
-        return "💷 _Getting it from the library instead of buying ≈ **£9–£20 saved**._"
+        return "_Getting it from the library instead of buying ≈ **£9–£20 saved**._"
     if tool == "online_hub":
         items = raw.get("items", [])
         if items:
             n = items[0].get("name", "").lower()
             if "pressreader" in n:
-                return "💷 _PressReader is typically **~£9.99/month** — you pay nothing with a library card._"
+                return "_PressReader is typically **~£9.99/month** - you pay nothing with a library card._"
             if "theory test" in n:
-                return "💷 _Theory Test Pro costs **£29.99** to buy — included in your free library card._"
+                return "_Theory Test Pro costs **£29.99** to buy - included in your free library card._"
             if "which" in n:
-                return "💷 _Which? costs **£10.99/month** to subscribe — not a penny with a library card._"
+                return "_Which? costs **£10.99/month** to subscribe - not a penny with a library card._"
             if "borrowbox" in n or "ebook" in n or "audiobook" in n:
-                return "💷 _eBooks and audiobooks run **£9–£15 each** to buy — £0 with a library card._"
-        return ("💷 _A newspaper or eBook subscription runs **~£8–£12/month** — "
+                return "_eBooks and audiobooks run **£9–£15 each** to buy - £0 with a library card._"
+        return ("_A newspaper or eBook subscription runs **~£8–£12/month** - "
                 "yours at no cost with a library card._")
     if tool == "printing_help":
-        return "💷 _Far cheaper than a high-street print shop._"
+        return "_Far cheaper than a high-street print shop._"
     return ""
 
 
 # (EAST: Easy=chips, Attractive=value, Social/Timely=nudge)
 NUDGES = {
-    "search_catalogue": ("💡 No time to visit? Many titles are free on **BorrowBox** tonight.",
-                         ["Is {title} on BorrowBox?", "Reserve & collect — how?", "Hot takes on new books"]),
-    "whats_new": ("💡 Reserve it free and collect at your branch.",
+    "search_catalogue": ("No time to visit? Many titles are free on **BorrowBox** tonight.",
+                         ["Is {title} on BorrowBox?", "Reserve & collect - how?", "Hot takes on new books"]),
+    "whats_new": ("Reserve it free and collect at your branch.",
                   ["More like this", "Is {title} an eBook?", "What's on this week?"]),
-    "find_library": (f"💡 Want in before/after staffed hours? "
+    "find_library": (f"Want in before/after staffed hours? "
                      f"[**Libraries Unlocked**]({ls.UNLOCKED_URL}) = 8am–8pm.",
                      ["Tell me about Libraries Unlocked", "What's on at {place}?", "How do I join?"]),
-    "mobile_library": ("💡 Housebound? The **Home Library Service** brings books to your door.",
+    "mobile_library": ("Housebound? The **Home Library Service** brings books to your door.",
                        ["Home Library Service", "How do I join?", "Find my nearest library"]),
-    "library_events": ("💡 Most events are free — just turn up.",
+    "library_events": ("Most events are free - just turn up.",
                        ["Children's events", "Do I need to book?", "Find my nearest library"]),
-    "online_hub": ("💡 Worth **~£10/month** in subscriptions — £0 with a library card. Set up tonight.",
+    "online_hub": ("Worth **~£10/month** in subscriptions - £0 with a library card. Set up tonight.",
                    ["How do I sign up?", "What newspapers are there?", "BorrowBox limits"]),
-    "libraries_unlocked": ("💡 It's free — just a quick one-off induction.",
+    "libraries_unlocked": ("It's free - just a quick one-off induction.",
                            ["How do I join the library?", "Is Malvern library open now?",
                             "What's on this week?"]),
-    "printing_help": ("💡 No printer at home? Print from your phone, collect within 24h.",
+    "printing_help": ("No printer at home? Print from your phone, collect within 24h.",
                       ["Printing prices", "Find my nearest library", "How do I join?"]),
-    "membership_help": ("💡 Digital membership is instant — no card needed.",
+    "membership_help": ("Digital membership is instant - no card needed.",
                         ["Set up digital membership", "What's the difference?", "What can I borrow online?"]),
-    "graph_search": ("💡 Tell me what matters (late, café, study space) and I'll match a branch.",
+    "graph_search": ("Tell me what matters (late, café, study space) and I'll match a branch.",
                      ["Late-opening + café", "Find a book", "What's on this week?"]),
-    "where_to_get": ("💡 Reservations are free — collect at any branch, or the van.",
+    "where_to_get": ("Reservations are free - collect at any branch, or the van.",
                      ["Is it on BorrowBox?", "Which branch is nearest?", "How do I join?"]),
-    "hive_info": ("💡 The Hive is open 8:30am–10pm every single day — and anyone can walk in.",
+    "hive_info": ("The Hive is open 8:30am–10pm every single day - and anyone can walk in.",
                   ["The Hive's archives", "Hire a room at the Hive", "Is the Hive open now?"]),
     "account_and_loans": (
-        "💡 Renewing is quickest online — no queue, no trip to the library.",
+        "Renewing is quickest online - no queue, no trip to the library.",
         ["How do I renew my books?", "How do I make a reservation?", "Can you suggest a book for me?"]),
     "children_services": (
-        "💡 Most children's sessions are free and need no booking — just turn up.",
+        "Most children's sessions are free and need no booking - just turn up.",
         ["What's on this week?", "Children's eBooks", "Find my nearest library"]),
 }
 HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
@@ -1392,11 +1392,11 @@ HELP_CHIPS = ["How do I get Wolf Hall?", "What's at The Hive?",
 
 SYNTH_SYSTEM = (
     "You are the Worcestershire Libraries assistant. Answer ONLY from the LIVE "
-    "DATA provided — never invent titles, times, prices, stops or facilities. Warm, "
-    "concise, British English. Keep the markdown links and the ✅/🔎 lines from the "
+    "DATA provided - never invent titles, times, prices, stops or facilities. Warm, "
+    "concise, British English. Keep the markdown links and the /lines from the "
     "data. Lead with what the person CAN do: if a service meets their need in a "
     "different way (e.g. they can't print AT home, but can send a job from home "
-    "and collect it at any branch), open with that — never with a bare 'no'. "
+    "and collect it at any branch), open with that - never with a bare 'no'. "
     "Keep any provenance footnote (e.g. 'From the Hive's own pages') intact. "
     "If the data doesn't answer it, say so and point to the source link.")
 
@@ -1423,55 +1423,55 @@ def synthesize_stream(question, rendered, model_id: str = None):
 
 
 HELP = (
-    "👋 I'm the **Worcestershire Libraries assistant**. I check the council site "
+    "I'm the **Worcestershire Libraries assistant**. I check the council site "
     "and catalogue *live* and can help you:\n\n"
-    "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
+    "- **Get a specific book** - which branch has it on the shelf *right now*, "
     "borrow the eBook tonight, or request it from another library service\n"
-    "- 🔄 **Account & loans** — renew books online, reserve or cancel items, "
+    "- **Account & loans** - renew books online, reserve or cancel items, "
     "return items, pay fines, lost or stolen card, lost/damaged item\n"
-    "- 🃏 **Lost, stolen or expired library card** — how to report it, get a replacement, renew membership\n"
-    "- 📶 **Library Wi-Fi** — free, no password needed, how to connect\n"
-    "- 🤖 **Self-service kiosks** — how to borrow and return items without staff\n"
-    "- 📦 **Inter-library loans** — requesting items not held in Worcestershire\n"
-    "- 🧒 **Children & family membership** — join at any age, free, under-16 needs a parent\n"
-    "- 📬 **Suggest a purchase** — ask the library to buy a specific title\n"
-    "- 📞 **Contact the library** — central phone number and how to get in touch\n"
-    "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
-    "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
-    "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
+    "- **Lost, stolen or expired library card** - how to report it, get a replacement, renew membership\n"
+    "- **Library Wi-Fi** - free, no password needed, how to connect\n"
+    "- **Self-service kiosks** - how to borrow and return items without staff\n"
+    "- **Inter-library loans** - requesting items not held in Worcestershire\n"
+    "- **Children & family membership** - join at any age, free, under-16 needs a parent\n"
+    "- **Suggest a purchase** - ask the library to buy a specific title\n"
+    "- **Contact the library** - central phone number and how to get in touch\n"
+    "- **Ask for a Book** - free personalised reading recommendations from a librarian\n"
+    "- **Branch hours, 'open now?', facilities** - toilets, parking, study space\n"
+    "- **The Hive** (Worcester) - archives & archaeology, study spaces, room "
     "hire, open 8:30am–10pm daily\n"
-    "- 🚐 **Mobile library** times for your village\n"
-    "- 🏠 **Library Service at Home** — free home delivery for those who can't visit\n"
-    "- 📅 **What's on** this week\n"
-    "- 💻 **Free online** — newspapers (PressReader), eBooks (BorrowBox), family history (Ancestry), "
+    "- **Mobile library** times for your village\n"
+    "- **Library Service at Home** - free home delivery for those who can't visit\n"
+    "- **What's on** this week\n"
+    "- **Free online** - newspapers (PressReader), eBooks (BorrowBox), family history (Ancestry), "
     "the OED, Oxford Reference, BFI films and more\n"
-    "- 🖥️ **Computers & digital skills** — free public computers, Wi-Fi, and digital skills support\n"
-    "- 🖨️ **Printing, photocopying & scanning** — Print Your Way from your phone, "
+    "- **Computers & digital skills** - free public computers, Wi-Fi, and digital skills support\n"
+    "- **Printing, photocopying & scanning** - Print Your Way from your phone, "
     "or walk-up copying/scanning in-branch\n"
-    "- 🗓️ **Library closures & bank holidays** — 2026 closing dates and planned closures\n"
-    "- ♿ **Building accessibility** — step-free, hearing loops, accessible toilets\n"
-    "- 🏢 **Room hire** — meeting rooms at libraries across the county\n"
-    "- 📖 **Reading Well** — free curated books for mental health and wellbeing\n"
-    "- 📖 **Book clubs & reading groups** — at various branches, free to join\n"
-    "- 🙋 **Volunteering, job clubs & adult learning** — free employment support "
+    "- **Library closures & bank holidays** - 2026 closing dates and planned closures\n"
+    "- **Building accessibility** - step-free, hearing loops, accessible toilets\n"
+    "- **Room hire** - meeting rooms at libraries across the county\n"
+    "- **Reading Well** - free curated books for mental health and wellbeing\n"
+    "- **Book clubs & reading groups** - at various branches, free to join\n"
+    "- **Volunteering, job clubs & adult learning** - free employment support "
     "and skills courses\n"
-    "- 👧 **Children's services** — Storytime, Bounce and Rhyme, the Summer Reading Challenge\n"
-    "- 🎧 **Teens & young adults** — YA fiction, free eBooks/audiobooks via BorrowBox, "
+    "- **Children's services** - Storytime, Bounce and Rhyme, the Summer Reading Challenge\n"
+    "- **Teens & young adults** - YA fiction, free eBooks/audiobooks via BorrowBox, "
     "teen volunteering, Libraries Unlocked for 15+\n"
-    "- 🏫 **School & group visits** — arrange a class visit or library tour\n"
-    "- ♿ **Accessible formats** — large print, eAudiobooks, talking newspapers, "
+    "- **School & group visits** - arrange a class visit or library tour\n"
+    "- **Accessible formats** - large print, eAudiobooks, talking newspapers, "
     "Braille and specialist services\n"
-    "- 📱 **Library apps** — BorrowBox, PressReader, and your account on mobile\n"
-    "- ☕ **Warm spaces** — free, no membership needed\n"
-    "- 🌐 **Multilingual resources** — books and digital content in 60+ languages\n"
-    "- 🏘️ **Community noticeboards** — local groups, signposting and community info\n\n"
-    "_Answers come from official sources — the council site and catalogue "
-    "checked live, plus every page of the Hive's own site — and each answer "
+    "- **Library apps** - BorrowBox, PressReader, and your account on mobile\n"
+    "- **Warm spaces** - free, no membership needed\n"
+    "- **Multilingual resources** - books and digital content in 60+ languages\n"
+    "- **Community noticeboards** - local groups, signposting and community info\n\n"
+    "_Answers come from official sources - the council site and catalogue "
+    "checked live, plus every page of the Hive's own site - and each answer "
     "names its source._")
 
 
 # --------------------------------------------------------------------------- #
-# Chat handler — yields (answer_text, chips_or_None)
+# Chat handler - yields (answer_text, chips_or_None)
 # --------------------------------------------------------------------------- #
 
 def respond(message, history, model_label: str = None):
@@ -1495,7 +1495,7 @@ def respond(message, history, model_label: str = None):
         raw = TOOLS[tool]["fn"](args)
     except Exception as e:
         tr.step("tool_call", name=tool, ok=False, error=str(e)).finish("", []).save()
-        yield (f"Sorry — I couldn't reach the library source just now. "
+        yield (f"Sorry - I couldn't reach the library source just now. "
                f"Please try again in a moment."), None
         return
     rendered = RENDER[tool](raw)
@@ -1531,7 +1531,7 @@ def respond(message, history, model_label: str = None):
     checked = raw.get("checked", "")
     label = ("page-level KB" if tool == "hive_info" and raw.get("as_of")
              else "**live**")
-    footer = (f"\n\n<sub>🔎 Checked {label}"
+    footer = (f"\n\n<sub>Checked {label}"
               + (f" · {checked}" if checked else "")
               + f" · tool `{tool}` ({how})"
               + (f" · [source]({source})" if source else "") + "</sub>")
@@ -1552,14 +1552,14 @@ def respond(message, history, model_label: str = None):
 
 CSS = """
 :root { --wcc:#0a7d78; --wcc-dark:#075a56; }
-.gradio-container { max-width: 940px !important; margin: auto !important;
+.gradio-container { max-width: 940px!important; margin: auto!important;
   font-family:'Segoe UI', system-ui, sans-serif; }
 #hero { background:linear-gradient(135deg,var(--wcc),var(--wcc-dark)); color:#fff;
   padding:22px 26px; border-radius:16px; margin-bottom:12px;
   box-shadow:0 6px 20px rgba(7,90,86,.25); }
 #hero h1 { margin:0; font-size:1.5rem; }
 #hero p { margin:.4rem 0 0; opacity:.92; font-size:.93rem; }
-#hero .live { display:inline-block; background:#fff; color:var(--wcc-dark);
+#hero.live { display:inline-block; background:#fff; color:var(--wcc-dark);
   font-weight:700; font-size:.7rem; padding:2px 9px; border-radius:999px;
   margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; }
 footer { visibility:hidden; }
@@ -1568,16 +1568,16 @@ footer { visibility:hidden; }
 
 
 def build_demo():
-    with gr.Blocks(title="Worcestershire Libraries — Live Assistant") as demo:
+    with gr.Blocks(title="Worcestershire Libraries - Live Assistant") as demo:
         gr.HTML("<div id='hero'><span class='live'>● live data</span>"
-                "<h1>Worcestershire Libraries — Live Assistant</h1>"
+                "<h1>Worcestershire Libraries - Live Assistant</h1>"
                 "<p>Exactly where to get the book you want, everything The Hive "
-                "offers, mobile library, events, printing and what's free online — "
+                "offers, mobile library, events, printing and what's free online - "
                 "from the council site, catalogue & every Hive page, with exactly "
                 "what you need to sign up.</p></div>")
 
         chat = gr.Chatbot(height=460, show_label=False,
-                          placeholder="📚 Ask me anything about your local library…",
+                          placeholder="Ask me anything about your local library…",
                           elem_classes=["prose"])
         with gr.Row():
             box = gr.Textbox(placeholder="e.g. When does the mobile library visit Abberley?",
@@ -1602,15 +1602,15 @@ def build_demo():
              "When does the mobile library visit Abberley?",
              "Can I read newspapers for free?",
              "Can I watch old British TV programmes for free?",
-             "I can't get to the library — can books be delivered?",
+             "I can't get to the library - can books be delivered?",
              "Can I book a computer at the library?",
              "How do I access the Oxford English Dictionary?",
              "Are there books to help with mental health?",
              "How do I join the Summer Reading Challenge?",
              "Can I hire a meeting room at my local library?",
              "Can I volunteer at the library?",
-             "I need help getting online — can the library help?",
-             "I forgot my library PIN — what do I do?",
+             "I need help getting online - can the library help?",
+             "I forgot my library PIN - what do I do?",
              "Are there adult learning courses at the library?",
              "Is there a book club at my local library?",
              "Can I donate books to the library?",
@@ -1619,11 +1619,11 @@ def build_demo():
              "Do you have books for people with visual impairments?",
              "How do I change my address on my library account?",
              "Is there a Youth Hub at The Hive?",
-             "I've lost my library card — what do I do?",
+             "I've lost my library card - what do I do?",
              "Is the library open on bank holidays?",
              "Are there any dementia-friendly activities at the library?",
              "Do you have activities for pre-school children?",
-             "My library card has expired — how do I renew it?",
+             "My library card has expired - how do I renew it?",
              "How do I connect to the library Wi-Fi?",
              "Can you get a book from another library service?",
              "How do I use the self-service machine to borrow books?",
@@ -1643,18 +1643,18 @@ def build_demo():
              "Can local groups display notices at the library?"],
             inputs=box, label="Try one")
 
-        with gr.Accordion("⚙️ Model", open=False):
+        with gr.Accordion("Model", open=False):
             model_dd = gr.Dropdown(
                 choices=MODEL_LABELS,
                 value=DEFAULT_LABEL,
                 label="Small model",
-                info=("Switch between sponsor & achievement models — all run via "
+                info=("Switch between sponsor & achievement models - all run via "
                       "HF Inference API. Keyword routing works without any model."),
                 interactive=bool(HF_TOKEN),
             )
 
         if not HF_TOKEN:
-            gr.Markdown("> ⚠️ No `HF_TOKEN` set — **no-LLM / offgrid mode**: "
+            gr.Markdown("> No `HF_TOKEN` set - **no-LLM / offgrid mode**: "
                         "keyword routing returns the raw live data (fully working, "
                         "no external AI API). Add an `HF_TOKEN` secret for "
                         "conversational phrasing and model switching.")
@@ -1676,7 +1676,7 @@ def build_demo():
             return "", (hist or []) + [{"role": "user", "content": label}], *hide3()
 
         def bot_turn(hist, model_label):
-            if not hist or hist[-1]["role"] != "user":
+            if not hist or hist[-1]["role"]!= "user":
                 yield hist, *hide3()
                 return
             msg = _content_text(hist[-1]["content"])

@@ -1,13 +1,13 @@
 name: Sync to Hugging Face Space
 
 # Pushes this repo's contents to the Hugging Face Space on every commit to main.
-# Requires one GitHub secret:  HF_TOKEN  (a write-scoped token with access to the
-# build-small-hackathon org).  Add it with:  gh secret set HF_TOKEN
+# Requires one GitHub secret: HF_TOKEN (a write-scoped token with access to the
+# build-small-hackathon org). Add it with: gh secret set HF_TOKEN
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:   # lets you trigger a sync manually from the Actions tab
+  workflow_dispatch: # lets you trigger a sync manually from the Actions tab
 
 concurrency:
   group: sync-hf
@@ -52,7 +52,7 @@ jobs:
               delete_patterns=["*.py", "*.pyc", "__pycache__/**",
                                "**/__pycache__/**"],
           )
-          print("✓ Synced to", REPO)
+          print("Synced to", REPO)
 
           # Uploading alone doesn't guarantee a fresh boot: a Space that is
           # paused or stuck in a build/runtime error keeps serving the old
@@ -61,5 +61,5 @@ jobs:
           runtime = api.get_space_runtime(REPO)
           print("Space stage before restart:", runtime.stage)
           api.restart_space(REPO, factory_reboot=True)
-          print("✓ Requested factory reboot of", REPO)
+          print("Requested factory reboot of", REPO)
           PY

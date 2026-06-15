@@ -1331,6 +1331,89 @@ CARD_EXPIRED = {
 }
 
 
+CHILDREN_MEMBERSHIP = {
+    "summary": (
+        "Children can join Worcestershire Libraries at any age — even as babies! "
+        "Membership is completely free and gives access to the full range of children's "
+        "books, eBooks, audiobooks, Storytime, Rhymetime and the Summer Reading Challenge. "
+        "Children under 16 need a parent or guardian to sign the membership form."
+    ),
+    "what_you_need": (
+        "For children under 16: a parent or guardian must be present and sign the form. "
+        "Bring the child's name and your home address — proof of address may be requested. "
+        "For 16- and 17-year-olds: can join independently with proof of address. "
+        "Membership is free for all ages."
+    ),
+    "how_to": [
+        "Visit any Worcestershire library with the child — staff sign you up on the spot "
+        "in a few minutes, and the card is usually ready the same day.",
+        f"Or [join online]({JOIN_URL}) — a physical card is posted out (or collect in branch).",
+        f"**Instant digital membership** is also free and available online right now — "
+        f"unlocks [BorrowBox]({BORROWBOX}) eBooks and audiobooks immediately. "
+        "Perfect while the physical card arrives.",
+    ],
+    "also_see": (
+        f"Once joined, look out for **Storytime** and **Rhymetime** — free weekly sessions "
+        f"at many branches. The **[Summer Reading Challenge]({SUMMER_READING_URL})** "
+        "runs July–September and rewards children for reading six library books."
+    ),
+    "url": JOIN_URL,
+}
+
+SUGGEST_PURCHASE = {
+    "summary": (
+        "If the library doesn't stock a book or item you'd like to borrow, you can "
+        "suggest that the library buys it. Library staff review all suggestions and "
+        "purchase titles that fit the collection — popular suggestions are given priority."
+    ),
+    "what_you_need": (
+        "No membership required to make a purchase suggestion. If the library orders the "
+        "item, you'll need a free library card to borrow it when it arrives."
+    ),
+    "how_to": [
+        f"Use the **[Ask for a Book form]({ASK_FOR_A_BOOK_URL})** — in the free-text "
+        "field, explain that you'd like the library to stock a specific title. "
+        "Include the title, author, publisher and ISBN if possible.",
+        "Or speak to staff at any library branch — they can note your suggestion on the "
+        "spot and pass it to the stock team.",
+        "You'll be contacted once a decision has been made. If the library orders it, "
+        "you'll often be first on the reservation list.",
+    ],
+    "also_see": (
+        f"Need it sooner? If another library service holds it, staff may be able to "
+        f"arrange an **inter-library loan** (a small charge usually applies — ask in any branch). "
+        f"Or check [BorrowBox]({BORROWBOX}) tonight — thousands of eBooks and audiobooks "
+        "are available free with your card."
+    ),
+    "url": ASK_FOR_A_BOOK_URL,
+}
+
+LIBRARY_CONTACT = {
+    "summary": (
+        f"The main Worcestershire Libraries enquiry line is **{LIBRARY_PHONE}** — "
+        "for general questions, computer bookings, Libraries Unlocked inductions, "
+        "mobile library enquiries and any other library service question."
+    ),
+    "how_to": [
+        f"📞 **Phone:** **{LIBRARY_PHONE}** — during staffed library hours "
+        "(hours vary by branch; most are open Monday–Saturday).",
+        f"🌐 **Online:** Browse the "
+        f"[Worcestershire Libraries website]({GOV}/council-services/libraries) — "
+        "each service page has relevant contact details and online forms.",
+        f"📍 **In person:** Drop in to any "
+        f"[Worcestershire library branch]({GOV}/council-services/libraries/find-library) "
+        "during staffed hours — staff can answer most questions on the spot.",
+        f"🔑 **Account queries:** Sign in at [your library account]({ACCOUNT_URL}) "
+        "to manage loans, reservations and PIN online, any time.",
+    ],
+    "also_see": (
+        "For a specific branch phone number and opening hours, ask me "
+        "'Is [branch name] library open?' or 'What are [branch] library hours?'."
+    ),
+    "url": f"{GOV}/council-services/libraries",
+}
+
+
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
@@ -1442,6 +1525,30 @@ def account_and_loans(query: str | None = None) -> dict:
                               "daisy format", "daisy book", "rnib talking")):
         out["focus"] = "accessible_formats"
         out["accessible_formats"] = ACCESSIBLE_FORMATS
+    elif (re.search(r"\b(baby|infant|child|children|kid|kids|toddler|junior|teen|"
+                    r"teenager|youth|family)\b", q)
+          and any(w in q for w in ("join", "member", "membership", "card",
+                                   "sign up", "sign-up", "register", "get a card",
+                                   "get their card", "get a library"))):
+        out["focus"] = "child_membership"
+        out["child_membership"] = CHILDREN_MEMBERSHIP
+    elif any(w in q for w in ("library buy", "library stock", "library purchase",
+                               "library order this", "ask library to buy",
+                               "suggest purchase", "suggest a title",
+                               "suggest the library", "buy it for the library",
+                               "buy this for the library", "buy a copy for the library",
+                               "request library buy", "want library to buy",
+                               "library get this book", "wish list")):
+        out["focus"] = "suggest_purchase"
+        out["suggest_purchase"] = SUGGEST_PURCHASE
+    elif any(w in q for w in ("contact library", "library contact", "library phone",
+                               "library telephone", "library helpline", "library enquir",
+                               "library email", "speak to library", "ring library",
+                               "call library", "how do i contact", "how can i contact",
+                               "general enquiry", "general enquiries", "reach library",
+                               "library number", "main number", "enquiry line")):
+        out["focus"] = "library_contact"
+        out["library_contact"] = LIBRARY_CONTACT
     else:
         out["focus"] = "general"
 
@@ -1479,6 +1586,12 @@ def account_and_loans(query: str | None = None) -> dict:
         out.setdefault("ill_service", ILL_SERVICE)
     if out["focus"] == "card_expired":
         out.setdefault("card_expired", CARD_EXPIRED)
+    if out["focus"] == "child_membership":
+        out.setdefault("child_membership", CHILDREN_MEMBERSHIP)
+    if out["focus"] == "suggest_purchase":
+        out.setdefault("suggest_purchase", SUGGEST_PURCHASE)
+    if out["focus"] == "library_contact":
+        out.setdefault("library_contact", LIBRARY_CONTACT)
 
     return out
 

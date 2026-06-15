@@ -1474,6 +1474,27 @@ HELP = (
 # Chat handler - yields (answer_text, chips_or_None)
 # --------------------------------------------------------------------------- #
 
+# Strip em-dashes and emoji from anything shown in the UI. The model itself
+# emits em-dashes/emoji and live council/catalogue text can too, so static file
+# cleanup is not enough -- this guarantees a clean UI whatever the source.
+# Typographic arrows (→ ← in the trace) and · ● £ … are deliberately kept.
+_EMOJI_RE = re.compile(
+    "(?:[\U0001F000-\U0001FAFF☀-➿⬀-⯿]"
+    "|[←-⇿⌀-⏿™ℹⓂ〰〽㊗㊙](?=️))"
+    "[️‍\U0001F3FB-\U0001F3FF⃣]*"
+)
+
+
+def _strip_decor(s: str) -> str:
+    if not s:
+        return s
+    s = s.replace("—", "-")              # em-dash -> hyphen
+    s = _EMOJI_RE.sub("", s)                  # emoji clusters
+    s = re.sub("[️‍⃣]", "", s)  # orphan modifiers
+    s = re.sub(r"(?<=\S)  +", " ", s)         # collapse interior double spaces
+    return s
+
+
 def respond(message, history, model_label: str = None):
     model_id = MODEL_IDS.get(model_label) or MODEL_ID
     message = (message or "").strip()
@@ -1505,7 +1526,7 @@ def respond(message, history, model_label: str = None):
     t2 = time.time()
     answer = ""
     for partial in synthesize_stream(message, rendered, model_id=model_id):
-        answer = partial
+        answer = _strip_decor(partial)
         yield answer, None
     tr.step("synthesis", model=model_id, ms=_ms(t2))
 
@@ -1643,7 +1664,7 @@ def build_demo():
              "Can local groups display notices at the library?"],
             inputs=box, label="Try one")
 
-        with gr.Accordion("Model", open=False):
+        with gr.Accordion("Model (Llama / MiniCPM / Qwen)", open=True):
             model_dd = gr.Dropdown(
                 choices=MODEL_LABELS,
                 value=DEFAULT_LABEL,

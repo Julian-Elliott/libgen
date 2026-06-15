@@ -1,18 +1,18 @@
 """
-build_kb.py — crawl the *entire* Worcestershire Libraries section of
+build_kb.py - crawl the *entire* Worcestershire Libraries section of
 worcestershire.gov.uk and build one current, reliable knowledge base.
 
 Output: library_kb.json with three parts:
-  • services    — every library service/content page: summary + WHAT YOU NEED
+  • services - every library service/content page: summary + WHAT YOU NEED
                   to sign up (eligibility) + how-to steps + source URL
-  • branches    — each library: address, day-by-day hours (core + Libraries
-                  Unlocked), facilities (toilets, parking, cafe, wifi ...)
-  • online_hub  — each online resource (BorrowBox, Ancestry ...) + what you need
+  • branches - each library: address, day-by-day hours (core + Libraries
+                  Unlocked), facilities (toilets, parking, cafe, wifi...)
+  • online_hub - each online resource (BorrowBox, Ancestry...) + what you need
 
-Run:  python build_kb.py      (re-run any time to refresh — it's all live)
+Run: python build_kb.py (re-run any time to refresh - it's all live)
 
 We only ever read worcestershire.gov.uk (the council's own pages). We never
-touch thehiveworcester.org — that content is unreliable / out of date.
+touch thehiveworcester.org - that content is unreliable / out of date.
 """
 
 from __future__ import annotations
@@ -29,9 +29,9 @@ GOV = "https://www.worcestershire.gov.uk"
 SITEMAP = f"{GOV}/sitemap.xml"
 HEADERS = {"User-Agent": "WorcsLibrariesKB/2.0 (hackathon; +council pages only)"}
 TIMEOUT = 20
-DELAY = 0.25  # be polite
+DELAY = 0.25 # be polite
 
-# Pages that are not user-facing services — skip from the KB.
+# Pages that are not user-facing services - skip from the KB.
 SKIP = re.compile(
     r"/events/|/mobile-library/|privacy-notice|byelaws|reading-pledge-wall|"
     r"worcestershires?-library-stories|/library-stories|service-disruption",
@@ -56,9 +56,9 @@ FACILITY_VOCAB = {
 
 # Sentence triggers that signal eligibility / "what you need to sign up".
 NEED_TRIGGERS = re.compile(
-    r"\b(you('| wi)?ll need|you need|to (join|use|access|register|sign ?up)|"
+    r"\b(you('| wi)?ll need|you need|to (join|use|access|register|sign?up)|"
     r"who can|available to|free (to|for)|eligible|membership|library card|"
-    r"\bPIN\b|register|sign ?up|induction|aged \d+|residents?|anyone|upgrade)\b",
+    r"\bPIN\b|register|sign?up|induction|aged \d+|residents?|anyone|upgrade)\b",
     re.I,
 )
 # Time-bound notices that LOOK like eligibility but aren't (drop them).
@@ -67,7 +67,7 @@ NEED_EXCLUDE = re.compile(
     r"\b(january|february|march|april|may|june|july|august|september|october|"
     r"november|december)\b|\b20\d\d\b", re.I,
 )
-# Dated / campaign pages — tag as seasonal so they're not shown as standing services.
+# Dated / campaign pages - tag as seasonal so they're not shown as standing services.
 SEASONAL = re.compile(
     r"summer-reading-challenge|world-book-day|steamfest|christmas|halloween|"
     r"national-year|young-poet|get-school-ready|reading-pledge|world book day|"
@@ -107,7 +107,7 @@ def discover() -> list[str]:
 
 def main_text(soup: BeautifulSoup):
     main = soup.find("main") or soup.find(id="main-content") or soup
-    for bad in main.select("nav, header, footer, script, style, .breadcrumb, form"):
+    for bad in main.select("nav, header, footer, script, style,.breadcrumb, form"):
         bad.decompose()
     return main
 
@@ -151,7 +151,7 @@ def title_of(soup, url) -> str:
 
 
 def parse_hours(main) -> dict[str, dict]:
-    """{Day: {"staffed": "...", "unlocked": "..."}} — handles both the
+    """{Day: {"staffed": "...", "unlocked": "..."}} - handles both the
     Libraries-Unlocked column table and plain 'Day: hours' text."""
     # 1) structured table (Libraries Unlocked branches)
     for table in main.find_all("table"):
@@ -246,7 +246,7 @@ def build() -> dict:
         try:
             soup = BeautifulSoup(_get(u), "html.parser")
         except Exception as e:
-            print(f"  ! {u} -> {e}")
+            print(f"! {u} -> {e}")
             continue
         if re.search(r"/find-library/[a-z]", u):
             branches.append(parse_branch(soup, u))
@@ -255,7 +255,7 @@ def build() -> dict:
         else:
             services.append(parse_service(soup, u))
         if i % 15 == 0:
-            print(f"  ...{i}/{len(urls)}")
+            print(f"...{i}/{len(urls)}")
         time.sleep(DELAY)
 
     return {
@@ -271,15 +271,15 @@ def build() -> dict:
     }
 
 
-# Curated cross-cutting "what you need" matrix — the one view no single page
+# Curated cross-cutting "what you need" matrix - the one view no single page
 # gives, verified against the council pages crawled here.
 MEMBERSHIP_TIERS = [
     {"tier": "Digital membership",
-     "what_you_need": "Just a Worcestershire postcode — sign up online in minutes, no card needed.",
+     "what_you_need": "Just a Worcestershire postcode - sign up online in minutes, no card needed.",
      "unlocks": "Free eBooks, eAudiobooks, eMagazines & eNewspapers (BorrowBox, PressReader), Times Digital Archive, Oxford University Press.",
      "url": f"{GOV}/council-services/libraries/online-library-hub/digital-library-membership"},
     {"tier": "Full membership",
-     "what_you_need": "Free for everyone — join online then collect, or join in person at any library. Gives you a library card number + PIN.",
+     "what_you_need": "Free for everyone - join online then collect, or join in person at any library. Gives you a library card number + PIN.",
      "unlocks": "Borrow physical books, reserve/renew, use public computers, Print Your Way, the mobile library, and the full online hub.",
      "url": f"{GOV}/council-services/libraries/your-library-membership/join-library"},
     {"tier": "Libraries Unlocked",

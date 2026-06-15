@@ -1,12 +1,12 @@
 """
-trace.py — capture a structured agent trace per turn.
+trace.py - capture a structured agent trace per turn.
 
 Three payoffs:
-  • 📡 Open Trace badge — every answer's reasoning is logged to traces.jsonl in a
+  • Open Trace badge - every answer's reasoning is logged to traces.jsonl in a
     shareable schema and can be pushed to the Hub.
-  • 🤖 Best Agent — the trace is also shown in-chat as a "How I answered" panel,
+  • Best Agent - the trace is also shown in-chat as a "How I answered" panel,
     so the agent's route → tool → retrieve → synthesise loop is visible.
-  • 📊 Behaviour analytics — when TRACE_DATASET is set, every turn is persisted to
+  • Behaviour analytics - when TRACE_DATASET is set, every turn is persisted to
     a Hugging Face Dataset so the data survives the Space's reboots. That's the
     raw material for iterating on real usage: which questions fall through to the
     help text (`route.tool == "none"`), when the LLM router fails over to keyword
@@ -20,7 +20,7 @@ Persistence is **opt-in and best-effort**: set `TRACE_DATASET` (e.g.
 "your-user/wpl-traces") and have a write-scoped `HF_TOKEN`; otherwise it's a
 no-op and only the local traces.jsonl is written. Uploads run on a single
 background worker (so they never add latency to an answer and never conflict on
-the dataset's git history) and any failure is swallowed — analytics must never
+the dataset's git history) and any failure is swallowed - analytics must never
 break the assistant. The dataset is created **private** (questions are user
 input and may contain personal detail).
 """
@@ -84,17 +84,17 @@ class Trace:
 
     def to_markdown(self) -> str:
         r = self.d["route"]
-        steps = " → ".join(s["type"] for s in self.d["steps"]) or "—"
+        steps = " → ".join(s["type"] for s in self.d["steps"]) or "-"
         src = self.d["sources"][0] if self.d["sources"] else ""
         srcline = f" · [source]({src})" if src else ""
         return (
-            "\n\n<details><summary>🔎 How I answered (agent trace)</summary>\n\n"
+            "\n\n<details open><summary>How I answered (agent trace)</summary>\n\n"
             f"- **Route:** `{r.get('tool','?')}` via {r.get('router','?')} "
             f"({r.get('latency_ms',0)} ms)\n"
             f"- **Steps:** {steps}\n"
             f"- **Model:** {self.d['model']} · **Total:** {self.d['total_ms']} ms · "
             f"{self.d['ts']}{srcline}\n\n"
-            "<sub>Logged openly to `traces.jsonl` for the 📡 Open Trace badge.</sub>\n"
+            "<sub>Logged openly to `traces.jsonl` for the Open Trace badge.</sub>\n"
             "</details>"
         )
 
@@ -116,7 +116,7 @@ def push_to_hub(repo_id: str, token: str | None = None, path: str = TRACE_PATH):
 
 
 # --------------------------------------------------------------------------- #
-# Continuous persistence — one small file per turn, on a single background
+# Continuous persistence - one small file per turn, on a single background
 # worker. Per-turn files (never an append) sidestep read-modify-write races and
 # can't lose earlier turns when the Space is rebooted, since each is its own
 # object in the dataset repo.
@@ -132,7 +132,7 @@ def _worker():
     from huggingface_hub import HfApi
 
     api = HfApi(token=_HF_TOKEN)
-    try:  # idempotent; private because questions are user input
+    try: # idempotent; private because questions are user input
         api.create_repo(repo_id=TRACE_DATASET, repo_type="dataset",
                         private=True, exist_ok=True)
     except Exception:
@@ -148,7 +148,7 @@ def _worker():
                 repo_id=TRACE_DATASET, repo_type="dataset",
                 commit_message="add trace")
         except Exception:
-            pass  # best-effort: analytics must never break the assistant
+            pass # best-effort: analytics must never break the assistant
         finally:
             _queue.task_done()
 
@@ -170,6 +170,6 @@ def enqueue_trace(record: dict):
         return
     _ensure_worker()
     try:
-        _queue.put_nowait(dict(record))  # copy: caller may keep mutating
+        _queue.put_nowait(dict(record)) # copy: caller may keep mutating
     except queue.Full:
-        pass  # shed load rather than block or grow unboundedly
+        pass # shed load rather than block or grow unboundedly

@@ -1,18 +1,18 @@
 """
-build_hive_kb.py — crawl EVERY page of thehiveworcester.org into hive_kb.json.
+build_hive_kb.py - crawl EVERY page of thehiveworcester.org into hive_kb.json.
 
-The Hive is Worcester city's library — Europe's first joint university + public
-library — and its website is the only place much of its extended offer is
+The Hive is Worcester city's library - Europe's first joint university + public
+library - and its website is the only place much of its extended offer is
 described (Explore the Past archives & archaeology, 800+ study spaces, room
 hire, BIPC business support, the Youth Hub...). We crawl it page-by-page and
 record the EXACT offering of each page, with provenance on every fact.
 
 Provenance policy (the re-think of our old "never touch the Hive site" rule):
   • every page object carries its source URL + last_seen date
-  • whats-on.html is flagged static/under-construction by the site itself —
+  • whats-on.html is flagged static/under-construction by the site itself -
     live events still come from worcestershire.gov.uk
   • where the Hive site and the council site conflict (hours, prices,
-    membership), the COUNCIL page wins — answers must say which source they used
+    membership), the COUNCIL page wins - answers must say which source they used
 
 Output: hive_kb.json
   {generated, source, note, page_count, hive_profile, pages: [...]}
@@ -22,11 +22,11 @@ Each page: {url, title, section, summary, offerings[], what_you_need[],
             last_seen}
 
 `hive_profile.extended_capabilities` is a CURATED list (capability, detail,
-source) — re-crawling refreshes every page but PRESERVES the curated list from
+source) - re-crawling refreshes every page but PRESERVES the curated list from
 the existing hive_kb.json unless you pass --rebuild-capabilities, in which case
 a best-effort automatic list is generated for you to re-curate.
 
-Run:  python build_hive_kb.py            (refresh pages, keep curated profile)
+Run: python build_hive_kb.py (refresh pages, keep curated profile)
       python build_hive_kb.py --rebuild-capabilities
 """
 
@@ -75,9 +75,9 @@ SECTION_HINTS = {
 }
 
 NEED_TRIGGERS = re.compile(
-    r"\b(you('| wi)?ll need|you need|to (join|use|access|book|register|sign ?up)|"
+    r"\b(you('| wi)?ll need|you need|to (join|use|access|book|register|sign?up)|"
     r"who can|available to|free (to|for)|eligible|membership|library card|"
-    r"\bPIN\b|register|sign ?up|aged \d+|bring|photo(graphic)? ID|proof of)\b", re.I)
+    r"\bPIN\b|register|sign?up|aged \d+|bring|photo(graphic)? ID|proof of)\b", re.I)
 
 HOURS_RE = re.compile(
     r"((?:open\s+)?(?:from\s+)?\d{1,2}[:.]\d{2}\s*(?:am|pm)?\s*(?:-|to|–)\s*"
@@ -113,7 +113,7 @@ def section_of(url: str, referrer_section: str) -> str:
 def main_text(soup: BeautifulSoup):
     main = (soup.find("main") or soup.find(id="content")
             or soup.find(class_="container") or soup.body or soup)
-    for bad in main.select("nav, header, footer, script, style, .navbar, .carousel"):
+    for bad in main.select("nav, header, footer, script, style,.navbar,.carousel"):
         bad.decompose()
     return main
 
@@ -154,7 +154,7 @@ def extract_page(url: str, html: str, referrer_section: str) -> dict:
             break
 
     details = {}
-    if (m := HOURS_RE.search(blob)):
+    if (m:= HOURS_RE.search(blob)):
         details["hours"] = m.group(1).strip()
     prices = PRICE_RE.findall(blob)[:6]
     if prices:
@@ -162,7 +162,7 @@ def extract_page(url: str, html: str, referrer_section: str) -> dict:
     contact = PHONE_RE.findall(blob)[:2] + EMAIL_RE.findall(blob)[:3]
     if contact:
         details["contact"] = ", ".join(dict.fromkeys(contact))
-    if (m := LEVEL_RE.search(blob)):
+    if (m:= LEVEL_RE.search(blob)):
         details["location_in_building"] = m.group(1)
 
     links_out = sorted({a["href"] for a in main.find_all("a", href=True)
@@ -180,7 +180,7 @@ def extract_page(url: str, html: str, referrer_section: str) -> dict:
     if links_out:
         page["links_out"] = links_out
     if "whats-on" in url:
-        page["notes"] = ("Site flags this page as static/under construction — "
+        page["notes"] = ("Site flags this page as static/under construction - "
                          "use worcestershire.gov.uk for live events.")
     return page, soup
 
@@ -230,20 +230,20 @@ def main():
             if is_internal_page(u) and u not in done:
                 queue.append((u, page["section"]))
         if len(done) % 10 == 0:
-            print(f"  ...{len(done)} pages")
+            print(f"...{len(done)} pages")
         time.sleep(DELAY)
 
     pages = sorted(done.values(), key=lambda p: p["url"])
     profile = old_profile if (old_profile and not rebuild_caps) else {
         "name": "The Hive, Worcester",
         "extended_capabilities": auto_capabilities(pages),
-        "note": "Auto-generated — please re-curate against the pages.",
+        "note": "Auto-generated - please re-curate against the pages.",
     }
 
     out = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "source": HIVE,
-        "method": "requests BFS crawl, every internal .html page",
+        "method": "requests BFS crawl, every internal.html page",
         "note": ("Built page-by-page from thehiveworcester.org. Every fact "
                  "carries its source page. Where the Hive site and "
                  "worcestershire.gov.uk conflict (hours, prices, membership), "

@@ -1047,18 +1047,20 @@ JOB_CLUBS = {
 CHILDREN_SERVICES = {
     "summary": (
         "Worcestershire libraries run a wide range of free children's activities — "
-        "Storytime, Rhymetime, the Summer Reading Challenge, holiday events and more — "
-        "across branches and at The Hive."
+        "Storytime, Rhymetime, Bounce and Rhyme, the Summer Reading Challenge, "
+        "holiday events and more — across branches and at The Hive."
     ),
     "what_you_need": (
         "Most sessions are free and need no booking — just turn up. "
         "A few popular sessions may require advance booking; check the events listing."
     ),
     "highlights": [
-        "**Storytime & Rhymetime** — regular free sessions at many branches for babies, "
-        "toddlers and young children.",
+        "**Storytime** — free weekly sessions at many branches for children aged 2–6; "
+        "stories, songs and a craft activity.",
+        "**Rhymetime / Bounce and Rhyme** — free sessions for babies and toddlers "
+        "(typically 0–2 years), with nursery rhymes and movement songs. No booking needed at most branches.",
         "**Summer Reading Challenge** — the annual national reading challenge for "
-        "school-age children, free to join at any library during the summer holidays.",
+        "children aged 4–11, free to join at any library during the summer holidays.",
         "**Holiday activities** — special events, crafts and clubs throughout school holidays.",
         "**Children's library at The Hive** — a dedicated children's floor with a wide "
         "selection of books for all ages.",
@@ -1140,6 +1142,41 @@ BOOK_CLUBS = {
         "magazines — great for keeping up with reviews between meetings."
     ),
     "url": EVENTS_URL,
+}
+
+TEEN_SERVICES = {
+    "summary": (
+        "Worcestershire libraries have plenty for teenagers and young adults — "
+        "a Young Adult (YA) fiction section, free eBooks and audiobooks, "
+        "volunteering opportunities and extended access for 15+."
+    ),
+    "highlights": [
+        "**Young Adult (YA) fiction** — dedicated YA and teen sections at most branches, "
+        "covering YA fiction, graphic novels, manga and non-fiction for teens.",
+        f"**Free eBooks & audiobooks** — [BorrowBox]({BORROWBOX}) has a large YA catalogue "
+        "of ebooks and audiobooks. Borrow up to 4 of each, auto-return, no fines — "
+        "just a free library card.",
+        f"**Libraries Unlocked** — members aged 15+ can access participating libraries "
+        f"7 days a week, 8am–8pm, even when unstaffed. Requires a one-off induction at "
+        f"your branch. [Find out more]({UNLOCKED_URL})",
+        "**Summer Reading Challenge volunteering** — young people aged 13–24 can volunteer "
+        f"in libraries during the Summer Reading Challenge (July–September). Great for CVs "
+        f"and the Duke of Edinburgh's Award. [Volunteering details]({VOLUNTEERING_URL})",
+        "**Teen events** — creative writing, gaming, craft and quiz events run throughout "
+        f"the year at various branches. Check the [library events page]({EVENTS_URL}) for "
+        "what's on near you.",
+        f"**Youth Hub & Careers Hub at The Hive** (Worcester) — free careers advice, "
+        "apprenticeship guidance and support for young people. Ask me about 'The Hive' "
+        "for details.",
+    ],
+    "what_you_need": (
+        "Free library membership for most services — join online instantly or in any branch. "
+        f"Under-16s need a parent or guardian to sign up. [Join free]({JOIN_URL})"
+    ),
+    "url": READ_DISCOVER_URL,
+    "events_url": EVENTS_URL,
+    "borrowbox_url": BORROWBOX,
+    "unlocked_url": UNLOCKED_URL,
 }
 
 DONATIONS = {
@@ -1462,6 +1499,30 @@ LIBRARY_CONTACT = {
     "url": f"{GOV}/council-services/libraries",
 }
 
+LIBRARY_APP = {
+    "summary": (
+        "There is no single dedicated 'Worcestershire Libraries' app, but several "
+        "apps connect you to library services:"
+    ),
+    "apps": [
+        f"**BorrowBox** — the library's eBook and eAudiobook app. Free with your library "
+        f"card; search 'BorrowBox' in the App Store or Google Play, then log in with your "
+        f"card number and PIN. Browse thousands of eBooks and audiobooks from Worcestershire. "
+        f"[Get started]({BORROWBOX})",
+        "**PressReader** — free access to 7,000+ newspapers and magazines worldwide "
+        "(Guardian, Times, local titles and more). Log in with your library card number on "
+        f"the PressReader app or website. [PressReader via Online Hub]({ONLINE_HUB})",
+        f"**Your library account (mobile browser)** — manage loans, reservations and renewals "
+        f"at [your library account]({ACCOUNT_URL}) — works on any smartphone browser.",
+        f"**Libraries Unlocked** — 15+ members use their smartphone to unlock participating "
+        f"libraries outside staffed hours. A one-off in-person induction is required first. "
+        f"[Libraries Unlocked]({UNLOCKED_URL})",
+    ],
+    "url": ONLINE_HUB,
+    "borrowbox_url": BORROWBOX,
+    "account_url": ACCOUNT_URL,
+}
+
 
 LIBRARY_CLOSURES = {
     "summary": (
@@ -1660,6 +1721,16 @@ def account_and_loans(query: str | None = None) -> dict:
                                "accessible toilet", "accessible parking", "disabled parking")):
         out["focus"] = "building_accessibility"
         out["building_accessibility"] = BUILDING_ACCESSIBILITY
+    elif any(w in q for w in ("teen", "teenager", "young adult", "ya books", "ya fiction",
+                               "ya section", "young people library", "youth service",
+                               "teen service", "teen activit", "teen event")):
+        out["focus"] = "teen_services"
+        out["teen_services"] = TEEN_SERVICES
+    elif any(w in q for w in ("library app", "app for library", "mobile app", "phone app",
+                               "borrowbox app", "pressreader app", "library on my phone",
+                               "library on phone", "download library")):
+        out["focus"] = "library_app"
+        out["library_app"] = LIBRARY_APP
     else:
         out["focus"] = "general"
 
@@ -1707,6 +1778,10 @@ def account_and_loans(query: str | None = None) -> dict:
         out.setdefault("library_closures", LIBRARY_CLOSURES)
     if out["focus"] == "building_accessibility":
         out.setdefault("building_accessibility", BUILDING_ACCESSIBILITY)
+    if out["focus"] == "teen_services":
+        out.setdefault("teen_services", TEEN_SERVICES)
+    if out["focus"] == "library_app":
+        out.setdefault("library_app", LIBRARY_APP)
 
     return out
 

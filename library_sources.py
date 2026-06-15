@@ -1282,8 +1282,8 @@ ACCESSIBLE_FORMATS = {
         f"if print is difficult. Borrow up to 4 at once, auto-return, no fines. "
         f"[Get BorrowBox]({BORROWBOX})",
         f"**Talking newspapers & magazines via PressReader** — listen to The Guardian, "
-        f"BBC Top Gear and 7,000+ titles with listen-to-article audio. Free with your "
-        f"card. [PressReader]({ONLINE_HUB})",
+        f"BBC Top Gear and 7,000+ titles with listen-to-article audio. "
+        f"Typically £9.99/month — included with your library card. [PressReader]({ONLINE_HUB})",
         "**RNIB resources & Listening Books** — library staff can advise on how to "
         "access RNIB Talking Books, the Listening Books service, and other "
         "specialist accessible reading formats. Ask at any branch.",
@@ -1418,7 +1418,7 @@ ILL_SERVICE = {
         "Items usually arrive within 2–4 weeks; you'll be notified when ready to collect.",
     ],
     "also_see": (
-        f"[BorrowBox eBooks and eAudiobooks]({BORROWBOX}) — free with your card, "
+        f"[BorrowBox eBooks and eAudiobooks]({BORROWBOX}) — no subscription needed, "
         "available tonight — often hold titles not in the physical collection. "
         f"The [Ask for a Book]({ASK_FOR_A_BOOK_URL}) service can also suggest "
         "alternatives you might enjoy."
@@ -1506,7 +1506,7 @@ SUGGEST_PURCHASE = {
         f"Need it sooner? If another library service holds it, staff may be able to "
         f"arrange an **inter-library loan** (a small charge usually applies — ask in any branch). "
         f"Or check [BorrowBox]({BORROWBOX}) tonight — thousands of eBooks and audiobooks "
-        "are available free with your card."
+        "included with your library card, no extra cost."
     ),
     "url": ASK_FOR_A_BOOK_URL,
 }
@@ -1542,10 +1542,10 @@ LIBRARY_APP = {
         "apps connect you to library services:"
     ),
     "apps": [
-        f"**BorrowBox** — the library's eBook and eAudiobook app. Free with your library "
-        f"card; search 'BorrowBox' in the App Store or Google Play, then log in with your "
-        f"card number and PIN. Browse thousands of eBooks and audiobooks from Worcestershire. "
-        f"[Get started]({BORROWBOX})",
+        f"**BorrowBox** — the library's eBook and eAudiobook app. A typical audiobook "
+        f"subscription is ~£15/month; yours at no extra cost with your library card. "
+        f"Search 'BorrowBox' in the App Store or Google Play, log in with your card number "
+        f"and PIN. [Get started]({BORROWBOX})",
         "**PressReader** — free access to 7,000+ newspapers and magazines worldwide "
         "(Guardian, Times, local titles and more). Log in with your library card number on "
         f"the PressReader app or website. [PressReader via Online Hub]({ONLINE_HUB})",
@@ -1650,7 +1650,8 @@ MULTILINGUAL_RESOURCES = {
     ),
     "what_we_offer": [
         f"**Newspapers & magazines in 60+ languages** via [PressReader]({ONLINE_HUB}) — "
-        "free with your library card. Includes Arabic, Chinese (Simplified & Traditional), "
+        "typically £9.99/month, included with your library card. "
+        "Includes Arabic, Chinese (Simplified & Traditional), "
         "French, German, Hindi, Polish, Portuguese, Spanish, Urdu and many more. "
         "Access at home or on library Wi-Fi.",
         "**Books in community languages** — Worcestershire Libraries stock books in a "

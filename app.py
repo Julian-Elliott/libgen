@@ -1301,15 +1301,15 @@ def value_receipt(tool, raw):
         if items:
             n = items[0].get("name", "").lower()
             if "pressreader" in n:
-                return "💷 _PressReader is typically **~£9.99/month** — free with your library card._"
+                return "💷 _PressReader is typically **~£9.99/month** — you pay nothing with a library card._"
             if "theory test" in n:
-                return "💷 _Theory Test Pro costs **£29.99** to buy — free with your library card._"
+                return "💷 _Theory Test Pro costs **£29.99** to buy — included in your free library card._"
             if "which" in n:
-                return "💷 _Which? subscription is **£10.99/month** — free with your library card._"
+                return "💷 _Which? costs **£10.99/month** to subscribe — not a penny with a library card._"
             if "borrowbox" in n or "ebook" in n or "audiobook" in n:
-                return "💷 _eBooks and audiobooks via BorrowBox are free — each would cost £9–£15 to buy._"
-        return ("💷 _Free with your card — a newspaper or eBook subscription is "
-                "**~£8–£12/month** you don't pay._")
+                return "💷 _eBooks and audiobooks run **£9–£15 each** to buy — £0 with a library card._"
+        return ("💷 _A newspaper or eBook subscription runs **~£8–£12/month** — "
+                "yours at no cost with a library card._")
     if tool == "printing_help":
         return "💷 _Far cheaper than a high-street print shop._"
     return ""
@@ -1328,7 +1328,7 @@ NUDGES = {
                        ["Home Library Service", "How do I join?", "Find my nearest library"]),
     "library_events": ("💡 Most events are free — just turn up.",
                        ["Children's events", "Do I need to book?", "Find my nearest library"]),
-    "online_hub": ("💡 It's free with your card — set up tonight from your sofa.",
+    "online_hub": ("💡 Worth **~£10/month** in subscriptions — £0 with a library card. Set up tonight.",
                    ["How do I sign up?", "What newspapers are there?", "BorrowBox limits"]),
     "libraries_unlocked": ("💡 It's free — just a quick one-off induction.",
                            ["How do I join the library?", "Is Malvern library open now?",

@@ -358,6 +358,13 @@ def keyword_route(q: str) -> tuple[str, dict]:
        re.search(r"\b(connect(ing)?|connection|password|log ?in|sign ?in|"
                  r"how (do|can|to)|guest|setup|set up|access)\b", t):
         return "account_and_loans", {"query": "wifi how to connect password access"}
+    # General library contact — direct enquiry about how to reach the service
+    if re.search(r"\bhow (do|can) i (contact|reach|call|speak to|get in touch with|"
+                 r"ring|get through to) (the |a |my |worcestershire )?librar|"
+                 r"\bwhat.{0,10}(library|libraries).{0,15}(phone|telephone|contact) number\b|"
+                 r"\b(library|libraries) (helpline|enquiry line|central number|main number)\b|"
+                 r"\bgeneral (library |libraries )?(enquiry|enquiries|contact|phone)\b", t):
+        return "account_and_loans", {"query": "contact library phone number enquiries general"}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
                  r"facilit|where is|near me|study space|wi-?fi|wireless|phone number|"
                  r"telephone|contact (details?|number)|email address|"
@@ -400,6 +407,27 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if (platform or re.search(r"\bnewspapers?|magazines?\b", t)
             or (media and online_ctx) or re.search(r"read\b.*\bfree", t)):
         return "online_hub", {"topic": q}
+    # Children / family joining — specific routing before generic membership catch-all
+    if re.search(r"\b(baby|infant|child|children|kid|kids|toddler|junior|teen|"
+                 r"teenager|youth|family)\b.{0,40}"
+                 r"\b(join|member|membership|card|sign.?up|register)\b|"
+                 r"\b(join|member|membership|card|sign.?up)\b.{0,40}"
+                 r"\b(baby|infant|child|children|kid|kids|toddler|junior|teen|"
+                 r"teenager|youth|family)\b|"
+                 r"\bcan (my|a|the) (baby|child|kid|teen|teenager|infant|toddler|junior|"
+                 r"young person) (join|borrow|use the library|get a card|sign up)\b|"
+                 r"\b(children'?s?|family|baby|junior|under.?16|under.?18).{0,20}"
+                 r"(library card|membership|member)\b", t):
+        return "account_and_loans", {"query": "child family join library membership card"}
+    # Suggest a book purchase — before catalogue catch-all
+    if re.search(r"\b(suggest|request|ask).{0,25}(library|you|council|them).{0,20}"
+                 r"(buys?|stocks?|orders?|purchases?|gets?)\b|"
+                 r"\bask (the |a )?library to (buys?|gets?|stocks?|orders?|purchases?)\b|"
+                 r"\b(buys?|gets?|stocks?|orders?|purchases?) (this|that|it|a copy) for the library\b|"
+                 r"\bhow (do|can) i suggest (a |the )?library.{0,30}(buys?|stocks?|orders?|gets?)\b|"
+                 r"\bcould (the|a) library (buys?|gets?|orders?|stocks?)\b|"
+                 r"\bwish.?list.{0,20}librar\b", t):
+        return "account_and_loans", {"query": "suggest purchase buy book library stock"}
     if re.search(r"\b(member|membership|join|library card|sign ?up|what do i need)\b", t):
         return "membership_help", {"service": q}
     # Dementia-friendly / memory activities — route to events with a focused query
@@ -923,6 +951,39 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Worcestershire Libraries]({ill['url']})")
         return "\n".join(out)
 
+    if focus == "child_membership" and r.get("child_membership"):
+        cm = r["child_membership"]
+        out = ["🧒 **Children's library membership — free at any age:**\n", cm["summary"], "\n"]
+        out.append(f"✅ **What you need:** {cm['what_you_need']}\n")
+        out.append("**How to join:**")
+        for i, step in enumerate(cm["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if cm.get("also_see"):
+            out.append(f"\n💡 _{cm['also_see']}_")
+        out.append(f"\n🔎 [Join the library — free]({cm['url']})")
+        return "\n".join(out)
+
+    if focus == "suggest_purchase" and r.get("suggest_purchase"):
+        sp = r["suggest_purchase"]
+        out = ["📬 **Suggest a book for the library to buy:**\n", sp["summary"], "\n"]
+        out.append(f"✅ **What you need:** {sp['what_you_need']}\n")
+        for i, step in enumerate(sp["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if sp.get("also_see"):
+            out.append(f"\n💡 _{sp['also_see']}_")
+        out.append(f"\n🔎 [Ask for a Book / suggest a purchase]({sp['url']})")
+        return "\n".join(out)
+
+    if focus == "library_contact" and r.get("library_contact"):
+        lc = r["library_contact"]
+        out = ["📞 **Contacting Worcestershire Libraries:**\n", lc["summary"], "\n"]
+        for step in lc["how_to"]:
+            out.append(f"- {step}")
+        if lc.get("also_see"):
+            out.append(f"\n💡 _{lc['also_see']}_")
+        out.append(f"\n🔎 [Worcestershire Libraries]({lc['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -1180,6 +1241,9 @@ HELP = (
     "- 📶 **Library Wi-Fi** — free, no password needed, how to connect\n"
     "- 🤖 **Self-service kiosks** — how to borrow and return items without staff\n"
     "- 📦 **Inter-library loans** — requesting items not held in Worcestershire\n"
+    "- 🧒 **Children & family membership** — join at any age, free, under-16 needs a parent\n"
+    "- 📬 **Suggest a purchase** — ask the library to buy a specific title\n"
+    "- 📞 **Contact the library** — central phone number and how to get in touch\n"
     "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
     "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
@@ -1361,7 +1425,10 @@ def build_demo():
              "My library card has expired — how do I renew it?",
              "How do I connect to the library Wi-Fi?",
              "Can you get a book from another library service?",
-             "How do I use the self-service machine to borrow books?"],
+             "How do I use the self-service machine to borrow books?",
+             "Can my baby join the library?",
+             "How do I suggest the library buys a specific book?",
+             "How do I contact the library service?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

@@ -1227,6 +1227,110 @@ LOST_CARD = {
 }
 
 
+WIFI_ACCESS = {
+    "summary": (
+        "Free Wi-Fi is available at all Worcestershire libraries — no password, "
+        "no login and no library card required. Just enable Wi-Fi on your device "
+        "and join the library guest network."
+    ),
+    "what_you_need": "Nothing — Wi-Fi is open to all visitors during staffed hours.",
+    "how_to": [
+        "Enable Wi-Fi on your device and look for the library's guest network — "
+        "the network name is usually posted on a sign in the branch.",
+        "Tap to connect — no password or login screen required.",
+        "Speed and time limits may apply; ask staff if you need longer or have "
+        "trouble connecting.",
+    ],
+    "also_see": (
+        f"Prefer a library computer? [Book a session online]({BOOK_COMPUTER_URL}) "
+        "or simply walk in — free at most branches. "
+        f"[Libraries Unlocked]({UNLOCKED_URL}) gives Wi-Fi access 8am–8pm Mon–Sat "
+        "even when the branch is unstaffed."
+    ),
+    "url": f"{GOV}/council-services/libraries",
+}
+
+SELF_SERVICE = {
+    "summary": (
+        "Most Worcestershire libraries have self-service kiosks where you can "
+        "borrow and return items without waiting for staff — quick and easy "
+        "using your library card and PIN."
+    ),
+    "what_you_need": "Your library card (or card number) and PIN.",
+    "how_to_borrow": [
+        "At the kiosk, scan your library card barcode or type your card number.",
+        "Enter your PIN when prompted.",
+        "Place the item on the pad or scan its barcode to check it out.",
+        "Collect your receipt — it shows the due date for each item.",
+    ],
+    "how_to_return": [
+        "Scan your library card at the kiosk, then scan each item to return it — "
+        "the screen confirms each successful check-in.",
+        "Many branches also have a 24-hour external drop-box outside for returns "
+        "when the library is closed or unstaffed.",
+    ],
+    "also_see": (
+        f"[Renew loans online anytime]({RENEW_URL}) — no trip to the library needed. "
+        f"[Reserve items]({RESERVE_URL}) for collection at any branch."
+    ),
+    "url": ACCOUNT_URL,
+}
+
+ILL_SERVICE = {
+    "summary": (
+        "If the item you want isn't in the Worcestershire library network, "
+        "library staff can often request it from another library service — "
+        "known as an inter-library loan. A small charge usually applies."
+    ),
+    "what_you_need": "Full library membership. Ask at any Worcestershire library branch.",
+    "how_to": [
+        f"First check the [Worcestershire catalogue]({CATALOGUE_SEARCH}) — including "
+        "eBook and eAudiobook formats on BorrowBox, which may be available tonight.",
+        "If the item isn't in the network, speak to staff at any branch or call "
+        f"**{LIBRARY_PHONE}** — they'll advise whether an inter-library loan is possible.",
+        "Provide the title, author, publisher and ideally the ISBN so staff can "
+        "trace the item in another service's catalogue.",
+        "A charge typically applies to cover processing and postage — staff will "
+        "confirm the fee before placing the request.",
+        "Items usually arrive within 2–4 weeks; you'll be notified when ready to collect.",
+    ],
+    "also_see": (
+        f"[BorrowBox eBooks and eAudiobooks]({BORROWBOX}) — free with your card, "
+        "available tonight — often hold titles not in the physical collection. "
+        f"The [Ask for a Book]({ASK_FOR_A_BOOK_URL}) service can also suggest "
+        "alternatives you might enjoy."
+    ),
+    "url": f"{GOV}/council-services/libraries",
+}
+
+CARD_EXPIRED = {
+    "summary": (
+        "If your Worcestershire library card or membership has expired, you can "
+        "renew it free of charge at any library branch. Your account, loans and "
+        "reservations are all retained."
+    ),
+    "what_you_need": (
+        "Your library card or card number. If your address has changed since you "
+        "joined, bring proof of your current address (e.g. a utility bill, bank "
+        "statement or official letter with your name and address)."
+    ),
+    "how_to": [
+        "Visit any Worcestershire library during staffed hours and ask staff to "
+        "renew your membership — it only takes a few minutes.",
+        "If your address is unchanged, your card number is usually all that's needed.",
+        f"Can't visit? Call **{LIBRARY_PHONE}** during staffed hours — staff can "
+        "often renew your membership over the phone if your details are on record.",
+    ],
+    "also_see": (
+        f"Not sure if your card has expired? Try logging in to "
+        f"[your library account]({ACCOUNT_URL}) — an expired card will prompt you "
+        "to renew. If you've also forgotten your PIN, use 'Forgotten PIN' on the "
+        "sign-in page."
+    ),
+    "url": JOIN_URL,
+}
+
+
 def account_and_loans(query: str | None = None) -> dict:
     """
     Online account, renewing loans, fines / late fees, reservations, returning,
@@ -1249,6 +1353,13 @@ def account_and_loans(query: str | None = None) -> dict:
                               "find work", "looking for work", "interview prep")):
         out["focus"] = "job_clubs"
         out["job_clubs"] = JOB_CLUBS
+    elif ((any(w in q for w in ("expired", "lapsed", "out of date"))
+           and any(w in q for w in ("card", "membership", "member")))
+          or (any(w in q for w in ("renew", "renewal"))
+              and any(w in q for w in ("card", "membership", "member"))
+              and not any(w in q for w in ("book", "item", "loan", "dvd", "cd")))):
+        out["focus"] = "card_expired"
+        out["card_expired"] = CARD_EXPIRED
     elif any(w in q for w in ("renew", "renewal", "extend", "due date")):
         out["focus"] = "renewals"
     elif ("card" in q and any(w in q for w in ("lost", "stolen", "replace", "replacement"))):
@@ -1258,8 +1369,18 @@ def account_and_loans(query: str | None = None) -> dict:
           and any(w in q for w in ("book", "item", "dvd", "cd"))
           and "card" not in q):
         out["focus"] = "lost_item"
+    elif any(w in q for w in ("self service", "self-service", "kiosk",
+                               "self checkout", "self-checkout", "self serve",
+                               "check out myself", "check books out")):
+        out["focus"] = "self_service"
+        out["self_service"] = SELF_SERVICE
     elif any(w in q for w in ("return", "returning", "bring back", "drop off", "hand back")):
         out["focus"] = "returning"
+    elif any(w in q for w in ("inter-library", "interlibrary", "inter library",
+                               "another library service", "from another library",
+                               "different library service", "ill loan")):
+        out["focus"] = "ill"
+        out["ill_service"] = ILL_SERVICE
     elif any(w in q for w in ("fine", "charge", "fee", "owe", "overdue", "late", "pay")):
         out["focus"] = "fines"
     elif any(w in q for w in ("reserve", "hold", "reservation", "request", "order")):
@@ -1270,6 +1391,11 @@ def account_and_loans(query: str | None = None) -> dict:
           and any(w in q for w in ("my", "account", "library"))):
         out["focus"] = "update_details"
         out["update_details"] = UPDATE_DETAILS_INFO
+    elif (any(w in q for w in ("wifi", "wi-fi", "wireless"))
+          and any(w in q for w in ("connect", "connection", "password", "how",
+                                   "access", "guest", "login", "log in", "use"))):
+        out["focus"] = "wifi"
+        out["wifi_access"] = WIFI_ACCESS
     elif any(w in q for w in ("account", "login", "log in", "sign in", "pin", "password")):
         out["focus"] = "account"
     elif any(w in q for w in ("home", "housebound", "deliver")):
@@ -1345,6 +1471,14 @@ def account_and_loans(query: str | None = None) -> dict:
         out.setdefault("update_details", UPDATE_DETAILS_INFO)
     if out["focus"] == "lost_card":
         out.setdefault("lost_card", LOST_CARD)
+    if out["focus"] == "wifi":
+        out.setdefault("wifi_access", WIFI_ACCESS)
+    if out["focus"] == "self_service":
+        out.setdefault("self_service", SELF_SERVICE)
+    if out["focus"] == "ill":
+        out.setdefault("ill_service", ILL_SERVICE)
+    if out["focus"] == "card_expired":
+        out.setdefault("card_expired", CARD_EXPIRED)
 
     return out
 

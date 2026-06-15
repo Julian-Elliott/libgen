@@ -189,6 +189,13 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if (re.search(r"\b(print|printing|photocopy|photocopies|scan|copier)\b", t)
             and not re.search(r"\blarge.?print\b|\bbig.?print\b", t)):
         return "printing_help", {}
+    # Expired card / membership renewal — before generic renew check
+    if (re.search(r"\b(library )?card (has |is |)(expired|lapsed|out of date)\b|"
+                  r"\bexpired (library )?card\b|"
+                  r"\b(my |the )?(library )?(membership|member) (has |is |)(expired|lapsed)\b", t)
+            or (re.search(r"\brenew (my |the )?(library )?(card|membership)\b", t)
+                and not re.search(r"\bbooks?\b|\bitems?\b|\bloans?\b", t))):
+        return "account_and_loans", {"query": "card expired renew membership"}
     # Account self-service: renewals, fines, reservations, home library
     if re.search(r"\b(renew|renewal|due date)\b|"
                  r"\bextend(ing)? (a |my |the |)?(loan|book|borrow|borrowing|item|items|them|it)\b|"
@@ -241,6 +248,12 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"computer session|book a pc\b|"
                  r"computers?.{0,30}librar|(library|libraries).{0,15}computers?\b", t):
         return "account_and_loans", {"query": "book a computer"}
+    # Self-service kiosk — how to check out / return without staff
+    if re.search(r"\bself[- ]?service (kiosk|machine|terminal)?\b|"
+                 r"\bself[- ]?checkout\b|\bkiosk\b|"
+                 r"\b(check (out|in)).{0,20}(myself|machine|kiosk|without staff)\b|"
+                 r"\buse (the |a )?self[- ]?service\b", t):
+        return "account_and_loans", {"query": "self service kiosk checkout borrow return"}
     if re.search(r"\bvolunteer(ing)?\b|work experience (at|in) (a |the )?librar\b", t):
         return "account_and_loans", {"query": "volunteering"}
     if re.search(r"\bdigital (skills?|inclusion|champion)\b|learn my way\b|"
@@ -340,6 +353,11 @@ def keyword_route(q: str) -> tuple[str, dict]:
     if re.search(r"\b(mobile library|mobile van|the van|comes to|visit)\b", t):
         place = _place_from(q)
         return "mobile_library", {"place": place or q.split()[-1]}
+    # Wi-Fi connection instructions — "how to connect" queries; "is there wifi at X" still → find_library
+    if re.search(r"\bwi-?fi\b|\bwireless internet\b", t) and \
+       re.search(r"\b(connect(ing)?|connection|password|log ?in|sign ?in|"
+                 r"how (do|can|to)|guest|setup|set up|access)\b", t):
+        return "account_and_loans", {"query": "wifi how to connect password access"}
     if re.search(r"\b(open|opening|hours|close|closing|toilet|parking|address|"
                  r"facilit|where is|near me|study space|wi-?fi|wireless|phone number|"
                  r"telephone|contact (details?|number)|email address|"
@@ -354,6 +372,12 @@ def keyword_route(q: str) -> tuple[str, dict]:
                  r"\bbraille\b|\bprint.?disabilit\b|"
                  r"\b(visual|sight).{0,12}impair.{0,25}\b(books?|reading|formats?)\b", t):
         return "account_and_loans", {"query": "accessible formats reading"}
+    # Inter-library loans — items not held in the Worcestershire network
+    if re.search(r"\binter[- ]?library (loan|borrow|request|service)?\b|"
+                 r"\bill (request|loan|service)?\b|"
+                 r"\b(borrow|get|obtain|request|order).{0,35}(another|different|other) librar|"
+                 r"\bfrom (another|a different|other) librar", t):
+        return "account_and_loans", {"query": "inter-library loan another library service"}
     # Talking books / accessible audio — route to BorrowBox via online_hub
     if re.search(r"\b(talking books?|daisy (format|books?|reader)\b|rnib\b|"
                  r"listening books? (service|online)?\b|"
@@ -850,6 +874,55 @@ def render_account_and_loans(r):
         out.append(f"\n🔎 [Fees and charges]({lc['url']})")
         return "\n".join(out)
 
+    if focus == "card_expired" and r.get("card_expired"):
+        ce = r["card_expired"]
+        out = ["🪪 **Library card or membership expired:**\n", ce["summary"], "\n"]
+        out.append(f"✅ **What you need:** {ce['what_you_need']}\n")
+        for i, step in enumerate(ce["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if ce.get("also_see"):
+            out.append(f"\n💡 _{ce['also_see']}_")
+        out.append(f"\n🔎 [Join or renew membership]({ce['url']})")
+        return "\n".join(out)
+
+    if focus == "wifi" and r.get("wifi_access"):
+        wa = r["wifi_access"]
+        out = ["📶 **Free Wi-Fi at Worcestershire Libraries:**\n", wa["summary"], "\n"]
+        out.append(f"✅ **What you need:** {wa['what_you_need']}\n")
+        out.append("**How to connect:**")
+        for step in wa["how_to"]:
+            out.append(f"- {step}")
+        if wa.get("also_see"):
+            out.append(f"\n💡 _{wa['also_see']}_")
+        out.append(f"\n🔎 [Worcestershire Libraries]({wa['url']})")
+        return "\n".join(out)
+
+    if focus == "self_service" and r.get("self_service"):
+        ss = r["self_service"]
+        out = ["🤖 **Self-service kiosks at Worcestershire Libraries:**\n", ss["summary"], "\n"]
+        out.append(f"✅ **What you need:** {ss['what_you_need']}\n")
+        out.append("**To borrow (check out):**")
+        for step in ss["how_to_borrow"]:
+            out.append(f"- {step}")
+        out.append("\n**To return (check in):**")
+        for step in ss["how_to_return"]:
+            out.append(f"- {step}")
+        if ss.get("also_see"):
+            out.append(f"\n💡 _{ss['also_see']}_")
+        out.append(f"\n🔎 [Your library account]({ss['url']})")
+        return "\n".join(out)
+
+    if focus == "ill" and r.get("ill_service"):
+        ill = r["ill_service"]
+        out = ["📦 **Inter-library loans — getting a book from another library service:**\n",
+               ill["summary"], f"\n✅ **What you need:** {ill['what_you_need']}\n"]
+        for i, step in enumerate(ill["how_to"], 1):
+            out.append(f"{i}. {step}")
+        if ill.get("also_see"):
+            out.append(f"\n💡 _{ill['also_see']}_")
+        out.append(f"\n🔎 [Worcestershire Libraries]({ill['url']})")
+        return "\n".join(out)
+
     if focus == "loan_limits":
         ll, ren = r["loan_limits"], r["renewals"]
         out = ["📅 **Borrowing periods & limits:**\n", ll["summary"],
@@ -1100,10 +1173,13 @@ HELP = (
     "👋 I'm the **Worcestershire Libraries assistant**. I check the council site "
     "and catalogue *live* and can help you:\n\n"
     "- 📚 **Get a specific book** — which branch has it on the shelf *right now*, "
-    "or borrow the eBook tonight\n"
+    "borrow the eBook tonight, or request it from another library service\n"
     "- 🔄 **Account & loans** — renew books online, reserve or cancel items, "
     "return items, pay fines, lost or stolen card, lost/damaged item\n"
-    "- 🃏 **Lost or stolen library card** — how to report it, get a replacement, and protect your account\n"
+    "- 🃏 **Lost, stolen or expired library card** — how to report it, get a replacement, renew membership\n"
+    "- 📶 **Library Wi-Fi** — free, no password needed, how to connect\n"
+    "- 🤖 **Self-service kiosks** — how to borrow and return items without staff\n"
+    "- 📦 **Inter-library loans** — requesting items not held in Worcestershire\n"
     "- 📖 **Ask for a Book** — free personalised reading recommendations from a librarian\n"
     "- 📍 **Branch hours, 'open now?', facilities** — toilets, parking, study space\n"
     "- 🐝 **The Hive** (Worcester) — archives & archaeology, study spaces, room "
@@ -1281,7 +1357,11 @@ def build_demo():
              "I've lost my library card — what do I do?",
              "Is the library open on bank holidays?",
              "Are there any dementia-friendly activities at the library?",
-             "Do you have activities for pre-school children?"],
+             "Do you have activities for pre-school children?",
+             "My library card has expired — how do I renew it?",
+             "How do I connect to the library Wi-Fi?",
+             "Can you get a book from another library service?",
+             "How do I use the self-service machine to borrow books?"],
             inputs=box, label="Try one")
 
         if not HF_TOKEN:

@@ -29,6 +29,8 @@ shelf - mined live at question time wherever the source allows it.
 > manager in Worcester**, whose recurring complaint is that *the library never
 > shouts loudly enough about everything it offers*. This is the megaphone.
 
+**[Watch the interactive demo](https://app.arcade.software/share/p5cZQyn7OZUXmR6Kqxbk)** — a click-through walkthrough of the assistant in action.
+
 ## What it does
 
 Ask in plain English and it routes your question to a live tool, reads what comes

@@ -37,20 +37,34 @@ from trace import Trace
 # Model (<= 32 billion params)
 # --------------------------------------------------------------------------- #
 
-MODEL_ID = os.environ.get("MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
 HF_TOKEN = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 
-_client = None
-def get_client():
-    global _client
-    if _client is None:
+# Sponsor & achievement models — all reachable via HF Inference API with HF_TOKEN.
+# achievement:llama  → Llama 3.1 8B (default)
+# sponsor:openbmb    → MiniCPM 3 4B
+# sponsor:nvidia     → NVIDIA accelerates Llama; Llama 3.2 3B shows the small-model thesis
+MODELS = [
+    ("🦙 Llama 3.1 8B · Meta",           "meta-llama/Llama-3.1-8B-Instruct"),
+    ("🌱 MiniCPM 3 4B · OpenBMB",         "openbmb/MiniCPM3-4B"),
+    ("⚡ Qwen 2.5 7B · Alibaba",           "Qwen/Qwen2.5-7B-Instruct"),
+    ("🔬 Llama 3.2 3B · Meta (smallest)", "meta-llama/Llama-3.2-3B-Instruct"),
+]
+MODEL_LABELS  = [label for label, _ in MODELS]
+MODEL_IDS     = {label: mid for label, mid in MODELS}
+DEFAULT_LABEL = MODEL_LABELS[0]                           # Llama 3.1 8B
+MODEL_ID      = os.environ.get("MODEL_ID", MODEL_IDS[DEFAULT_LABEL])  # env override
+
+_clients: dict = {}
+
+def get_client(model_id: str):
+    if model_id not in _clients:
         from huggingface_hub import InferenceClient
-        _client = InferenceClient(model=MODEL_ID, token=HF_TOKEN, timeout=60)
-    return _client
+        _clients[model_id] = InferenceClient(model=model_id, token=HF_TOKEN, timeout=60)
+    return _clients[model_id]
 
 
-def llm(messages, *, max_tokens=512, temperature=0.3, stream=False):
-    return get_client().chat_completion(
+def llm(messages, *, model_id: str = None, max_tokens=512, temperature=0.3, stream=False):
+    return get_client(model_id or MODEL_ID).chat_completion(
         messages, max_tokens=max_tokens, temperature=temperature, stream=stream)
 
 
@@ -130,6 +144,24 @@ ROUTER_SYSTEM = (
     "You route a Worcestershire Libraries question to exactly one tool.\nTools:\n"
     + "\n".join(f"- {n}: {t['desc']}" for n, t in TOOLS.items())
     + "\n- none: greeting / off-topic / general 'what can you do'.\n\n"
+    "Key distinctions:\n"
+    "- where_to_get = 'how/where can I GET a specific title' (copy availability + borrow path)\n"
+    "- search_catalogue = 'do you HAVE books by/about X' (search, list results)\n"
+    "- graph_search = multi-feature branch queries ('café AND late AND parking')\n"
+    "- find_library = single-branch hours/facilities/open-now queries\n\n"
+    "Examples:\n"
+    "{\"tool\":\"where_to_get\",\"args\":{\"query\":\"Wolf Hall\"}}  "
+    "← 'Can I get Wolf Hall?' / 'How do I borrow Wolf Hall?'\n"
+    "{\"tool\":\"search_catalogue\",\"args\":{\"query\":\"Jodi Picoult\"}}  "
+    "← 'Do you have books by Jodi Picoult?'\n"
+    "{\"tool\":\"find_library\",\"args\":{\"name\":\"Bromsgrove\",\"when\":\"today\"}}  "
+    "← 'Is Bromsgrove library open today?'\n"
+    "{\"tool\":\"graph_search\",\"args\":{\"query\":\"café late opening parking\"}}  "
+    "← 'A late library with a café and parking'\n"
+    "{\"tool\":\"online_hub\",\"args\":{\"topic\":\"ebooks borrowbox\"}}  "
+    "← 'How do I borrow eBooks?' / 'What free apps are there?'\n"
+    "{\"tool\":\"mobile_library\",\"args\":{\"place\":\"Pershore\"}}  "
+    "← 'When does the mobile van visit Pershore?'\n\n"
     "If conversation context is provided, resolve references like 'there', 'it' "
     "or 'that one' from it (e.g. 'what's on there?' after a Malvern answer -> "
     "library_events with Malvern).\n"
@@ -513,7 +545,7 @@ def keyword_route(q: str) -> tuple[str, dict]:
     return "none", {}
 
 
-def route(q: str, history=None) -> tuple[str, dict, str, int]:
+def route(q: str, history=None, model_id: str = None) -> tuple[str, dict, str, int]:
     t0 = time.time()
     if HF_TOKEN:
         try:
@@ -523,7 +555,7 @@ def route(q: str, history=None) -> tuple[str, dict, str, int]:
                 user = f"Conversation so far:\n{ctx}\n\nRoute this latest question: {q}"
             out = llm([{"role": "system", "content": ROUTER_SYSTEM},
                        {"role": "user", "content": user}],
-                      max_tokens=120, temperature=0.0)
+                      model_id=model_id, max_tokens=120, temperature=0.0)
             m = re.search(r"\{.*\}", out.choices[0].message.content, re.S)
             if m:
                 data = json.loads(m.group(0))
@@ -1369,7 +1401,7 @@ SYNTH_SYSTEM = (
     "If the data doesn't answer it, say so and point to the source link.")
 
 
-def synthesize_stream(question, rendered):
+def synthesize_stream(question, rendered, model_id: str = None):
     if not HF_TOKEN:
         yield rendered
         return
@@ -1377,7 +1409,7 @@ def synthesize_stream(question, rendered):
         stream = llm([{"role": "system", "content": SYNTH_SYSTEM},
                       {"role": "user", "content": f"Question: {question}\n\n"
                        f"LIVE DATA:\n{rendered}"}],
-                     max_tokens=650, temperature=0.3, stream=True)
+                     model_id=model_id, max_tokens=650, temperature=0.3, stream=True)
         acc = ""
         for chunk in stream:
             d = chunk.choices[0].delta.content or ""
@@ -1442,14 +1474,15 @@ HELP = (
 # Chat handler — yields (answer_text, chips_or_None)
 # --------------------------------------------------------------------------- #
 
-def respond(message, history):
+def respond(message, history, model_label: str = None):
+    model_id = MODEL_IDS.get(model_label) or MODEL_ID
     message = (message or "").strip()
     if not message:
         yield HELP, HELP_CHIPS
         return
 
-    tr = Trace(message, MODEL_ID)
-    tool, args, how, rms = route(message, history)
+    tr = Trace(message, model_id)
+    tool, args, how, rms = route(message, history, model_id=model_id)
     tr.set_route(tool, args, how, rms)
 
     if tool == "none":
@@ -1471,10 +1504,10 @@ def respond(message, history):
 
     t2 = time.time()
     answer = ""
-    for partial in synthesize_stream(message, rendered):
+    for partial in synthesize_stream(message, rendered, model_id=model_id):
         answer = partial
         yield answer, None
-    tr.step("synthesis", model=MODEL_ID, ms=_ms(t2))
+    tr.step("synthesis", model=model_id, ms=_ms(t2))
 
     # behaviour-change extras + provenance + open trace
     value = value_receipt(tool, raw)
@@ -1610,10 +1643,21 @@ def build_demo():
              "Can local groups display notices at the library?"],
             inputs=box, label="Try one")
 
+        with gr.Accordion("⚙️ Model", open=False):
+            model_dd = gr.Dropdown(
+                choices=MODEL_LABELS,
+                value=DEFAULT_LABEL,
+                label="Small model",
+                info=("Switch between sponsor & achievement models — all run via "
+                      "HF Inference API. Keyword routing works without any model."),
+                interactive=bool(HF_TOKEN),
+            )
+
         if not HF_TOKEN:
-            gr.Markdown("> ⚠️ No `HF_TOKEN` set — **no-LLM mode**: you get the raw "
-                        "live data (still fully working). Add an `HF_TOKEN` secret "
-                        "for conversational phrasing.")
+            gr.Markdown("> ⚠️ No `HF_TOKEN` set — **no-LLM / offgrid mode**: "
+                        "keyword routing returns the raw live data (fully working, "
+                        "no external AI API). Add an `HF_TOKEN` secret for "
+                        "conversational phrasing and model switching.")
 
         def hide3():
             return tuple(gr.update(visible=False) for _ in range(3))
@@ -1631,14 +1675,14 @@ def build_demo():
         def chip_turn(label, hist):
             return "", (hist or []) + [{"role": "user", "content": label}], *hide3()
 
-        def bot_turn(hist):
+        def bot_turn(hist, model_label):
             if not hist or hist[-1]["role"] != "user":
                 yield hist, *hide3()
                 return
             msg = _content_text(hist[-1]["content"])
             hist = hist + [{"role": "assistant", "content": ""}]
             final_chips = []
-            for text, ch in respond(msg, hist[:-1]):
+            for text, ch in respond(msg, hist[:-1], model_label):
                 hist[-1]["content"] = text
                 if ch is not None:
                     final_chips = ch
@@ -1647,12 +1691,12 @@ def build_demo():
 
         outs = [chat, *chips]
         box.submit(user_turn, [box, chat], [box, chat, *chips], queue=False).then(
-            bot_turn, chat, outs)
+            bot_turn, [chat, model_dd], outs)
         send.click(user_turn, [box, chat], [box, chat, *chips], queue=False).then(
-            bot_turn, chat, outs)
+            bot_turn, [chat, model_dd], outs)
         for c in chips:
             c.click(chip_turn, [c, chat], [box, chat, *chips], queue=False).then(
-                bot_turn, chat, outs)
+                bot_turn, [chat, model_dd], outs)
 
     return demo
 

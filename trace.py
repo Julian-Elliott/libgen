@@ -88,7 +88,7 @@ class Trace:
         src = self.d["sources"][0] if self.d["sources"] else ""
         srcline = f" · [source]({src})" if src else ""
         return (
-            "\n\n<details><summary>🔎 How I answered (agent trace)</summary>\n\n"
+            "\n\n<details open><summary>🔎 How I answered (agent trace)</summary>\n\n"
             f"- **Route:** `{r.get('tool','?')}` via {r.get('router','?')} "
             f"({r.get('latency_ms',0)} ms)\n"
             f"- **Steps:** {steps}\n"

@@ -117,7 +117,7 @@ testable against the live sites: `python library_sources.py`.
 
 ```bash
 pip install -r requirements.txt gradio
-export HF_TOKEN=hf_xxx            # optional — omit for no-LLM mode
+export HF_TOKEN=hf_xxx            # optional — omit for no-LLM / offgrid mode
 export TRACE_DATASET=you/wpl-traces  # optional — persist usage analytics (see below)
 python app.py                    # http://localhost:7860
 
@@ -126,6 +126,21 @@ python build_kb.py               # council pages   -> library_kb.json
 python build_hive_kb.py          # every Hive page -> hive_kb.json
 python graph_build.py            # both KBs        -> library_graph.json
 ```
+
+### No-LLM / Offgrid mode (`achievement:offgrid`)
+
+Run **without** `HF_TOKEN` and the assistant works entirely on its own — no
+external AI API call is made. A deterministic keyword router (400+ patterns)
+handles every question and returns the raw live data directly. This is the
+`achievement:offgrid` mode: the library data still comes from the council's
+own public website, but the intelligence layer requires no third-party model
+service whatsoever.
+
+```bash
+python app.py          # no HF_TOKEN → keyword-only, zero AI API calls
+```
+
+The UI flags this mode clearly and all tools remain fully functional.
 
 ### Usage analytics (optional)
 
